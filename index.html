@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Silly Sausage Ultra Smooth</title>
+  <title>Silly Sausage: All Levels</title>
   <style>
     * {
       box-sizing: border-box;
@@ -33,7 +33,7 @@
       display: block;
       touch-action: none;
       box-shadow: 0 10px 40px rgba(0,0,0,0.85);
-      border-radius: 12px;
+      border-radius: 14px;
     }
 
     /* HUD */
@@ -49,7 +49,7 @@
       z-index: 10;
     }
     .hud-pill {
-      background: rgba(36, 14, 38, 0.85);
+      background: rgba(36, 14, 38, 0.9);
       border: 2px solid #ff79c6;
       color: #fff;
       padding: 6px 14px;
@@ -59,11 +59,15 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.6);
       backdrop-filter: blur(6px);
     }
+    #lvl-box {
+      color: #50fa7b;
+      border-color: #50fa7b;
+    }
 
-    /* Виртуальный D-Pad под палец */
+    /* D-Pad */
     #dpad {
       position: absolute;
-      bottom: 18px;
+      bottom: 16px;
       width: 175px;
       height: 175px;
       z-index: 20;
@@ -105,7 +109,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(18, 8, 20, 0.88);
+      background: rgba(18, 8, 20, 0.9);
       backdrop-filter: blur(10px);
       display: flex;
       justify-content: center;
@@ -125,7 +129,7 @@
       color: #fff;
       box-shadow: 0 15px 45px rgba(0,0,0,0.8);
     }
-    .card h1 { font-size: 20px; color: #50fa7b; margin-bottom: 12px; }
+    .card h1 { font-size: 21px; color: #50fa7b; margin-bottom: 12px; }
     .card ul {
       text-align: left;
       font-size: 13px;
@@ -155,8 +159,8 @@
   <canvas id="stage"></canvas>
 
   <div id="hud">
-    <div class="hud-pill" id="score-box">🌭 0 / 12</div>
-    <div class="hud-pill" id="cp-box">🚩 СТАРТ</div>
+    <div class="hud-pill" id="lvl-box">УРОВЕНЬ 1</div>
+    <div class="hud-pill" id="score-box">🌭 0 / 0</div>
   </div>
 
   <div id="dpad">
@@ -169,18 +173,18 @@
   <!-- Старт -->
   <div id="start-modal" class="modal">
     <div class="card">
-      <h1>🌭 SILLY SAUSAGE 60FPS</h1>
+      <h1>🌭 SILLY SAUSAGE & CHIN</h1>
       <ul>
-        <li>↕️ <b>Тяни таксу:</b> жми D-pad внизу или свайпай по экрану.</li>
-        <li>🧱 <b>Цепляйся за стены:</b> пока тело в воздухе, оно тянется как резина!</li>
-        <li>🐭 <b>Шиншилла на спине:</b> собирает сосиски и балансирует на хвосте.</li>
-        <li>⚙️ <b>Опасайся пил:</b> растянутое тело разрезается мгновенно!</li>
+        <li>↕️ <b>Тяни сосисочную таксу</b> кнопками или свайпами.</li>
+        <li>🧱 <b>Прижимайся к стенам</b>, чтобы подтянуть хвост с шиншиллой!</li>
+        <li>🌭 <b>Собери все сосиски</b>, чтобы открыть золотой портал (★) на следующий уровень!</li>
+        <li>⚙️ <b>Берегись пил:</b> растянутое тело разрезается мгновенно!</li>
       </ul>
-      <button class="main-btn" id="start-btn">ПОГНАЛИ ТЯНУТЬСЯ! 🚀</button>
+      <button class="main-btn" id="start-btn">ПОГНАЛИ! 🚀</button>
     </div>
   </div>
 
-  <!-- Game Over -->
+  <!-- Смерть -->
   <div id="end-modal" class="modal hidden">
     <div class="card">
       <h1 id="end-title" style="color:#ff5555;">ТЕБЯ РАСПИЛИЛО! ⚙️💥</h1>
@@ -188,11 +192,29 @@
       <button class="main-btn" id="restart-btn">С ЧЕКПОИНТА 🔄</button>
     </div>
   </div>
+
+  <!-- Уровень пройден -->
+  <div id="win-modal" class="modal hidden">
+    <div class="card" style="border-color:#50fa7b;">
+      <h1 style="color:#50fa7b;">УРОВЕНЬ ПРОЙДЕН! 🎉</h1>
+      <p style="font-size: 15px; margin: 10px 0 20px 0;">Все сосиски съедены, шиншилла довольна!</p>
+      <button class="main-btn" id="next-lvl-btn">СЛЕДУЮЩИЙ УРОВЕНЬ ⏩</button>
+    </div>
+  </div>
+
+  <!-- Финал игры -->
+  <div id="victory-modal" class="modal hidden">
+    <div class="card" style="border-color:#f1fa8c;">
+      <h1 style="color:#f1fa8c;">ПОБЕДА! ВЫ СБЕЖАЛИ! 🏆</h1>
+      <p style="font-size: 15px; margin: 10px 0 20px 0;">Такса и шиншилла преодолели все мясные цеха и наелись от пуза!</p>
+      <button class="main-btn" id="all-restart-btn">ИГРАТЬ СНАЧАЛА 🔄</button>
+    </div>
+  </div>
 </div>
 
 <script>
 (() => {
-  // --- АУДИО (WEB AUDIO API БЕЗ ЗАВИСАНИЙ) ---
+  // --- АУДИО ---
   let audioCtx = null;
   function initAudio() {
     if (!audioCtx) {
@@ -231,10 +253,18 @@
         osc.type = 'square';
         osc.frequency.setValueAtTime(420, t);
         osc.frequency.setValueAtTime(740, t + 0.05);
-        gain.gain.setValueAtTime(0.22, t);
+        gain.gain.setValueAtTime(0.25, t);
         gain.gain.linearRampToValueAtTime(0.01, t + 0.1);
         osc.start(t);
         osc.stop(t + 0.1);
+      } else if (type === 'portal') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, t);
+        osc.frequency.exponentialRampToValueAtTime(850, t + 0.25);
+        gain.gain.setValueAtTime(0.4, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.25);
+        osc.start(t);
+        osc.stop(t + 0.25);
       } else if (type === 'cut') {
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(180, t);
@@ -247,7 +277,7 @@
     } catch(e) {}
   }
 
-  // --- ХОЛСТ И ГЕОМЕТРИЯ СЕТКИ ---
+  // --- ХОЛСТ И ГЕОМЕТРИЯ ---
   const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
   const TILE = 32;
@@ -256,7 +286,6 @@
   const baseW = COLS * TILE;
   const baseH = ROWS * TILE;
 
-  // Retina / High-DPI масштабирование
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = baseW * dpr;
   canvas.height = baseH * dpr;
@@ -264,31 +293,115 @@
   canvas.style.height = `${baseH}px`;
   ctx.scale(dpr, dpr);
 
-  // Карта (1: Стена, 0: Пусто, 2: Сосиска, 3: Пила, 4: Чекпоинт)
-  const MAP_DEF = [
-    [1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,1,2,0,0,0,2,1],
-    [1,0,1,0,1,0,1,1,1,0,1],
-    [1,2,1,0,0,0,0,3,1,0,1],
-    [1,0,1,1,1,1,0,0,1,0,1],
-    [1,0,0,0,2,1,1,0,0,0,1],
-    [1,1,1,0,0,0,1,0,1,1,1],
-    [1,4,1,1,3,0,1,0,2,0,1],
-    [1,0,0,0,0,0,0,0,1,0,1],
-    [1,0,1,1,1,0,1,1,1,0,1],
-    [1,2,1,3,0,0,0,3,1,2,1],
-    [1,0,1,0,1,1,1,0,1,0,1],
-    [1,0,0,0,0,2,0,0,0,0,1],
-    [1,1,1,0,1,1,1,0,1,1,1],
-    [1,2,0,0,0,0,0,0,0,2,1],
-    [1,1,1,1,1,1,1,1,1,1,1]
+  // ==========================================
+  // --- БАЗА УРОВНЕЙ (4 УРОВНЯ) ---
+  // 1: Стена, 0: Пусто, 2: Сосиска, 3: Пила, 4: Чекпоинт, 5: Портал выхода
+  // ==========================================
+  const LEVELS = [
+    // УРОВЕНЬ 1: Разминка
+    {
+      name: "УРОВЕНЬ 1",
+      start: { x: 5, y: 14 },
+      exit: { x: 5, y: 1 },
+      map: [
+        [1,1,1,1,1,5,1,1,1,1,1],
+        [1,0,0,0,1,0,1,0,0,0,1],
+        [1,0,1,0,1,0,1,0,1,0,1],
+        [1,2,1,0,0,2,0,0,1,2,1],
+        [1,0,1,1,1,0,1,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,1],
+        [1,1,1,0,1,1,1,0,1,1,1],
+        [1,2,0,0,0,4,0,0,0,2,1],
+        [1,0,1,1,0,0,0,1,1,0,1],
+        [1,0,0,1,0,2,0,1,0,0,1],
+        [1,1,0,1,1,0,1,1,0,1,1],
+        [1,2,0,0,0,0,0,0,0,2,1],
+        [1,0,1,1,0,1,0,1,1,0,1],
+        [1,0,0,0,0,2,0,0,0,0,1],
+        [1,1,1,0,1,1,1,0,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1]
+      ]
+    },
+    // УРОВЕНЬ 2: Зубастый лабиринт
+    {
+      name: "УРОВЕНЬ 2",
+      start: { x: 1, y: 14 },
+      exit: { x: 9, y: 1 },
+      map: [
+        [1,1,1,1,1,1,1,1,1,5,1],
+        [1,2,0,0,0,3,0,0,0,0,1],
+        [1,1,1,1,0,1,1,1,1,0,1],
+        [1,0,0,0,0,0,2,0,1,0,1],
+        [1,0,1,1,1,1,1,0,1,0,1],
+        [1,0,1,2,0,3,1,0,0,0,1],
+        [1,0,1,0,1,0,1,1,1,0,1],
+        [1,0,0,0,1,0,0,2,1,0,1],
+        [1,1,1,0,1,1,1,0,1,0,1],
+        [1,2,0,0,0,4,1,0,0,0,1],
+        [1,0,1,1,3,0,1,1,1,0,1],
+        [1,0,1,2,0,0,0,2,1,0,1],
+        [1,0,1,1,1,0,1,1,1,0,1],
+        [1,0,0,0,0,0,0,3,0,2,1],
+        [1,0,1,1,1,1,1,1,1,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1]
+      ]
+    },
+    // УРОВЕНЬ 3: Завод сосисок
+    {
+      name: "УРОВЕНЬ 3",
+      start: { x: 5, y: 14 },
+      exit: { x: 5, y: 1 },
+      map: [
+        [1,1,1,1,1,5,1,1,1,1,1],
+        [1,2,0,1,0,0,0,1,0,2,1],
+        [1,0,3,1,0,3,0,1,3,0,1],
+        [1,0,0,0,0,2,0,0,0,0,1],
+        [1,1,1,0,1,1,1,0,1,1,1],
+        [1,2,0,0,0,4,0,0,0,2,1],
+        [1,0,1,1,3,0,3,1,1,0,1],
+        [1,0,0,1,0,2,0,1,0,0,1],
+        [1,1,0,1,1,0,1,1,0,1,1],
+        [1,2,0,0,0,0,0,0,0,2,1],
+        [1,0,1,3,1,0,1,3,1,0,1],
+        [1,0,1,0,1,2,1,0,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,1],
+        [1,1,1,0,1,3,1,0,1,1,1],
+        [1,2,0,0,0,0,0,0,0,2,1],
+        [1,1,1,1,1,1,1,1,1,1,1]
+      ]
+    },
+    // УРОВЕНЬ 4: Великий Побег (Хардкор финал)
+    {
+      name: "ФИНАЛ: ПОБЕГ",
+      start: { x: 1, y: 14 },
+      exit: { x: 9, y: 1 },
+      map: [
+        [1,1,1,1,1,1,1,1,1,5,1],
+        [1,2,0,3,0,2,0,3,0,0,1],
+        [1,1,0,1,1,0,1,1,0,1,1],
+        [1,0,0,0,3,0,0,0,0,2,1],
+        [1,0,1,1,1,1,1,0,1,1,1],
+        [1,0,0,2,0,4,0,0,0,0,1],
+        [1,1,1,0,1,3,1,0,1,0,1],
+        [1,2,0,0,1,2,1,0,1,0,1],
+        [1,0,1,3,1,0,1,0,1,0,1],
+        [1,0,1,0,0,0,0,0,0,2,1],
+        [1,0,1,1,1,0,1,1,1,0,1],
+        [1,2,0,3,0,0,0,3,0,0,1],
+        [1,1,0,1,1,1,1,0,1,1,1],
+        [1,2,0,0,0,2,0,0,0,2,1],
+        [1,0,1,1,1,1,1,1,1,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1]
+      ]
+    }
   ];
 
+  let currentLvlIdx = 0;
   let currentMap = [];
   let totalSausages = 0;
   let eatenSausages = 0;
+  let portalOpen = false;
 
-  // Сегменты таксы с интерполяцией положения для сверх-плавности
   let bodyNodes = [];
   let headDir = { x: 0, y: -1 };
   let sawRotation = 0;
@@ -296,15 +409,23 @@
   let isRunning = false;
   let particles = [];
 
-  function initLevel() {
-    currentMap = JSON.parse(JSON.stringify(MAP_DEF));
+  function loadLevel(idx) {
+    currentLvlIdx = idx;
+    const lvl = LEVELS[currentLvlIdx];
+    currentMap = JSON.parse(JSON.stringify(lvl.map));
+    activeCp = { x: lvl.start.x, y: lvl.start.y };
+
     totalSausages = 0;
     eatenSausages = 0;
+    portalOpen = false;
+
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         if (currentMap[r][c] === 2) totalSausages++;
       }
     }
+
+    document.getElementById('lvl-box').textContent = lvl.name;
     respawn();
   }
 
@@ -317,12 +438,14 @@
 
   function updateHUD() {
     document.getElementById('score-box').textContent = `🌭 ${eatenSausages} / ${totalSausages}`;
-    document.getElementById('cp-box').textContent = (activeCp.y < 14) ? '🚩 ЧЕКПОИНТ 1' : '🚩 СТАРТ';
   }
 
   function canMoveTo(tx, ty) {
     if (tx < 0 || tx >= COLS || ty < 0 || ty >= ROWS) return false;
     if (currentMap[ty][tx] === 1) return false;
+    // В портал можно только если собран весь провиант
+    if (currentMap[ty][tx] === 5 && !portalOpen) return false;
+
     for (let i = 1; i < bodyNodes.length - 1; i++) {
       if (bodyNodes[i].x === tx && bodyNodes[i].y === ty) return false;
     }
@@ -354,7 +477,6 @@
     if (!canMoveTo(nx, ny)) return;
 
     headDir = { x: dx, y: dy };
-    // Добавляем сегмент с плавной интерполяцией
     bodyNodes.unshift({
       x: nx,
       y: ny,
@@ -363,12 +485,16 @@
     });
     playSound('stretch');
 
-    // Сбор лакомства
+    // Сбор сосиски
     if (currentMap[ny][nx] === 2) {
       currentMap[ny][nx] = 0;
       eatenSausages++;
       playSound('eat');
       spawnSparks(nx * TILE + 16, ny * TILE + 16, '#f1fa8c');
+      if (eatenSausages >= totalSausages) {
+        portalOpen = true;
+        playSound('portal');
+      }
       updateHUD();
     }
 
@@ -376,16 +502,21 @@
     if (currentMap[ny][nx] === 4) {
       activeCp = { x: nx, y: ny };
       spawnSparks(nx * TILE + 16, ny * TILE + 16, '#50fa7b');
-      updateHUD();
     }
 
-    // Столкновение носом с пилой
+    // ВХОД В ПОРТАЛ (Победа на уровне)
+    if (currentMap[ny][nx] === 5 && portalOpen) {
+      winLevel();
+      return;
+    }
+
+    // Столкновение с пилой носом
     if (currentMap[ny][nx] === 3) {
       killDoge('Такса наткнулась носом на циркулярную пилу!');
       return;
     }
 
-    // Закрепление на стене: сжимаем хвост к голове
+    // Закрепление на стене: сжимаем тело
     if (isAdjacentSolid(nx, ny) && bodyNodes.length > 1) {
       bodyNodes = [{
         x: nx,
@@ -405,6 +536,16 @@
     document.getElementById('end-modal').classList.remove('hidden');
   }
 
+  function winLevel() {
+    playSound('portal');
+    isRunning = false;
+    if (currentLvlIdx < LEVELS.length - 1) {
+      document.getElementById('win-modal').classList.remove('hidden');
+    } else {
+      document.getElementById('victory-modal').classList.remove('hidden');
+    }
+  }
+
   function spawnSparks(x, y, color) {
     for (let i = 0; i < 8; i++) {
       particles.push({
@@ -418,7 +559,7 @@
     }
   }
 
-  // --- ОБРАБОТКА ВВОДА БЕЗ ЗАДЕРЖКИ (POINTERDOWN) ---
+  // --- ВВОД (POINTERDOWN / KEYBOARD) ---
   window.addEventListener('keydown', e => {
     if (e.key === 'ArrowUp' || e.key === 'KeyW') tryMove(0, -1);
     if (e.key === 'ArrowDown' || e.key === 'KeyS') tryMove(0, 1);
@@ -438,7 +579,6 @@
   bindPad('btn-left', -1, 0);
   bindPad('btn-right', 1, 0);
 
-  // Свайпы
   let touchX = 0, touchY = 0;
   canvas.addEventListener('pointerdown', e => {
     touchX = e.clientX;
@@ -454,7 +594,7 @@
     }
   });
 
-  // --- ИГРОВОЙ ЦИКЛ 60–120 FPS ---
+  // --- ИГРОВОЙ ЦИКЛ ---
   let lastTime = performance.now();
 
   function loop(now) {
@@ -470,7 +610,6 @@
   function update(dt) {
     sawRotation += 4.5 * dt;
 
-    // Плавная интерполяция сегментов тела таксы (LERP)
     for (let i = 0; i < bodyNodes.length; i++) {
       const seg = bodyNodes[i];
       const targetX = seg.x * TILE + TILE / 2;
@@ -479,7 +618,6 @@
       seg.renderY += (targetY - seg.renderY) * 0.35;
     }
 
-    // Проверка столкновения натянутого тела с вращающимися пилами
     if (isRunning && bodyNodes.length > 1) {
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
@@ -489,7 +627,7 @@
             for (let i = 0; i < bodyNodes.length; i++) {
               const seg = bodyNodes[i];
               if (Math.hypot(sawX - seg.renderX, sawY - seg.renderY) < 16) {
-                killDoge('Растянутую сосиску разрезало пилой!');
+                killDoge('Растянутую сосиску разрезало циркулярной пилой!');
                 return;
               }
             }
@@ -498,7 +636,6 @@
       }
     }
 
-    // Частицы
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.x += p.vx;
@@ -508,11 +645,10 @@
     }
   }
 
-  // --- ОТРИСОВКА (CANVAS) ---
+  // --- ОТРИСОВКА ---
   function render() {
     ctx.clearRect(0, 0, baseW, baseH);
 
-    // 1. Стены и лабиринт
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const type = currentMap[r][c];
@@ -520,13 +656,11 @@
         const py = r * TILE;
 
         if (type === 1) {
-          // Мясные блоки лабиринта
           ctx.fillStyle = '#4c1e40';
           ctx.fillRect(px, py, TILE, TILE);
           ctx.strokeStyle = '#321029';
           ctx.lineWidth = 1;
           ctx.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
-          // Блики на кирпичах
           ctx.fillStyle = '#6e2b5d';
           ctx.fillRect(px + 4, py + 4, 8, 4);
         } else {
@@ -534,7 +668,7 @@
           ctx.fillRect(px, py, TILE, TILE);
         }
 
-        // Сосиски-лакомства
+        // Сосиска
         if (type === 2) {
           ctx.fillStyle = '#ff5555';
           ctx.beginPath();
@@ -544,7 +678,7 @@
           ctx.fillRect(px + 12, py + 12, 8, 8);
         }
 
-        // Циркулярная пила
+        // Пила
         if (type === 3) {
           ctx.save();
           ctx.translate(px + TILE / 2, py + TILE / 2);
@@ -556,7 +690,6 @@
           ctx.strokeStyle = '#f8f8f2';
           ctx.lineWidth = 2;
           ctx.stroke();
-          // Зубья пилы
           for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
             ctx.fillStyle = '#ff79c6';
             ctx.fillRect(Math.cos(a) * 12 - 2, Math.sin(a) * 12 - 2, 4, 4);
@@ -574,12 +707,40 @@
           ctx.font = 'bold 12px sans-serif';
           ctx.fillText('★', px + 11, py + 24);
         }
+
+        // Портал выхода (5)
+        if (type === 5) {
+          ctx.save();
+          ctx.translate(px + 16, py + 16);
+          if (portalOpen) {
+            ctx.rotate(sawRotation * 0.7);
+            ctx.fillStyle = '#50fa7b';
+            ctx.shadowColor = '#50fa7b';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(0, 0, 13, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(0, 0, 6, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // Закрытый портал
+            ctx.fillStyle = '#44475a';
+            ctx.beginPath();
+            ctx.arc(0, 0, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#6272a4';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText('🔒', -6, 4);
+          }
+          ctx.restore();
+        }
       }
     }
 
-    // 2. Растягивающаяся такса и шиншилла
+    // Такса и шиншилла
     if (bodyNodes.length > 0) {
-      // Плавное соединительное тело-резинка
       if (bodyNodes.length > 1) {
         ctx.strokeStyle = '#ff79c6';
         ctx.lineWidth = 20;
@@ -592,7 +753,6 @@
         }
         ctx.stroke();
 
-        // Световой блик по хребту
         ctx.strokeStyle = '#ff92d0';
         ctx.lineWidth = 6;
         ctx.beginPath();
@@ -603,41 +763,37 @@
         ctx.stroke();
       }
 
-      // Отрисовка хвоста и шиншиллы
+      // Хвост и шиншилла
       const tail = bodyNodes[bodyNodes.length - 1];
       ctx.fillStyle = '#d63384';
       ctx.beginPath();
       ctx.arc(tail.renderX, tail.renderY, 11, 0, Math.PI * 2);
       ctx.fill();
 
-      // ШИНШИЛЛА НА ХВОСТЕ
       ctx.save();
       ctx.translate(tail.renderX, tail.renderY - 7);
       ctx.fillStyle = '#f8f8f2';
       ctx.beginPath();
       ctx.arc(0, 0, 9, 0, Math.PI * 2);
       ctx.fill();
-      // Розовые ушки
       ctx.fillStyle = '#ffb8b8';
       ctx.beginPath();
       ctx.arc(-5, -8, 3.5, 0, Math.PI * 2);
       ctx.arc(5, -8, 3.5, 0, Math.PI * 2);
       ctx.fill();
-      // Голубой глазик
       ctx.fillStyle = '#8be9fd';
       ctx.beginPath();
       ctx.arc(3, -1, 1.8, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // ГОЛОВА ТАКСЫ
+      // Голова таксы
       const head = bodyNodes[0];
       ctx.fillStyle = '#ff79c6';
       ctx.beginPath();
       ctx.arc(head.renderX, head.renderY, 13, 0, Math.PI * 2);
       ctx.fill();
 
-      // Глаза с направлением взгляда
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(head.renderX + headDir.x * 5 - 3, head.renderY + headDir.y * 5 - 3, 3.5, 0, Math.PI * 2);
@@ -649,14 +805,12 @@
       ctx.arc(head.renderX + headDir.x * 6 + 3, head.renderY + headDir.y * 6 - 3, 1.8, 0, Math.PI * 2);
       ctx.fill();
 
-      // Нос
       ctx.fillStyle = '#120814';
       ctx.beginPath();
       ctx.arc(head.renderX + headDir.x * 10, head.renderY + headDir.y * 10, 3.5, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Частицы
     for (const p of particles) {
       ctx.fillStyle = p.color;
       ctx.globalAlpha = Math.max(0, p.life);
@@ -667,27 +821,37 @@
     ctx.globalAlpha = 1.0;
   }
 
-  // --- СТАРТ И РЕСТАРТ ---
+  // --- МОДАЛКИ И ПЕРЕХОДЫ ---
   const startModal = document.getElementById('start-modal');
   const endModal = document.getElementById('end-modal');
-  const startBtn = document.getElementById('start-btn');
-  const restartBtn = document.getElementById('restart-btn');
+  const winModal = document.getElementById('win-modal');
+  const victoryModal = document.getElementById('victory-modal');
 
-  function start() {
+  document.getElementById('start-btn').onclick = () => {
     initAudio();
     startModal.classList.add('hidden');
-    endModal.classList.add('hidden');
-    initLevel();
+    loadLevel(0);
     isRunning = true;
-  }
+  };
 
-  startBtn.addEventListener('click', start);
-  restartBtn.addEventListener('click', () => {
+  document.getElementById('restart-btn').onclick = () => {
     endModal.classList.add('hidden');
     respawn();
     isRunning = true;
-  });
+  };
+
+  document.getElementById('next-lvl-btn').onclick = () => {
+    winModal.classList.add('hidden');
+    loadLevel(currentLvlIdx + 1);
+    isRunning = true;
+  };
+
+  document.getElementById('all-restart-btn').onclick = () => {
+    victoryModal.classList.add('hidden');
+    loadLevel(0);
+    isRunning = true;
+  };
 })();
 </script>
 </body>
-</html>
+  </html>
