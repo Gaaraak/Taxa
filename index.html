@@ -7,12 +7,12 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: var(--tg-theme-bg-color, #1a1a2e);
+      --bg-color: var(--tg-theme-bg-color, #13141f);
       --text-color: var(--tg-theme-text-color, #ffffff);
-      --card-bg: var(--tg-theme-secondary-bg-color, #16213e);
-      --btn-color: var(--tg-theme-button-color, #e94560);
+      --card-bg: var(--tg-theme-secondary-bg-color, #1f2235);
+      --btn-color: var(--tg-theme-button-color, #ff4757);
       --btn-text: var(--tg-theme-button-text-color, #ffffff);
-      --accent: #f39c12;
+      --accent: #ffa502;
     }
 
     * {
@@ -32,7 +32,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 16px;
+      padding: 24px 16px;
       overflow: hidden;
     }
 
@@ -42,110 +42,139 @@
     }
 
     h1 {
-      font-size: 1.6rem;
-      margin-bottom: 6px;
+      font-size: 1.7rem;
+      margin-bottom: 8px;
       color: var(--accent);
+      text-shadow: 0 2px 10px rgba(255, 165, 2, 0.3);
     }
 
     .stats {
       display: flex;
       justify-content: center;
-      gap: 16px;
+      gap: 12px;
       font-size: 0.95rem;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .badge {
       background: var(--card-bg);
-      padding: 6px 12px;
-      border-radius: 12px;
+      padding: 8px 14px;
+      border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      font-weight: 600;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-container {
+      position: relative;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
     }
 
     .status {
-      font-size: 1.1rem;
-      height: 28px;
-      margin: 16px 0;
-      font-weight: 500;
+      font-size: 1.15rem;
+      font-weight: 600;
       text-align: center;
+      transition: color 0.2s;
     }
 
     .game-area {
       position: relative;
       width: 100%;
       max-width: 360px;
-      height: 140px;
+      height: 150px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      perspective: 800px;
+      perspective: 900px;
     }
 
     .cup-slot {
       position: relative;
-      width: 90px;
-      height: 110px;
+      width: 96px;
+      height: 120px;
       cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
+    /* Скрытый объект за коробкой */
     .item-behind {
       position: absolute;
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 38px;
+      width: 68px;
+      height: 68px;
       z-index: 1;
       opacity: 0;
-      transition: opacity 0.2s, transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      transition: opacity 0.2s, transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
+    .taxa-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 16px rgba(255, 165, 2, 0.6);
+    }
+
+    .empty-icon {
+      font-size: 40px;
+    }
+
+    /* Коробка */
     .box {
       position: absolute;
       width: 100%;
       height: 100%;
-      background: linear-gradient(145deg, #0f3460, #16213e);
-      border: 2px solid #533483;
-      border-radius: 14px;
+      background: linear-gradient(145deg, #2b304d, #1a1c2e);
+      border: 2px solid #3e4466;
+      border-radius: 16px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+      font-size: 42px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
       z-index: 2;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .cup-slot.revealed .box {
-      transform: translateY(-50px) scale(0.9);
+      transform: translateY(-64px) scale(0.88);
     }
 
     .cup-slot.revealed .item-behind {
       opacity: 1;
-      transform: translateX(-50%) translateY(-10px) scale(1.15);
+      transform: translateX(-50%) translateY(-14px) scale(1.15);
     }
 
     .controls {
       width: 100%;
       max-width: 340px;
-      text-align: center;
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      font-size: 1.05rem;
+      padding: 16px;
+      font-size: 1.1rem;
       font-weight: 700;
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       background: var(--btn-color);
       color: var(--btn-text);
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(233, 69, 96, 0.4);
-      transition: opacity 0.2s, transform 0.1s;
+      box-shadow: 0 6px 18px rgba(255, 71, 87, 0.35);
+      transition: transform 0.1s, opacity 0.2s;
     }
 
     button:active {
@@ -154,7 +183,7 @@
     }
 
     button:disabled {
-      opacity: 0.45;
+      opacity: 0.4;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -163,26 +192,29 @@
 <body>
 
   <header>
-    <h1>🐶 Где такса?</h1>
+    <h1>🔎 Где такса?</h1>
     <div class="stats">
-      <div class="badge">Счёт: <span id="score">0</span></div>
+      <div class="badge">Счёт: <span id="score" style="color: var(--accent);">0</span></div>
       <div class="badge">Серия: <span id="streak">0</span> 🔥</div>
+      <div class="badge">Множитель: <span id="mult" style="color: #2ed573;">x1</span></div>
     </div>
   </header>
 
-  <div class="status" id="status-text">Нажми «Перемешать», чтобы начать</div>
+  <div class="status-container">
+    <div class="status" id="status-text">Нажми «Перемешать», чтобы начать</div>
+  </div>
 
   <div class="game-area" id="board">
     <div class="cup-slot" data-index="0" onclick="chooseCup(0)">
-      <div class="item-behind" id="item-0">🌭</div>
+      <div class="item-behind" id="item-0"></div>
       <div class="box">📦</div>
     </div>
     <div class="cup-slot" data-index="1" onclick="chooseCup(1)">
-      <div class="item-behind" id="item-1">🌭</div>
+      <div class="item-behind" id="item-1"></div>
       <div class="box">📦</div>
     </div>
     <div class="cup-slot" data-index="2" onclick="chooseCup(2)">
-      <div class="item-behind" id="item-2">🌭</div>
+      <div class="item-behind" id="item-2"></div>
       <div class="box">📦</div>
     </div>
   </div>
@@ -216,11 +248,24 @@
     const startBtn = document.getElementById('start-btn');
     const scoreVal = document.getElementById('score');
     const streakVal = document.getElementById('streak');
+    const multVal = document.getElementById('mult');
 
-    function updateIcons() {
+    // Расчет множителя от серии побед
+    function getMultiplier(curStreak) {
+      if (curStreak >= 10) return 5;
+      if (curStreak >= 6) return 3;
+      if (curStreak >= 3) return 2;
+      return 1;
+    }
+
+    function renderItems() {
       for (let i = 0; i < 3; i++) {
-        const item = document.getElementById(`item-${i}`);
-        item.textContent = (i === targetIndex) ? '🐕' : '💨';
+        const itemBox = document.getElementById(`item-${i}`);
+        if (i === targetIndex) {
+          itemBox.innerHTML = '<img class="taxa-photo" src="taxa.jpg" alt="Такса">';
+        } else {
+          itemBox.innerHTML = '<span class="empty-icon">💨</span>';
+        }
       }
     }
 
@@ -232,20 +277,21 @@
       isShuffling = true;
       startBtn.disabled = true;
       statusText.textContent = 'Такса прячется...';
+      statusText.style.color = 'var(--text-color)';
 
-      // Закрываем все коробки
+      // Закрываем коробки
       slots.forEach(slot => slot.classList.remove('revealed'));
       await sleep(350);
 
-      // Случайное новое место
+      // Задаем новое случайное место
       targetIndex = Math.floor(Math.random() * 3);
-      updateIcons();
+      renderItems();
 
-      statusText.textContent = 'Внимательно следи!';
+      statusText.textContent = 'Следи за коробками! 👀';
 
-      // Перемешивание (смена визуальных позиций translateX)
-      const swaps = 6 + Math.min(streak, 6);
-      const speed = Math.max(160, 320 - streak * 15);
+      // Скорость и количество перемешиваний растут с серией
+      const swaps = 6 + Math.min(streak, 8);
+      const speed = Math.max(140, 310 - streak * 16);
       let order = [0, 1, 2];
 
       for (let i = 0; i < swaps; i++) {
@@ -262,18 +308,18 @@
         await sleep(speed);
       }
 
-      // Возврат на нормальную разметку без смещений с сохранением спрятанной таксы
+      // Возвращаем в стандартное положение с сохранением реальной позиции
       slots.forEach(slot => slot.style.transform = 'none');
       targetIndex = order.indexOf(targetIndex);
-      updateIcons();
+      renderItems();
 
-      statusText.textContent = 'Где спряталась такса? Выбирай!';
+      statusText.textContent = 'Где такса? Выбирай!';
       isShuffling = false;
       isInteractive = true;
     }
 
     function applyPositions(order) {
-      const distance = 110; // ширина шага между коробками
+      const distance = 110;
       for (let currentPos = 0; currentPos < 3; currentPos++) {
         const originalIndex = order[currentPos];
         const offset = (currentPos - originalIndex) * distance;
@@ -285,22 +331,30 @@
       if (!isInteractive || isShuffling) return;
       isInteractive = false;
 
-      // Открываем все коробки
+      // Открываем коробки
       slots.forEach(slot => slot.classList.add('revealed'));
 
       if (chosenIndex === targetIndex) {
         haptic('success');
-        score += 10 + (streak * 2);
         streak += 1;
-        statusText.textContent = 'Нашёл! Это такса! 🎉';
+        const currentMult = getMultiplier(streak);
+        const earned = 10 * currentMult;
+        score += earned;
+
+        statusText.style.color = '#2ed573';
+        statusText.textContent = `Найдена! +${earned} очков (Комбо x${currentMult}) 🎉`;
       } else {
         haptic('error');
         streak = 0;
-        statusText.textContent = 'Там пусто! Такса убежала 💨';
+        statusText.style.color = '#ff4757';
+        statusText.textContent = 'Пусто! Такса ускользнула 💨';
       }
 
+      const nextMult = getMultiplier(streak);
       scoreVal.textContent = score;
       streakVal.textContent = streak;
+      multVal.textContent = `x${nextMult}`;
+
       startBtn.disabled = false;
       startBtn.textContent = 'Сыграть ещё раз';
     }
@@ -309,7 +363,7 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    updateIcons();
+    renderItems();
   </script>
 </body>
 </html>
