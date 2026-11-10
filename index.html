@@ -2,1480 +2,713 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Long Doge & Round Boy</title>
-  <!-- Telegram WebApp SDK -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Rubik:wght@500;700;900&display=swap');
-
     * {
+      box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
-      -webkit-touch-callout: none;
-      touch-action: manipulation;
-    }
-
-    body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      background-color: #2b1f1d;
-      font-family: 'Rubik', 'Fredoka', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #fff;
     }
-
-    #gameCanvas {
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
       display: block;
-      width: 100vw;
-      height: 100vh;
+      background: #2b1b17;
       touch-action: none;
     }
-
-    /* Comic badge shadows & pop animations */
-    .comic-pop {
-      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    /* Плавающий интерфейс */
+    #ui-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
-    @keyframes popIn {
-      0% { transform: scale(0.7) translateY(20px); opacity: 0; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
+    .hud {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      color: #fff;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      font-size: 16px;
     }
-
-    .pulse-glow {
-      animation: pulseGlow 1.8s infinite alternate;
+    .hud span {
+      background: rgba(0,0,0,0.5);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
-
-    @keyframes pulseGlow {
-      from { box-shadow: 0 0 10px rgba(251, 146, 60, 0.5), inset 0 0 10px rgba(251, 146, 60, 0.2); }
-      to { box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), inset 0 0 20px rgba(239, 68, 68, 0.4); }
+    /* Оверлеи меню */
+    .modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      pointer-events: auto;
+      z-index: 100;
     }
-
-    .custom-shadow {
-      filter: drop-shadow(0 6px 0px rgba(0,0,0,0.35));
+    .modal.hidden {
+      display: none !important;
+    }
+    .card {
+      background: #1c1c1e;
+      border: 2px solid #ff9500;
+      border-radius: 24px;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .card h1 {
+      font-size: 20px;
+      margin-bottom: 14px;
+      color: #ff9500;
+    }
+    .card ul {
+      text-align: left;
+      font-size: 13px;
+      color: #ccc;
+      margin-bottom: 18px;
+      line-height: 1.5;
+      list-style: none;
+    }
+    .card ul li {
+      margin-bottom: 8px;
+    }
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, #ff9500, #ff3b30);
+      color: #fff;
+      border: none;
+      padding: 15px;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255,149,0,0.4);
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    /* Мобильные элементы управления */
+    #touch-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 20px;
+      pointer-events: auto;
+      gap: 12px;
+    }
+    .ctrl-btn {
+      background: rgba(255,255,255,0.18);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 20px;
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      backdrop-filter: blur(5px);
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .ctrl-btn:active {
+      background: rgba(255,149,0,0.5);
+    }
+    .steer-btn {
+      flex: 1;
+    }
+    .hop-btn {
+      flex: 1.4;
+      background: rgba(255,149,0,0.3);
+      border-color: #ff9500;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    /* Индикатор тревоги */
+    #warning-badge {
+      display: none;
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff3b30;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #ff3b30;
+      animation: blink 0.3s infinite alternate;
+    }
+    @keyframes blink {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
   </style>
 </head>
-<body class="relative w-screen h-screen select-none overflow-hidden bg-stone-900">
+<body>
 
-  <!-- Canvas viewport -->
-  <canvas id="gameCanvas"></canvas>
+<div id="game-container">
+  <canvas id="game"></canvas>
 
-  <!-- Top In-Game HUD -->
-  <div id="gameHUD" class="absolute top-0 left-0 right-0 p-3 sm:p-5 flex justify-between items-start pointer-events-none transition-opacity duration-300">
-    <!-- Length & Meters Gauge -->
-    <div class="flex flex-col gap-1.5 pointer-events-auto">
-      <div class="bg-amber-950/80 backdrop-blur-md border-2 border-amber-500/60 rounded-2xl px-4 py-2 shadow-xl flex items-center gap-3">
-        <span class="text-2xl animate-bounce">🌭</span>
-        <div>
-          <div class="text-[11px] font-bold uppercase tracking-wider text-amber-300/80 leading-none">Длина таксы</div>
-          <div class="text-xl sm:text-2xl font-black text-amber-400 tracking-tight leading-tight">
-            <span id="hudSausageCount">3</span> <span class="text-xs text-amber-200/90 font-bold uppercase">сосисок</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-stone-900/70 backdrop-blur-sm border border-stone-700/60 rounded-xl px-3 py-1 flex items-center justify-between gap-3 text-xs text-stone-300">
-        <span>Дистанция:</span>
-        <span id="hudDistance" class="font-bold text-amber-400 font-mono">0.0 м</span>
-      </div>
+  <div id="ui-layer">
+    <div class="hud">
+      <span id="score-val">🌭 0 сосисок</span>
+      <span id="dist-val">0 м</span>
     </div>
-
-    <!-- Right Controls: Sound & Balance Meter -->
-    <div class="flex flex-col items-end gap-2 pointer-events-auto">
-      <button id="soundToggleBtn" class="w-11 h-11 bg-stone-800/80 hover:bg-stone-700/90 active:scale-95 border-2 border-stone-600 rounded-full flex items-center justify-center text-xl shadow-lg transition-transform">
-        🔊
-      </button>
-
-      <!-- Chinchilla Balance Indicator -->
-      <div class="bg-stone-900/85 backdrop-blur-md border border-stone-700 rounded-2xl p-2.5 flex flex-col items-center shadow-xl w-28 sm:w-32">
-        <div class="flex items-center gap-1.5 mb-1.5 text-[10px] font-black uppercase tracking-wider text-stone-300">
-          <span>Баланс</span>
-          <span id="chinchillaStatusIcon" class="text-sm">🐭</span>
-        </div>
-        <!-- Balance Slider Track -->
-        <div class="relative w-full h-3 bg-stone-950 rounded-full overflow-hidden border border-stone-700">
-          <div class="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-emerald-400/80 z-10"></div>
-          <!-- Safe Zone -->
-          <div class="absolute inset-y-0 left-1/4 right-1/4 bg-emerald-500/20"></div>
-          <!-- Indicator Pin -->
-          <div id="balancePin" class="absolute top-0 bottom-0 w-3 bg-amber-400 rounded-full shadow-md -translate-x-1/2 transition-transform duration-75" style="left: 50%;"></div>
-        </div>
-        <div class="text-[9px] text-stone-400 font-medium mt-1" id="balanceTextLabel">Держись!</div>
-      </div>
+    <div id="warning-badge">⚠️ КОГТИ! ЖМИ ПОДБРОС!</div>
+    
+    <div id="touch-controls">
+      <button class="ctrl-btn steer-btn" id="left-btn">◀</button>
+      <button class="ctrl-btn hop-btn" id="hop-btn">ПОДБРОС 🦘</button>
+      <button class="ctrl-btn steer-btn" id="right-btn">▶</button>
     </div>
   </div>
 
-  <!-- Touch Controls Overlay for Mobile Screens -->
-  <div id="touchZones" class="absolute inset-x-0 bottom-0 h-44 flex pointer-events-auto md:hidden">
-    <div id="touchLeft" class="flex-1 flex items-end justify-start p-6 active:bg-white/5 transition-colors">
-      <div class="w-16 h-16 rounded-full bg-stone-900/60 border-2 border-stone-600/80 flex items-center justify-center text-2xl text-stone-300 shadow-xl backdrop-blur-sm active:scale-90 transition-transform">
-        ⬅️
-      </div>
-    </div>
-    <div id="touchRight" class="flex-1 flex items-end justify-end p-6 active:bg-white/5 transition-colors">
-      <div class="w-16 h-16 rounded-full bg-stone-900/60 border-2 border-stone-600/80 flex items-center justify-center text-2xl text-stone-300 shadow-xl backdrop-blur-sm active:scale-90 transition-transform">
-        ➡️
-      </div>
-    </div>
-  </div>
-
-  <!-- Welcome / Start Screen -->
-  <div id="startOverlay" class="absolute inset-0 z-20 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
-    <div class="max-w-md w-full bg-stone-900 border-4 border-amber-500 rounded-3xl p-6 sm:p-8 text-center shadow-2xl relative comic-pop">
-      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-gradient-to-tr from-amber-600 to-amber-400 rounded-full border-4 border-stone-900 flex items-center justify-center text-4xl shadow-2xl">
-        🌭
-      </div>
-      
-      <h1 class="text-2xl sm:text-3xl font-black text-amber-400 uppercase tracking-wide mt-7 mb-1 custom-shadow">
-        Long Doge &amp; Round Boy
-      </h1>
-      <p class="text-xs sm:text-sm font-medium text-amber-200/80 mb-5">
-        Бесконечная такса-балансир и пушистый колобок
-      </p>
-
-      <div class="bg-stone-950/80 rounded-2xl p-4 text-left border border-stone-800 mb-6 space-y-2.5 text-xs sm:text-sm text-stone-300">
-        <div class="flex items-center gap-3">
-          <span class="text-xl">🌭</span>
-          <span>Жри <b>сосиски</b>, чтобы растягивать сосисочную таксу в длину!</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="text-xl">🐭</span>
-          <span><b>Балансируй</b> круглого шиншиллу на спине — не дай ему слететь!</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="text-xl">🤖</span>
-          <span>Уворачивайся от тапок, кофе и <b>роботов-пылесосов</b>.</span>
-        </div>
-      </div>
-
-      <div class="text-[11px] text-stone-400 mb-5">
-        Управление: <b>Стрелки ⬅️ ➡️</b> или <b>Тапы / Свайпы по экрану</b>
-      </div>
-
-      <button id="startGameBtn" class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-stone-950 font-black text-lg sm:text-xl rounded-2xl uppercase tracking-wider shadow-lg shadow-orange-500/40 border-2 border-yellow-300 transition-all cursor-pointer">
-        Погнааали! 🚀
-      </button>
-
-      <div id="startHighScore" class="text-xs text-amber-300 font-bold mt-4 opacity-80">
-        🏆 Рекорд: 0 сосисок
-      </div>
+  <!-- Старт -->
+  <div id="start-modal" class="modal">
+    <div class="card">
+      <h1>🌭 LONG DOGE & ROUND BOY</h1>
+      <ul>
+        <li>🌭 <b>Ешь сосиски</b>, чтобы такса росла длиннее!</li>
+        <li>🐭 <b>Балансируй шиншиллу:</b> она соскальзывает на резких поворотах.</li>
+        <li>🦘 <b>ПОДБРОС:</b> если сползает — жми кнопку по центру, чтобы поймать её!</li>
+      </ul>
+      <button class="btn" id="start-btn">ПОГНАААЛИ! 🚀</button>
+      <p style="margin-top: 12px; font-size: 12px; color: #888;" id="best-score">Рекорд: 0</p>
     </div>
   </div>
 
-  <!-- Game Over Screen -->
-  <div id="gameOverOverlay" class="absolute inset-0 z-30 hidden items-center justify-center bg-black/80 backdrop-blur-md p-4">
-    <div class="max-w-md w-full bg-stone-900 border-4 border-red-500 rounded-3xl p-6 sm:p-7 text-center shadow-2xl relative comic-pop">
-      <div class="w-20 h-20 mx-auto -mt-14 mb-3 bg-red-600 border-4 border-stone-900 rounded-full flex items-center justify-center text-4xl shadow-xl">
-        💥
-      </div>
-
-      <h2 id="deathReasonTitle" class="text-2xl font-black text-red-400 uppercase tracking-wide mb-1">
-        Шиншилла катапультировалась!
-      </h2>
-      <p id="deathReasonSub" class="text-xs text-stone-300 mb-5">
-        Круглый бро не удержался на длинной сосиске
-      </p>
-
-      <!-- Viral Result Card -->
-      <div class="bg-gradient-to-br from-stone-950 to-stone-900 rounded-2xl p-4 border-2 border-amber-500/40 mb-6 relative overflow-hidden shadow-inner text-left">
-        <div class="flex justify-between items-center mb-3 border-b border-stone-800 pb-2">
-          <span class="text-xs text-stone-400 uppercase font-black tracking-wider">Итоговый размер</span>
-          <span id="newRecordBadge" class="hidden px-2 py-0.5 bg-red-500 text-white text-[10px] font-black rounded-md uppercase tracking-wider animate-pulse">
-            🔥 Новый рекорд!
-          </span>
-        </div>
-
-        <div class="flex items-baseline gap-2 mb-1">
-          <span id="finalScoreSausages" class="text-4xl font-black text-amber-400 leading-none">12</span>
-          <span class="text-sm font-bold text-amber-200 uppercase">сосисок</span>
-        </div>
-        <div class="text-xs text-stone-400 font-medium">
-          (Это примерно <span id="finalScoreMeters" class="text-amber-300 font-bold">2.4</span> метра чистого счастья)
-        </div>
-
-        <div class="mt-3 pt-2 border-t border-stone-800 flex justify-between text-xs text-stone-300">
-          <span>Дистанция: <b id="finalScoreDistance" class="text-stone-100">0 м</b></span>
-          <span>Рекорд: <b id="finalBestScore" class="text-amber-400">0</b></span>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-col gap-3">
-        <button id="restartGameBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-stone-950 font-black text-lg rounded-2xl uppercase tracking-wider shadow-lg shadow-emerald-500/30 border-2 border-emerald-300 transition-all cursor-pointer">
-          Снова в забег! 🔄
-        </button>
-
-        <button id="tgShareBtn" class="w-full py-3.5 bg-[#2AABEE] hover:bg-[#229ED9] active:scale-95 text-white font-black text-base rounded-2xl tracking-wide shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2 transition-all cursor-pointer">
-          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.66-.54.82-1.09.51l-3.02-2.22-1.46 1.41c-.16.16-.3.3-.61.3l.22-3.09 5.63-5.09c.24-.22-.05-.34-.38-.13l-6.96 4.38-2.99-.93c-.65-.2-.66-.65.14-.96l11.7-4.51c.54-.2 1.02.13.77 1.04z"/></svg>
-          Поделиться в Telegram
-        </button>
-      </div>
+  <!-- Game Over -->
+  <div id="over-modal" class="modal hidden">
+    <div class="card">
+      <h1 id="over-title">ШИНШИЛЛА УЛЕТЕЛА!</h1>
+      <p style="font-size: 15px; margin: 10px 0 20px 0;" id="over-reason"></p>
+      <p style="font-size: 18px; margin-bottom: 20px;" id="final-stats"></p>
+      <button class="btn" id="restart-btn">ЕЩЁ РАЗОК 🔄</button>
     </div>
   </div>
+</div>
 
-  <script>
-    /**
-     * LONG DOGE & ROUND BOY - Telegram Mini App Game
-     * Pure vanilla canvas & procedural physics engine.
-     */
-
-    // --- Telegram WebApp SDK Initialization ---
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      try {
-        tg.ready();
-        tg.expand();
-        if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
-      } catch (e) {
-        console.warn("TG SDK Init note:", e);
-      }
+<script>
+(() => {
+  // --- АУДИО (Web Audio API со снятием блокировки мобилок) ---
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) audioCtx = new AudioContext();
     }
-
-    // Trigger Telegram Haptic Feedback if supported
-    function triggerHaptic(type = 'impact', style = 'medium') {
-      if (!tg?.HapticFeedback) return;
-      try {
-        if (type === 'impact') tg.HapticFeedback.impactOccurred(style);
-        else if (type === 'notification') tg.HapticFeedback.notificationOccurred(style);
-        else if (type === 'selection') tg.HapticFeedback.selectionChanged();
-      } catch (e) {}
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
     }
+  }
 
-    // --- Web Audio API Procedural Sound Engine ---
-    class SoundEngine {
-      constructor() {
-        this.ctx = null;
-        this.muted = false;
-      }
+  function playSound(type) {
+    if (!audioCtx || audioCtx.state !== 'running') return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const t = audioCtx.currentTime;
 
-      init() {
-        if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) this.ctx = new AudioContext();
-        }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
-      }
-
-      toggleMute() {
-        this.muted = !this.muted;
-        return !this.muted;
-      }
-
-      playSausageChime() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        const now = this.ctx.currentTime;
-        osc.frequency.setValueAtTime(520, now);
-        osc.frequency.exponentialRampToValueAtTime(1040, now + 0.12);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.2);
-      }
-
-      playBoing() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        const now = this.ctx.currentTime;
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.linearRampToValueAtTime(480, now + 0.15);
-        osc.frequency.exponentialRampToValueAtTime(180, now + 0.35);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.4);
-      }
-
-      playCrash() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-
-        // White noise for impact
-        const bufferSize = this.ctx.sampleRate * 0.3;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, this.ctx.currentTime);
-        filter.frequency.linearRampToValueAtTime(100, this.ctx.currentTime + 0.3);
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.5, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        noise.start();
-      }
-
-      playBark() {
-        if (this.muted) return;
-        this.init();
-        if (!this.ctx) return;
-
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+      if (type === 'eat') {
+        osc.frequency.setValueAtTime(400, t);
+        osc.frequency.exponentialRampToValueAtTime(800, t + 0.1);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.1);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      } else if (type === 'hop') {
+        osc.frequency.setValueAtTime(250, t);
+        osc.frequency.exponentialRampToValueAtTime(600, t + 0.18);
+        gain.gain.setValueAtTime(0.4, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.18);
+        osc.start(t);
+        osc.stop(t + 0.18);
+      } else if (type === 'crash') {
         osc.type = 'sawtooth';
-        const now = this.ctx.currentTime;
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.linearRampToValueAtTime(140, now + 0.12);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.15);
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
+        gain.gain.setValueAtTime(0.5, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.3);
+        osc.start(t);
+        osc.stop(t + 0.3);
       }
+    } catch(e) {}
+  }
+
+  // --- ХОЛСТ И РЕСАЙЗ ---
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  let cw = 0, ch = 0;
+
+  function resize() {
+    cw = window.innerWidth;
+    ch = window.innerHeight;
+    canvas.width = cw;
+    canvas.height = ch;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // --- СОСТОЯНИЕ ИГРЫ ---
+  let isRunning = false;
+  let score = 0;
+  let distance = 0;
+  let best = parseInt(localStorage.getItem('long_doge_best') || '0', 10);
+  document.getElementById('best-score').textContent = `Рекорд: ${best} сосисок`;
+
+  const road = { width: 0, left: 0, speed: 6 };
+
+  // ТАКСА
+  const SEG_DIST = 18;
+  let segments = [];
+  let baseLength = 16;
+  let dogX = 0;
+  let steerDir = 0; // -1, 0, 1
+
+  // ШИНШИЛЛА
+  let chin = {
+    segIdx: 6,
+    offset: 0,       // смещение от центра позвоночника (-1 .. 1)
+    vel: 0,          // боковая скорость
+    isHopping: false,
+    hopY: 0,
+    hopVy: 0
+  };
+
+  // ПРЕДМЕТЫ
+  let items = [];
+  let itemSpawnTimer = 0;
+
+  function resetGame() {
+    road.width = Math.min(cw * 0.82, 380);
+    road.left = (cw - road.width) / 2;
+    dogX = road.left + road.width / 2;
+
+    score = 0;
+    distance = 0;
+    road.speed = 6;
+    steerDir = 0;
+
+    // Сборка таксы
+    segments = [];
+    const headY = ch * 0.65;
+    for (let i = 0; i < baseLength; i++) {
+      segments.push({ x: dogX, y: headY + i * SEG_DIST });
     }
 
-    const sound = new SoundEngine();
+    chin.segIdx = Math.floor(segments.length / 2);
+    chin.offset = 0;
+    chin.vel = 0;
+    chin.isHopping = false;
+    chin.hopY = 0;
+    chin.hopVy = 0;
 
-    // --- Canvas & Rendering Pipeline ---
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+    items = [];
+    itemSpawnTimer = 0;
+    updateUI();
+  }
 
-    let width = 0;
-    let height = 0;
-    let dpr = window.devicePixelRatio || 1;
+  function updateUI() {
+    document.getElementById('score-val').textContent = `🌭 ${score} сосисок`;
+    document.getElementById('dist-val').textContent = `${Math.floor(distance)} м`;
+  }
 
-    function resizeCanvas() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
+  // --- УПРАВЛЕНИЕ ---
+  let keyLeft = false, keyRight = false;
+  window.addEventListener('keydown', e => {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keyLeft = true;
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') keyRight = true;
+    if (e.code === 'Space') rescueHop();
+  });
+  window.addEventListener('keyup', e => {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keyLeft = false;
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') keyRight = false;
+  });
+
+  // Кнопки на экране
+  const lBtn = document.getElementById('left-btn');
+  const rBtn = document.getElementById('right-btn');
+  const hBtn = document.getElementById('hop-btn');
+
+  function bindTouch(btn, onDown, onUp) {
+    btn.addEventListener('touchstart', e => { e.preventDefault(); onDown(); }, { passive: false });
+    btn.addEventListener('touchend', e => { e.preventDefault(); onUp(); }, { passive: false });
+    btn.addEventListener('mousedown', onDown);
+    btn.addEventListener('mouseup', onUp);
+    btn.addEventListener('mouseleave', onUp);
+  }
+
+  bindTouch(lBtn, () => keyLeft = true, () => keyLeft = false);
+  bindTouch(rBtn, () => keyRight = true, () => keyRight = false);
+  bindTouch(hBtn, () => rescueHop(), () => {});
+
+  function rescueHop() {
+    if (!isRunning || chin.isHopping) return;
+    initAudio();
+    chin.isHopping = true;
+    chin.hopVy = -7;
+    chin.vel = 0; // Сброс бокового скольжения при подбросе!
+    playSound('hop');
+  }
+
+  // --- СТАРТ И ФИНИШ ---
+  const startModal = document.getElementById('start-modal');
+  const overModal = document.getElementById('over-modal');
+  const startBtn = document.getElementById('start-btn');
+  const restartBtn = document.getElementById('restart-btn');
+
+  function startGame() {
+    initAudio();
+    startModal.classList.add('hidden');
+    overModal.classList.add('hidden');
+    resetGame();
+    isRunning = true;
+  }
+
+  function gameOver(reason) {
+    isRunning = false;
+    playSound('crash');
+    if (score > best) {
+      best = score;
+      localStorage.setItem('long_doge_best', best);
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    document.getElementById('over-reason').textContent = reason;
+    document.getElementById('final-stats').textContent = `Счёт: ${score} сосисок | Пробег: ${Math.floor(distance)}м`;
+    overModal.classList.remove('hidden');
+  }
 
-    // --- Game State & Storage ---
-    const STORAGE_KEY = 'long_doge_highscore_v1';
-    let highScore = parseInt(localStorage.getItem(STORAGE_KEY) || '3', 10);
+  ['click', 'touchstart'].forEach(ev => {
+    startBtn.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
+    restartBtn.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
+  });
 
-    const STATE = {
-      MENU: 0,
-      PLAYING: 1,
-      GAMEOVER: 2
-    };
-
-    let currentState = STATE.MENU;
-    let lastTime = performance.now();
-    let scrollY = 0;
-    let gameSpeed = 240; // pixels per second moving upwards
-    let distanceTraveled = 0;
-    let screenShake = 0;
-
-    // --- Dachshund ("Long Doge") Structure ---
-    // The dog is modeled as an inverse-kinematic connected vertebrae spline chain
-    const dog = {
-      baseHeadX: 0,
-      headX: 0,
-      headY: 0,
-      targetX: 0,
-      speedX: 0,
-      segmentRadius: 18,
-      segmentSpacing: 16,
-      segments: [], // [{x, y, angle}]
-      trotCycle: 0,
-      expression: 'happy', // happy, alert, scared
-      blinkTimer: 0,
-      isBlinking: false
-    };
-
-    // --- Chinchilla ("Round Boy") Physical Body ---
-    const chinchilla = {
-      segmentIndex: 3, // Segment index on dog's back where it sits
-      lateralOffset: 0, // Balance offset relative to center of dog back (-1 to +1 range is safe)
-      lateralVelocity: 0,
-      wobbleAngle: 0,
-      radius: 24,
-      isCatapulted: false,
-      worldX: 0,
-      worldY: 0,
-      velX: 0,
-      velY: 0,
-      spin: 0,
-      spinAngle: 0,
-      earsTwitch: 0
-    };
-
-    // --- Entities: Collectibles, Obstacles, Particles ---
-    let sausages = [];
-    let obstacles = [];
-    let particles = [];
-    let nextSpawnY = 0;
-
-    // Pre-calculated types of obstacles
-    const OBSTACLE_TYPES = [
-      { type: 'slipper', w: 46, h: 68, color: '#f87171', name: 'Тапочек' },
-      { type: 'vacuum', w: 68, h: 68, color: '#38bdf8', isMoving: true, name: 'Робот-пылесос' },
-      { type: 'coffee', w: 38, h: 38, color: '#fb923c', name: 'Кофеек' },
-      { type: 'cables', w: 74, h: 32, color: '#a855f7', name: 'Провода' }
-    ];
-
-    // --- Initialize Dog Spine Segments ---
-    function initDog(initialSausageCount = 3) {
-      dog.segments = [];
-      const totalVertebrae = 12 + initialSausageCount * 4;
-      dog.headX = width / 2;
-      dog.headY = height * 0.72;
-      dog.targetX = dog.headX;
-
-      for (let i = 0; i < totalVertebrae; i++) {
-        dog.segments.push({
-          x: dog.headX,
-          y: dog.headY + i * dog.segmentSpacing,
-          angle: 0
-        });
-      }
-
-      // Position chinchilla in the sweet spot (first third of spine)
-      chinchilla.segmentIndex = Math.floor(dog.segments.length * 0.35);
-      chinchilla.lateralOffset = 0;
-      chinchilla.lateralVelocity = 0;
-      chinchilla.isCatapulted = false;
-      chinchilla.wobbleAngle = 0;
-      chinchilla.spinAngle = 0;
-    }
-
-    // --- Particle System ---
-    function spawnParticles(x, y, count, type = 'sparkle') {
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const spd = Math.random() * 120 + 30;
-        let color = '#fbbf24';
-        let size = Math.random() * 4 + 2;
-
-        if (type === 'poof') {
-          color = Math.random() > 0.5 ? '#e2e8f0' : '#cbd5e1';
-          size = Math.random() * 7 + 4;
-        } else if (type === 'meat') {
-          color = Math.random() > 0.5 ? '#f87171' : '#dc2626';
-          size = Math.random() * 5 + 3;
-        }
-
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * spd,
-          vy: Math.sin(angle) * spd,
-          life: 1.0,
-          decay: Math.random() * 1.5 + 1.2,
-          size,
-          color
-        });
-      }
-    }
-
-    // --- Controls Handling (Keyboard, Pointer, Touch) ---
-    const keys = { left: false, right: false };
-
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
-      if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
-      if (e.code === 'Space' && currentState === STATE.MENU) startGame();
+  // --- СПАВН ПРЕПЯТСТВИЙ И СОСИСОК ---
+  function spawnItem() {
+    const isSausage = Math.random() < 0.45;
+    const itemX = road.left + 35 + Math.random() * (road.width - 70);
+    items.push({
+      x: itemX,
+      y: -50,
+      radius: isSausage ? 16 : 22,
+      type: isSausage ? 'sausage' : (Math.random() < 0.5 ? 'slipper' : 'vacuum')
     });
+  }
 
-    window.addEventListener('keyup', (e) => {
-      if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
-      if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
-    });
+  // --- ИГРОВОЙ ЦИКЛ ---
+  let lastTime = performance.now();
 
-    // Touch button overlays
-    const touchLeftBtn = document.getElementById('touchLeft');
-    const touchRightBtn = document.getElementById('touchRight');
+  function loop(now) {
+    const dt = Math.min((now - lastTime) / 1000, 0.1);
+    lastTime = now;
 
-    const handleTouchStart = (dir) => {
-      if (dir === 'left') keys.left = true;
-      if (dir === 'right') keys.right = true;
-      triggerHaptic('selection');
-    };
+    if (isRunning) {
+      update(dt);
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
 
-    const handleTouchEnd = (dir) => {
-      if (dir === 'left') keys.left = false;
-      if (dir === 'right') keys.right = false;
-    };
+  function update(dt) {
+    distance += road.speed * dt;
+    road.speed = 6 + Math.min(distance * 0.005, 5);
 
-    touchLeftBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleTouchStart('left'); });
-    touchLeftBtn.addEventListener('pointerup', (e) => { e.preventDefault(); handleTouchEnd('left'); });
-    touchLeftBtn.addEventListener('pointercancel', (e) => { e.preventDefault(); handleTouchEnd('left'); });
+    // 1. Управление головой и сдвиг всей таксы
+    let moveDir = 0;
+    if (keyLeft) moveDir -= 1;
+    if (keyRight) moveDir += 1;
 
-    touchRightBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleTouchStart('right'); });
-    touchRightBtn.addEventListener('pointerup', (e) => { e.preventDefault(); handleTouchEnd('right'); });
-    touchRightBtn.addEventListener('pointercancel', (e) => { e.preventDefault(); handleTouchEnd('right'); });
+    const targetX = dogX + moveDir * 280 * dt;
+    const minX = road.left + 25;
+    const maxX = road.left + road.width - 25;
+    dogX = Math.max(minX, Math.min(maxX, targetX));
 
-    // Direct Canvas Drag / Touch Steering
-    let isDragging = false;
-    let dragStartX = 0;
-
-    canvas.addEventListener('pointerdown', (e) => {
-      isDragging = true;
-      dragStartX = e.clientX;
-      if (currentState === STATE.PLAYING) {
-        // Direct jump towards tap location
-        dog.targetX = Math.max(40, Math.min(width - 40, e.clientX));
-      }
-    });
-
-    canvas.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-      if (currentState === STATE.PLAYING) {
-        dog.targetX = Math.max(40, Math.min(width - 40, e.clientX));
-      }
-    });
-
-    canvas.addEventListener('pointerup', () => { isDragging = false; });
-    canvas.addEventListener('pointercancel', () => { isDragging = false; });
-
-    // Sound button toggle
-    const soundToggleBtn = document.getElementById('soundToggleBtn');
-    soundToggleBtn.addEventListener('click', () => {
-      const active = sound.toggleMute();
-      soundToggleBtn.textContent = active ? '🔊' : '🔇';
-      triggerHaptic('selection');
-    });
-
-    // --- Spawner Logic ---
-    function spawnRow() {
-      const y = nextSpawnY;
-      const laneWidth = width - 100;
-      const randomX = Math.random() * laneWidth + 50;
-
-      // Decide whether to spawn a sausage or an obstacle
-      if (Math.random() < 0.6) {
-        // Spawn yummy sausage
-        sausages.push({
-          x: randomX,
-          y: y,
-          radius: 16,
-          collected: false,
-          wobble: Math.random() * Math.PI * 2
-        });
-      } else {
-        // Spawn room obstacle
-        const tmpl = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
-        obstacles.push({
-          ...tmpl,
-          x: randomX,
-          y: y,
-          startX: randomX,
-          patrolDir: Math.random() > 0.5 ? 1 : -1,
-          patrolSpeed: tmpl.isMoving ? Math.random() * 60 + 40 : 0
-        });
-      }
-
-      nextSpawnY -= Math.random() * 90 + 130;
+    // Обновление сегментов (цепочка инверсной кинематики)
+    segments[0].x += (dogX - segments[0].x) * 0.35;
+    for (let i = 1; i < segments.length; i++) {
+      const prev = segments[i - 1];
+      const cur = segments[i];
+      const dx = cur.x - prev.x;
+      const dy = cur.y - prev.y;
+      const angle = Math.atan2(dy, dx);
+      cur.x = prev.x + Math.cos(angle) * SEG_DIST;
+      cur.y = prev.y + Math.sin(angle) * SEG_DIST;
     }
 
-    // --- Main Game Loop & Physics Logic ---
-    let currentSausageCount = 3;
-
-    function startGame() {
-      sound.init();
-      currentSausageCount = 3;
-      distanceTraveled = 0;
-      scrollY = 0;
-      nextSpawnY = -100;
-      sausages = [];
-      obstacles = [];
-      particles = [];
-      gameSpeed = 260;
-
-      initDog(currentSausageCount);
-
-      // Populate initial field ahead
-      for (let i = 0; i < 7; i++) {
-        spawnRow();
-      }
-
-      currentState = STATE.PLAYING;
-      document.getElementById('startOverlay').classList.add('hidden');
-      document.getElementById('gameOverOverlay').classList.add('hidden');
-      document.getElementById('gameHUD').classList.remove('opacity-0');
-      updateHUD();
-      sound.playBark();
-      triggerHaptic('impact', 'medium');
+    // 2. Спавн и движение объектов
+    itemSpawnTimer += dt;
+    if (itemSpawnTimer > Math.max(0.7, 1.4 - distance * 0.003)) {
+      itemSpawnTimer = 0;
+      spawnItem();
     }
 
-    function triggerGameOver(reason, subtitle) {
-      if (currentState === STATE.GAMEOVER) return;
-      currentState = STATE.GAMEOVER;
-      screenShake = 18;
-      sound.playCrash();
-      triggerHaptic('notification', 'error');
+    for (let i = items.length - 1; i >= 0; i--) {
+      const it = items[i];
+      it.y += road.speed * 60 * dt;
 
-      // Catapult chinchilla into sky ragdoll
-      chinchilla.isCatapulted = true;
-      chinchilla.velY = -400;
-      chinchilla.velX = chinchilla.lateralVelocity * 200 + (Math.random() * 200 - 100);
-      chinchilla.spin = (Math.random() - 0.5) * 15;
-
-      // Update High Scores
-      const isNewRecord = currentSausageCount > highScore;
-      if (isNewRecord) {
-        highScore = currentSausageCount;
-        localStorage.setItem(STORAGE_KEY, highScore.toString());
-      }
-
-      setTimeout(() => {
-        const overlay = document.getElementById('gameOverOverlay');
-        document.getElementById('deathReasonTitle').textContent = reason;
-        document.getElementById('deathReasonSub').textContent = subtitle;
-        document.getElementById('finalScoreSausages').textContent = currentSausageCount;
-        document.getElementById('finalScoreMeters').textContent = (currentSausageCount * 0.22).toFixed(1);
-        document.getElementById('finalScoreDistance').textContent = Math.floor(distanceTraveled) + ' м';
-        document.getElementById('finalBestScore').textContent = highScore + ' сосисок';
-
-        const recordBadge = document.getElementById('newRecordBadge');
-        if (isNewRecord) {
-          recordBadge.classList.remove('hidden');
-        } else {
-          recordBadge.classList.add('hidden');
-        }
-
-        overlay.classList.remove('hidden');
-        overlay.classList.add('flex');
-      }, 700);
-    }
-
-    function updatePhysics(dt) {
-      // Screen shake decay
-      if (screenShake > 0) {
-        screenShake = Math.max(0, screenShake - dt * 40);
-      }
-
-      // Parallax world scrolling forward
-      const advance = gameSpeed * dt;
-      scrollY += advance;
-      distanceTraveled += advance * 0.04;
-
-      // Spawn new forward obstacles
-      if (nextSpawnY > -scrollY - 200) {
-        spawnRow();
-      }
-
-      // Update particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-        p.life -= p.decay * dt;
-        if (p.life <= 0) particles.splice(i, 1);
-      }
-
-      // Update moving obstacles (e.g. Robot Vacuum)
-      obstacles.forEach(obs => {
-        if (obs.isMoving) {
-          obs.x += obs.patrolDir * obs.patrolSpeed * dt;
-          if (obs.x < 50 || obs.x > width - 50) {
-            obs.patrolDir *= -1;
-          }
-        }
-      });
-
-      // 1. Dachshund Head Movement
-      const steerSpeed = 420;
-      if (keys.left) dog.targetX -= steerSpeed * dt;
-      if (keys.right) dog.targetX += steerSpeed * dt;
-      dog.targetX = Math.max(45, Math.min(width - 45, dog.targetX));
-
-      const dx = dog.targetX - dog.headX;
-      dog.headX += dx * Math.min(dt * 12, 1);
-      dog.trotCycle += dt * 14;
-
-      // Blinking animation
-      dog.blinkTimer -= dt;
-      if (dog.blinkTimer <= 0) {
-        dog.isBlinking = !dog.isBlinking;
-        dog.blinkTimer = dog.isBlinking ? 0.15 : (Math.random() * 3 + 2);
-      }
-
-      // 2. Spine Vertebrae Procedural Follower Constraint
-      dog.segments[0].x = dog.headX;
-      dog.segments[0].y = dog.headY;
-
-      for (let i = 1; i < dog.segments.length; i++) {
-        const lead = dog.segments[i - 1];
-        const seg = dog.segments[i];
-
-        const segDx = lead.x - seg.x;
-        const segDy = lead.y - seg.y;
-        const dist = Math.hypot(segDx, segDy);
-        seg.angle = Math.atan2(segDy, segDx);
-
-        if (dist > dog.segmentSpacing) {
-          seg.x = lead.x - Math.cos(seg.angle) * dog.segmentSpacing;
-          seg.y = lead.y - Math.sin(seg.angle) * dog.segmentSpacing;
-        }
-      }
-
-      // 3. Chinchilla Balance & Ragdoll Physics
-      if (!chinchilla.isCatapulted) {
-        // Find segment where Chinchilla sits
-        const idx = Math.min(chinchilla.segmentIndex, dog.segments.length - 2);
-        const segA = dog.segments[idx];
-        const segB = dog.segments[idx + 1];
-
-        // Segment angle & curvature (centrifugal force calculation)
-        const spineAngle = Math.atan2(segA.y - segB.y, segA.x - segB.x); // roughly PI/2
-        const curvature = (segA.x - segB.x); // dog bending direction
-
-        // Inertial roll: dog moving left pushes chinchilla right, and vice versa
-        const centrifugal = -curvature * 1.8;
-        chinchilla.lateralVelocity += centrifugal * dt;
-
-        // Counter-roll friction and natural gravity towards center
-        chinchilla.lateralVelocity -= chinchilla.lateralOffset * 4.5 * dt; // self-centering tendency
-        chinchilla.lateralVelocity *= 0.94; // damping
-
-        chinchilla.lateralOffset += chinchilla.lateralVelocity * dt;
-        chinchilla.wobbleAngle = chinchilla.lateralOffset * 0.6 + Math.sin(performance.now() * 0.008) * 0.1;
-
-        // Position Chinchilla in world coordinates atop the dog
-        const perpAngle = spineAngle + Math.PI / 2;
-        const spineMidX = (segA.x + segB.x) / 2;
-        const spineMidY = (segA.y + segB.y) / 2;
-
-        const maxOffsetPx = dog.segmentRadius * 1.8;
-        chinchilla.worldX = spineMidX + Math.cos(perpAngle) * (chinchilla.lateralOffset * maxOffsetPx);
-        chinchilla.worldY = spineMidY + Math.sin(perpAngle) * (chinchilla.lateralOffset * maxOffsetPx) - 8;
-
-        // Danger check: If offset goes beyond ±1.0, the chinchilla slips!
-        if (Math.abs(chinchilla.lateralOffset) > 1.25) {
-          triggerGameOver(
-            'Шиншилла катапультировалась!',
-            chinchilla.lateralOffset > 0 ? 'Соскользнул вправо на повороте!' : 'Соскользнул влево на крутом вираже!'
-          );
-        }
-
-        // Set Dog's facial expression based on stability
-        const absOff = Math.abs(chinchilla.lateralOffset);
-        if (absOff > 0.8) {
-          dog.expression = 'scared';
-        } else if (absOff > 0.4) {
-          dog.expression = 'alert';
-        } else {
-          dog.expression = 'happy';
-        }
-      } else {
-        // Catapulted Free-flight / Ragdoll
-        chinchilla.velY += 850 * dt; // gravity
-        chinchilla.worldX += chinchilla.velX * dt;
-        chinchilla.worldY += chinchilla.velY * dt;
-        chinchilla.spinAngle += chinchilla.spin * dt;
-        dog.expression = 'scared';
-      }
-
-      // 4. Sausage Collisions (Eaten by Dog's Mouth)
-      const mouthX = dog.headX;
-      const mouthY = dog.headY - 14;
-
-      for (let i = sausages.length - 1; i >= 0; i--) {
-        const s = sausages[i];
-        const screenY = s.y + scrollY;
-
-        // Check distance to dog mouth
-        const dMouth = Math.hypot(mouthX - s.x, mouthY - screenY);
-        if (dMouth < s.radius + 20) {
-          // Nom nom! Sausage consumed!
-          sound.playSausageChime();
-          triggerHaptic('impact', 'light');
-          spawnParticles(s.x, screenY, 14, 'sparkle');
-          spawnParticles(mouthX, mouthY, 6, 'meat');
-          sausages.splice(i, 1);
-
-          currentSausageCount++;
-          // Grow the dog! Add 3 vertebrae segments per sausage eaten
-          for (let k = 0; k < 3; k++) {
-            const last = dog.segments[dog.segments.length - 1];
-            dog.segments.push({
-              x: last.x,
-              y: last.y + dog.segmentSpacing,
-              angle: last.angle
-            });
-          }
-
-          // Gradually ramp up speed
-          gameSpeed = Math.min(460, gameSpeed + 4);
-          updateHUD();
-        } else if (screenY > height + 100) {
-          // Passed offscreen
-          sausages.splice(i, 1);
-        }
-      }
-
-      // 5. Obstacle Collisions
-      obstacles.forEach((obs) => {
-        const obsScreenY = obs.y + scrollY;
-
-        // Check collision against head or spine segments
-        for (let segIdx = 0; segIdx < Math.min(dog.segments.length, 18); segIdx += 2) {
-          const seg = dog.segments[segIdx];
-          const segDist = Math.hypot(seg.x - obs.x, seg.y - obsScreenY);
-          if (segDist < dog.segmentRadius + (obs.w / 2) - 4) {
-            triggerGameOver(
-              `Врезался в ${obs.name}!`,
-              'Такса не смогла пролезть и запуталась лапками'
-            );
+      // Столкновения с телом таксы
+      for (let s = 0; s < segments.length; s++) {
+        const seg = segments[s];
+        const dist = Math.hypot(it.x - seg.x, it.y - seg.y);
+        if (dist < it.radius + 18) {
+          if (it.type === 'sausage') {
+            score++;
+            playSound('eat');
+            // Удлиняем таксу
+            const last = segments[segments.length - 1];
+            segments.push({ x: last.x, y: last.y + SEG_DIST });
+            chin.segIdx = Math.floor(segments.length / 2);
+            items.splice(i, 1);
+            updateUI();
+          } else {
+            gameOver(it.type === 'slipper' ? 'Такса споткнулась о тапок!' : 'Робот-пылесос засосал таксу!');
             return;
           }
+          break;
         }
+      }
 
-        // Also check if obstacle hits Round Boy directly
-        if (!chinchilla.isCatapulted) {
-          const chinDist = Math.hypot(chinchilla.worldX - obs.x, chinchilla.worldY - obsScreenY);
-          if (chinDist < chinchilla.radius + (obs.w / 2) - 2) {
-            sound.playBoing();
-            triggerGameOver(
-              `Шиншиллу сбил ${obs.name}!`,
-              'Круглый бро получил смачный тумак!'
-            );
-          }
-        }
-      });
-
-      // Cleanup old obstacles
-      obstacles = obstacles.filter(obs => (obs.y + scrollY) < height + 160);
-
-      updateHUD();
+      if (it && it.y > ch + 60) {
+        items.splice(i, 1);
+      }
     }
 
-    // --- HUD Updating ---
-    function updateHUD() {
-      document.getElementById('hudSausageCount').textContent = currentSausageCount;
-      document.getElementById('hudDistance').textContent = distanceTraveled.toFixed(1) + ' м';
+    // 3. Физика шиншиллы
+    const chinSeg = segments[Math.min(chin.segIdx, segments.length - 1)];
+    const prevSeg = segments[Math.max(0, chin.segIdx - 1)];
+    const tilt = (chinSeg.x - prevSeg.x) * 0.04; // наклон хребта
 
-      // Update Balance Meter
-      const pin = document.getElementById('balancePin');
-      const textLabel = document.getElementById('balanceTextLabel');
-      const icon = document.getElementById('chinchillaStatusIcon');
+    if (chin.isHopping) {
+      chin.hopY += chin.hopVy;
+      chin.hopVy += 25 * dt; // гравитация
+      chin.offset *= 0.92;   // подтягивание к центру в полете
+      if (chin.hopY >= 0) {
+        chin.hopY = 0;
+        chin.isHopping = false;
+        chin.hopVy = 0;
+      }
+    } else {
+      // Скатывание по наклону
+      chin.vel += tilt * 3.5 * dt;
+      chin.vel *= 0.94; // трение шерсти
+      chin.offset += chin.vel;
 
-      // Normalized offset: 0 is center (50%), -1 is left (5%), +1 is right (95%)
-      const clampedOffset = Math.max(-1.2, Math.min(1.2, chinchilla.lateralOffset));
-      const percent = 50 + (clampedOffset / 1.2) * 45;
-      pin.style.left = `${percent}%`;
+      // Магнитная стабилизация возле центра
+      if (Math.abs(chin.offset) < 0.3) {
+        chin.offset *= 0.95;
+      }
 
-      const abs = Math.abs(clampedOffset);
-      if (abs > 0.9) {
-        pin.className = 'absolute top-0 bottom-0 w-3 bg-red-500 rounded-full shadow-lg -translate-x-1/2 animate-ping';
-        textLabel.textContent = 'ПАДАЕТ!! 😱';
-        textLabel.className = 'text-[9px] text-red-400 font-black mt-1 animate-pulse';
-        icon.textContent = '💥';
-      } else if (abs > 0.5) {
-        pin.className = 'absolute top-0 bottom-0 w-3 bg-amber-400 rounded-full shadow-md -translate-x-1/2';
-        textLabel.textContent = 'Осторожно! ⚠️';
-        textLabel.className = 'text-[9px] text-amber-300 font-bold mt-1';
-        icon.textContent = '👀';
+      // Индикатор тревоги
+      const warn = document.getElementById('warning-badge');
+      if (Math.abs(chin.offset) > 0.65) {
+        warn.style.display = 'block';
       } else {
-        pin.className = 'absolute top-0 bottom-0 w-3 bg-emerald-400 rounded-full shadow-md -translate-x-1/2';
-        textLabel.textContent = 'Идеально 👌';
-        textLabel.className = 'text-[9px] text-emerald-400 font-medium mt-1';
-        icon.textContent = '🐭';
+        warn.style.display = 'none';
+      }
+
+      // Падение со спины
+      if (Math.abs(chin.offset) > 1.3) {
+        gameOver('Шиншилла не удержалась и покатилась кубарем!');
       }
     }
+  }
 
-    // --- High-Fidelity Canvas Rendering ---
+  // --- ОТРИСОВКА ---
+  function render() {
+    ctx.clearRect(0, 0, cw, ch);
 
-    // Draw Parquet Wood Floor Pattern
-    function drawLivingRoomBackground() {
-      // Warm woody base
-      ctx.fillStyle = '#3a251d';
-      ctx.fillRect(0, 0, width, height);
-
-      // Procedural parquet planks moving with scroll
-      const plankHeight = 80;
-      const plankWidth = 140;
-      const offsetScroll = scrollY % plankHeight;
-
-      ctx.save();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = '#271711';
-
-      const startRow = -2;
-      const endRow = Math.ceil(height / plankHeight) + 2;
-
-      for (let r = startRow; r < endRow; r++) {
-        const y = r * plankHeight + offsetScroll;
-        const rowShift = (r % 2) * (plankWidth / 2);
-
-        // Draw plank lines
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-
-        // Vertical plank borders
-        for (let x = -plankWidth + rowShift; x < width + plankWidth; x += plankWidth) {
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x, y + plankHeight);
-          ctx.stroke();
-
-          // Subtle woodgrain gradient variations
-          if ((x + r) % 3 === 0) {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.025)';
-            ctx.fillRect(x, y, plankWidth, plankHeight);
-          }
-        }
-      }
-
-      // Cozy room carpet runner down the center
-      const carpetWidth = Math.min(width * 0.75, 420);
-      const carpetX = (width - carpetWidth) / 2;
-
-      ctx.fillStyle = '#652329'; // Boho Persian-style carpet
-      ctx.fillRect(carpetX, 0, carpetWidth, height);
-
-      // Carpet borders & fringes
-      ctx.fillStyle = '#b45309';
-      ctx.fillRect(carpetX, 0, 8, height);
-      ctx.fillRect(carpetX + carpetWidth - 8, 0, 8, height);
-
-      // Carpet ornate dash patterns
-      ctx.strokeStyle = 'rgba(253, 224, 71, 0.2)';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([16, 14]);
+    // Пол (доски ламината)
+    ctx.fillStyle = '#3a2318';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 3;
+    const boardW = 60;
+    for (let x = 0; x < cw; x += boardW) {
       ctx.beginPath();
-      ctx.moveTo(carpetX + 22, 0);
-      ctx.lineTo(carpetX + 22, height);
-      ctx.moveTo(carpetX + carpetWidth - 22, 0);
-      ctx.lineTo(carpetX + carpetWidth - 22, height);
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, ch);
       ctx.stroke();
-      ctx.setLineDash([]);
+    }
 
+    // Ковер (дорожка)
+    ctx.fillStyle = '#611a24';
+    ctx.fillRect(road.left, 0, road.width, ch);
+    // Бахрома и кант ковра
+    ctx.fillStyle = '#d4a359';
+    ctx.fillRect(road.left, 0, 8, ch);
+    ctx.fillRect(road.left + road.width - 8, 0, 8, ch);
+
+    // Препятствия и еда
+    for (const it of items) {
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      if (it.type === 'sausage') {
+        ctx.fillStyle = '#ff4d4d';
+        ctx.beginPath();
+        ctx.roundRect(-16, -8, 32, 16, 8);
+        ctx.fill();
+        ctx.fillStyle = '#ffd152';
+        ctx.fillRect(-6, -4, 12, 8);
+      } else if (it.type === 'slipper') {
+        ctx.fillStyle = '#3a86ff';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 14, 22, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(-10, -5, 20, 6);
+      } else {
+        // Робот-пылесос
+        ctx.fillStyle = '#222';
+        ctx.beginPath();
+        ctx.arc(0, 0, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#00f2fe';
+        ctx.beginPath();
+        ctx.arc(0, -6, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
     }
 
-    // Draw Long Doge (Dachshund) with Segmented Spine & Little Trotting Paws
-    function drawDachshund() {
-      if (dog.segments.length < 2) return;
-
-      ctx.save();
-
-      // 1. Soft Floor Shadow under the whole long body
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
-      ctx.beginPath();
-      for (let i = 0; i < dog.segments.length; i++) {
-        const seg = dog.segments[i];
-        const r = dog.segmentRadius * 1.35;
-        if (i === 0) ctx.moveTo(seg.x, seg.y + 16);
-        ctx.arc(seg.x, seg.y + 14, r, 0, Math.PI * 2);
-      }
-      ctx.fill();
-
-      // 2. Trotting Little Dachshund Paws (Front and Back)
-      const trot = Math.sin(dog.trotCycle);
-      const pawIndices = [
-        { idx: 2, side: -1, phase: 0 },
-        { idx: 2, side: 1, phase: Math.PI },
-        { idx: dog.segments.length - 3, side: -1, phase: Math.PI },
-        { idx: dog.segments.length - 3, side: 1, phase: 0 }
-      ];
-
-      pawIndices.forEach(({ idx, side, phase }) => {
-        if (idx < dog.segments.length) {
-          const seg = dog.segments[idx];
-          const legSwing = Math.sin(dog.trotCycle + phase) * 10;
-          const px = seg.x + side * (dog.segmentRadius + 8);
-          const py = seg.y + legSwing;
-
-          // Cute stubby leg
-          ctx.fillStyle = '#854d0e';
-          ctx.beginPath();
-          ctx.arc(px, py, 7, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Black claws
-          ctx.fillStyle = '#292524';
-          ctx.beginPath();
-          ctx.arc(px + side * 2, py + 4, 3, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-
-      // 3. Thick Sausage Body Spline (Connected Spine Discs)
-      for (let i = dog.segments.length - 1; i >= 0; i--) {
-        const seg = dog.segments[i];
-        const isTail = i > dog.segments.length - 4;
-        const radius = isTail ? dog.segmentRadius * 0.75 : dog.segmentRadius;
-
-        // Rich caramel-brown dachshund coat gradient
-        const grad = ctx.createRadialGradient(
-          seg.x - 3, seg.y - 3, 2,
-          seg.x, seg.y, radius
-        );
-        grad.addColorStop(0, '#d97706'); // warm golden amber highlight
-        grad.addColorStop(0.7, '#92400e'); // rich dachshund brown
-        grad.addColorStop(1, '#713f12'); // shadow edge
-
-        ctx.fillStyle = grad;
+    // Такса (прорисовка от хвоста к голове)
+    if (segments.length > 0) {
+      // Лапки
+      ctx.fillStyle = '#8a4213';
+      for (let i = 2; i < segments.length - 1; i += 3) {
+        const s = segments[i];
         ctx.beginPath();
-        ctx.arc(seg.x, seg.y, radius, 0, Math.PI * 2);
+        ctx.arc(s.x - 22, s.y, 6, 0, Math.PI * 2);
+        ctx.arc(s.x + 22, s.y, 6, 0, Math.PI * 2);
         ctx.fill();
-
-        // Little wagging tail at the very end
-        if (i === dog.segments.length - 1) {
-          const tailWag = Math.sin(dog.trotCycle * 1.5) * 12;
-          ctx.strokeStyle = '#713f12';
-          ctx.lineWidth = 6;
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(seg.x, seg.y);
-          ctx.quadraticCurveTo(seg.x + tailWag * 0.5, seg.y + 14, seg.x + tailWag, seg.y + 26);
-          ctx.stroke();
-        }
       }
 
-      // 4. Expressive Dachshund Head
-      const head = dog.segments[0];
-      const neck = dog.segments[1];
-      const headAngle = Math.atan2(head.y - neck.y, head.x - neck.x) - Math.PI / 2;
+      // Тело-сосиска
+      for (let i = segments.length - 1; i >= 0; i--) {
+        const s = segments[i];
+        ctx.fillStyle = '#b3541e';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 18, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
+      // Мордочка таксы
+      const head = segments[0];
       ctx.save();
       ctx.translate(head.x, head.y);
-      ctx.rotate(headAngle * 0.4);
-
-      // Flappy Droopy Ears
-      const earSwing = Math.sin(dog.trotCycle) * 3;
-      ctx.fillStyle = '#713f12';
-      // Left Ear
+      
+      // Уши
+      ctx.fillStyle = '#7a330a';
       ctx.beginPath();
-      ctx.ellipse(-18 + earSwing * 0.5, 4, 8, 18, -0.25, 0, Math.PI * 2);
-      ctx.fill();
-      // Right Ear
-      ctx.beginPath();
-      ctx.ellipse(18 + earSwing * 0.5, 4, 8, 18, 0.25, 0, Math.PI * 2);
+      ctx.ellipse(-16, 4, 7, 14, 0.3, 0, Math.PI * 2);
+      ctx.ellipse(16, 4, 7, 14, -0.3, 0, Math.PI * 2);
       ctx.fill();
 
-      // Main Head Shape
-      ctx.fillStyle = '#b45309';
+      // Глаза
+      ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.ellipse(0, -6, 17, 21, 0, 0, Math.PI * 2);
+      ctx.arc(-7, -4, 5, 0, Math.PI * 2);
+      ctx.arc(7, -4, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(-7, -5, 2.5, 0, Math.PI * 2);
+      ctx.arc(7, -5, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Dachshund Long Snout
-      ctx.fillStyle = '#92400e';
+      // Нос
+      ctx.fillStyle = '#111';
       ctx.beginPath();
-      ctx.ellipse(0, -20, 10, 14, 0, 0, Math.PI * 2);
+      ctx.arc(0, -14, 5, 0, Math.PI * 2);
       ctx.fill();
-
-      // Shiny Black Nose
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.ellipse(0, -32, 6, 4.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // Nose highlight
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(-2, -33, 1.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Eyes with Expression
-      if (dog.isBlinking) {
-        // Blinking slits
-        ctx.strokeStyle = '#1e1b4b';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(-8, -10);
-        ctx.lineTo(-2, -10);
-        ctx.moveTo(2, -10);
-        ctx.lineTo(8, -10);
-        ctx.stroke();
-      } else {
-        // Round cartoon dog eyes
-        const eyeSize = dog.expression === 'scared' ? 5.5 : 4;
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.arc(-6, -11, eyeSize, 0, Math.PI * 2);
-        ctx.arc(6, -11, eyeSize, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Pupils looking up at the player / road
-        const pupilOffset = dog.expression === 'scared' ? 1.5 : -1;
-        ctx.fillStyle = '#1c1917';
-        ctx.beginPath();
-        ctx.arc(-6, -11 + pupilOffset, eyeSize * 0.55, 0, Math.PI * 2);
-        ctx.arc(6, -11 + pupilOffset, eyeSize * 0.55, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Sparkle
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.arc(-7, -12 + pupilOffset, 1.2, 0, Math.PI * 2);
-        ctx.arc(5, -12 + pupilOffset, 1.2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Mouth / Tongue
-      if (dog.expression === 'happy') {
-        // Pink tongue out
-        ctx.fillStyle = '#fb7185';
-        ctx.beginPath();
-        ctx.ellipse(2, -14, 4, 7, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#e11d48';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(2, -16);
-        ctx.lineTo(2, -11);
-        ctx.stroke();
-      } else if (dog.expression === 'scared') {
-        // O-shaped gasp mouth
-        ctx.fillStyle = '#7f1d1d';
-        ctx.beginPath();
-        ctx.arc(0, -14, 4, 0, Math.PI * 2);
-        ctx.fill();
-      }
 
       ctx.restore();
-      ctx.restore();
-    }
 
-    // Draw Round Boy (The Absurdly Fluffy Chinchilla Ball)
-    function drawChinchilla() {
+      // Шиншилла на спине
+      const cSeg = segments[Math.min(chin.segIdx, segments.length - 1)];
+      const chinX = cSeg.x + chin.offset * 26;
+      const chinY = cSeg.y + chin.hopY;
+
       ctx.save();
-      ctx.translate(chinchilla.worldX, chinchilla.worldY);
-      ctx.rotate(chinchilla.isCatapulted ? chinchilla.spinAngle : chinchilla.wobbleAngle);
+      ctx.translate(chinX, chinY);
 
-      const r = chinchilla.radius;
+      // Тень при прыжке
+      if (chin.isHopping) {
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(0, -chin.hopY, 14, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
-      // Drop shadow on dog's back
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      // Круглое пушистое тело шиншиллы
+      ctx.fillStyle = '#a8b0b8';
       ctx.beginPath();
-      ctx.ellipse(0, r * 0.75, r * 0.9, r * 0.4, 0, 0, Math.PI * 2);
+      ctx.arc(0, 0, 16, 0, Math.PI * 2);
       ctx.fill();
 
-      // Bushy round tail
-      ctx.fillStyle = '#94a3b8';
+      // Розовые круглые ушки
+      ctx.fillStyle = '#ffafcc';
       ctx.beginPath();
-      const tailWobble = Math.sin(dog.trotCycle * 2) * 5;
-      ctx.ellipse(tailWobble, r * 0.8, 10, 16, 0.2, 0, Math.PI * 2);
+      ctx.arc(-11, -12, 6, 0, Math.PI * 2);
+      ctx.arc(11, -12, 6, 0, Math.PI * 2);
       ctx.fill();
 
-      // Big Round Ears with Pink Insides
-      const twitch = Math.sin(performance.now() * 0.01) * 2;
-      // Left ear
-      ctx.fillStyle = '#94a3b8';
+      // Бусинки глаз и носик
+      ctx.fillStyle = '#000';
       ctx.beginPath();
-      ctx.ellipse(-14, -r + 2 + twitch, 9, 13, -0.35, 0, Math.PI * 2);
+      ctx.arc(-5, -2, 2.5, 0, Math.PI * 2);
+      ctx.arc(5, -2, 2.5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#fbcfe8';
+      ctx.fillStyle = '#ff758f';
       ctx.beginPath();
-      ctx.ellipse(-14, -r + 2 + twitch, 5, 8, -0.35, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Right ear
-      ctx.fillStyle = '#94a3b8';
-      ctx.beginPath();
-      ctx.ellipse(14, -r + 2 - twitch, 9, 13, 0.35, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#fbcfe8';
-      ctx.beginPath();
-      ctx.ellipse(14, -r + 2 - twitch, 5, 8, 0.35, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Main ultra-fluffy ball body (radial gradient)
-      const chinGrad = ctx.createRadialGradient(-4, -6, 4, 0, 0, r);
-      chinGrad.addColorStop(0, '#f8fafc'); // soft light top highlight
-      chinGrad.addColorStop(0.55, '#cbd5e1'); // plush gray fur
-      chinGrad.addColorStop(1, '#64748b'); // darker edge fur shadow
-      ctx.fillStyle = chinGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fill();
-
-      // White fluffy belly bib
-      ctx.fillStyle = '#f1f5f9';
-      ctx.beginPath();
-      ctx.ellipse(0, 6, r * 0.65, r * 0.5, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Big glossy chinchilla eyes
-      const eyeY = -2;
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.arc(-8, eyeY, 4.5, 0, Math.PI * 2);
-      ctx.arc(8, eyeY, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Cute anime highlight reflections
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(-9, eyeY - 1.5, 1.6, 0, Math.PI * 2);
-      ctx.arc(7, eyeY - 1.5, 1.6, 0, Math.PI * 2);
-      ctx.arc(-7, eyeY + 1.2, 0.8, 0, Math.PI * 2);
-      ctx.arc(9, eyeY + 1.2, 0.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Little pink nose
-      ctx.fillStyle = '#f472b6';
-      ctx.beginPath();
-      ctx.ellipse(0, 4, 2.5, 1.8, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Delicate whiskers
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 1.2;
-      // Left whiskers
-      ctx.beginPath();
-      ctx.moveTo(-4, 4); ctx.lineTo(-20, 2);
-      ctx.moveTo(-4, 5); ctx.lineTo(-19, 8);
-      // Right whiskers
-      ctx.moveTo(4, 4); ctx.lineTo(20, 2);
-      ctx.moveTo(4, 5); ctx.lineTo(19, 8);
-      ctx.stroke();
-
-      // Tiny paws clutching a mini treat or balancing
-      ctx.fillStyle = '#fbcfe8';
-      ctx.beginPath();
-      ctx.ellipse(-5, 12, 3.5, 2.5, 0.2, 0, Math.PI * 2);
-      ctx.ellipse(5, 12, 3.5, 2.5, -0.2, 0, Math.PI * 2);
+      ctx.arc(0, 2, 2, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
     }
-
-    // Draw Collectible Sausages
-    function drawSausages() {
-      sausages.forEach((s) => {
-        const screenY = s.y + scrollY;
-        if (screenY < -40 || screenY > height + 40) return;
-
-        ctx.save();
-        ctx.translate(s.x, screenY);
-        const floatAnim = Math.sin(performance.now() * 0.006 + s.wobble) * 4;
-        ctx.translate(0, floatAnim);
-
-        // Glow ring
-        ctx.fillStyle = 'rgba(251, 191, 36, 0.25)';
-        ctx.beginPath();
-        ctx.arc(0, 0, s.radius * 1.6, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.2)';
-        ctx.beginPath();
-        ctx.ellipse(0, 18, 14, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Delicious plump frankfurter sausage
-        ctx.fillStyle = '#dc2626';
-        ctx.beginPath();
-        ctx.roundRect(-14, -9, 28, 18, 9);
-        ctx.fill();
-
-        // Golden mustard swirl
-        ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(-10, 0);
-        ctx.quadraticCurveTo(-5, -4, 0, 0);
-        ctx.quadraticCurveTo(5, 4, 10, 0);
-        ctx.stroke();
-
-        ctx.restore();
-      });
-    }
-
-    // Draw Apartment Obstacles (Mugs, Slippers, Roombas)
-    function drawObstacles() {
-      obstacles.forEach((obs) => {
-        const screenY = obs.y + scrollY;
-        if (screenY < -80 || screenY > height + 80) return;
-
-        ctx.save();
-        ctx.translate(obs.x, screenY);
-
-        if (obs.type === 'vacuum') {
-          // Robotic Vacuum Cleaner
-          ctx.fillStyle = 'rgba(0,0,0,0.3)';
-          ctx.beginPath();
-          ctx.arc(0, 4, obs.w / 2 + 3, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Black metallic rim
-          ctx.fillStyle = '#1e293b';
-          ctx.beginPath();
-          ctx.arc(0, 0, obs.w / 2, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Cyan LED ring
-          ctx.strokeStyle = '#06b6d4';
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(0, 0, obs.w / 2 - 5, 0, Math.PI * 2);
-          ctx.stroke();
-
-          // Center LiDAR turret
-          ctx.fillStyle = '#0f172a';
-          ctx.beginPath();
-          ctx.arc(0, 0, 10, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#ef4444'; // blinking red power light
-          ctx.beginPath();
-          ctx.arc(0, 0, 3, 0, Math.PI * 2);
-          ctx.fill();
-
-        } else if (obs.type === 'slipper') {
-          // Fluffy Red Slipper
-          ctx.fillStyle = 'rgba(0,0,0,0.25)';
-          ctx.beginPath();
-          ctx.ellipse(0, 6, obs.w / 2, obs.h / 2, 0.15, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.fillStyle = '#ef4444';
-          ctx.beginPath();
-          ctx.ellipse(0, 0, obs.w / 2 - 2, obs.h / 2 - 2, 0.15, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Slipper opening
-          ctx.fillStyle = '#fee2e2';
-          ctx.beginPath();
-          ctx.ellipse(0, 8, 12, 16, 0.15, 0, Math.PI * 2);
-          ctx.fill();
-
-        } else if (obs.type === 'coffee') {
-          // Spilled Hot Mug
-          ctx.fillStyle = '#78350f'; // puddle
-          ctx.beginPath();
-          ctx.ellipse(-6, 8, 18, 10, -0.2, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Ceramic mug
-          ctx.fillStyle = '#f97316';
-          ctx.beginPath();
-          ctx.arc(0, 0, 14, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#451a03'; // dark coffee top
-          ctx.beginPath();
-          ctx.arc(0, 0, 10, 0, Math.PI * 2);
-          ctx.fill();
-
-        } else if (obs.type === 'cables') {
-          // Tangle of Phone/Laptop Power Cords
-          ctx.strokeStyle = '#6366f1';
-          ctx.lineWidth = 5;
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(-obs.w / 2, 0);
-          ctx.bezierCurveTo(-15, -16, 15, 16, obs.w / 2, -4);
-          ctx.stroke();
-
-          // White adapter block
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillRect(-8, -8, 16, 16);
-        }
-
-        ctx.restore();
-      });
-    }
-
-    // Draw Particle Sparks
-    function drawParticles() {
-      particles.forEach((p) => {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, p.life);
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-    }
-
-    // --- Main Render Pipeline ---
-    function render() {
-      ctx.save();
-
-      // Screen shake translation
-      if (screenShake > 0) {
-        const shakeX = (Math.random() - 0.5) * screenShake;
-        const shakeY = (Math.random() - 0.5) * screenShake;
-        ctx.translate(shakeX, shakeY);
-      }
-
-      drawLivingRoomBackground();
-      drawObstacles();
-      drawSausages();
-      drawDachshund();
-      drawChinchilla();
-      drawParticles();
-
-      ctx.restore();
-    }
-
-    // --- Animation Frame Loop ---
-    function gameLoop(now) {
-      const dt = Math.min((now - lastTime) / 1000, 0.05); // clamp delta
-      lastTime = now;
-
-      if (currentState === STATE.PLAYING || currentState === STATE.GAMEOVER) {
-        updatePhysics(dt);
-      }
-
-      render();
-      requestAnimationFrame(gameLoop);
-    }
-
-    // --- Button Bindings & Telegram Share ---
-    document.getElementById('startGameBtn').addEventListener('click', startGame);
-    document.getElementById('restartGameBtn').addEventListener('click', startGame);
-
-    // Initialize High Score Badge in Start Menu
-    document.getElementById('startHighScore').textContent = `🏆 Рекорд: ${highScore} сосисок`;
-
-    // Viral Telegram Share Link Generator
-    document.getElementById('tgShareBtn').addEventListener('click', () => {
-      triggerHaptic('selection');
-      const shareText = encodeURIComponent(
-        `🌭 Моя такса выросла до ${currentSausageCount} сосисок (${(currentSausageCount * 0.22).toFixed(1)}м), а круглый шиншилла катапультировался! 🐭🚀 Сможешь сбалансировать лучше в "Long Doge"?`
-      );
-      const appUrl = encodeURIComponent(window.location.href);
-      const tgUrl = `https://t.me/share/url?url=${appUrl}&text=${shareText}`;
-
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(tgUrl);
-      } else {
-        window.open(tgUrl, '_blank');
-      }
-    });
-
-    // Start Animation loop on window load
-    window.onload = function () {
-      initDog(3);
-      lastTime = performance.now();
-      requestAnimationFrame(gameLoop);
-    };
-  </script>
+  }
+})();
+</script>
 </body>
 </html>
     
