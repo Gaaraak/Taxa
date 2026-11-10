@@ -16,186 +16,250 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #1e1e2d;
+      background: #181926;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    #game-container {
+
+    /* Фоновый объемный градиент с референса */
+    #app {
       position: relative;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      background: radial-gradient(circle at 50% 30%, #2b2b42 0%, #171724 100%);
-    }
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      touch-action: none;
+      background: radial-gradient(circle at 50% 35%, #2a2a3f 0%, #161722 100%);
+      padding: 16px 20px 24px 20px;
+      overflow: hidden;
     }
 
-    /* Верхний HUD (Clay / 3D pill стиль) */
-    #hud {
-      position: absolute;
-      top: 18px;
-      left: 18px;
-      right: 18px;
+    /* ВЕРХНИЙ ХЕДЕР (HUD) */
+    .header-row {
+      width: 100%;
+      max-width: 420px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      pointer-events: none;
       z-index: 10;
     }
-    .hud-pill {
-      background: #252538;
-      border: 1.5px solid #383852;
-      border-radius: 22px;
-      padding: 8px 16px;
+
+    .pill-badge {
+      background: #25263a;
+      border: 1.5px solid #363752;
+      border-radius: 24px;
+      padding: 6px 16px;
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #fff;
-      font-weight: 800;
-      font-size: 17px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.15);
-      pointer-events: auto;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.12);
     }
-    #clock-pill {
+
+    .clock-badge {
       color: #ff3366;
       font-family: monospace;
-      font-size: 19px;
+      font-weight: 900;
+      font-size: 20px;
       letter-spacing: 0.5px;
     }
-    .clock-icon {
+    .clock-icon-wrap {
       width: 22px;
       height: 22px;
-      background: #7388a9;
+      background: #6e82a3;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #171724;
+      color: #1a1a2b;
       font-size: 13px;
       font-weight: 900;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+      box-shadow: inset 0 2px 3px rgba(0,0,0,0.35);
     }
-    #score-pill {
-      color: #fff;
+
+    .score-badge {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 18px;
     }
-    #shop-btn {
+
+    .shop-btn {
       background: linear-gradient(180deg, #ff9f43 0%, #ee5253 100%);
       border: 1.5px solid #ffbe76;
       border-radius: 20px;
-      color: #fff;
-      font-size: 15px;
+      padding: 8px 16px;
+      color: #ffffff;
       font-weight: 900;
-      letter-spacing: 0.5px;
+      font-size: 15px;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       cursor: pointer;
-      box-shadow: 0 6px 16px rgba(238, 82, 83, 0.45), inset 0 2px 2px rgba(255,255,255,0.4);
+      box-shadow: 0 8px 20px rgba(238, 82, 83, 0.45), inset 0 2px 2px rgba(255,255,255,0.4);
+      outline: none;
     }
-    #shop-btn:active {
+    .shop-btn:active {
       transform: scale(0.96);
     }
 
-    /* Шкалы прогресса с объёмными углублениями */
-    #bars-container {
-      position: absolute;
-      top: 76px;
-      left: 18px;
-      right: 18px;
+    /* ШКАЛЫ ПРОГРЕССА С ОБЪЕМНЫМИ ВДАВЛИВАНИЯМИ */
+    .bars-wrap {
+      width: 100%;
+      max-width: 420px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      pointer-events: none;
+      margin-top: 10px;
       z-index: 10;
     }
-    .bar-row {
+    .bar-pill {
+      background: #25263a;
+      border: 1.5px solid #363752;
+      border-radius: 20px;
+      padding: 6px 14px;
       display: flex;
       align-items: center;
       gap: 12px;
-      background: #252538;
-      padding: 6px 14px;
-      border-radius: 18px;
-      border: 1.5px solid #383852;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.1);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.1);
     }
-    .bar-label {
+    .bar-title {
+      color: #8b9bb2;
       font-size: 12px;
-      font-weight: 800;
-      color: #8f9cae;
-      width: 100px;
+      font-weight: 900;
+      width: 95px;
       letter-spacing: 0.5px;
     }
-    .progress-track {
+    .groove-track {
       flex: 1;
       height: 18px;
-      background: #171724;
+      background: #151624;
       border-radius: 9px;
       overflow: hidden;
+      border: 1px solid #2b2c42;
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.65);
       position: relative;
-      box-shadow: inset 0 3px 6px rgba(0,0,0,0.6);
-      border: 1px solid #2d2d42;
     }
-    #vibe-bar {
+    #vibe-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #ff416c, #8a2387, #00d2ff);
+      background: linear-gradient(90deg, #ff416c 0%, #8a2387 50%, #00d2ff 100%);
       border-radius: 9px;
-      box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.7);
       transition: width 0.05s linear;
     }
-    #rage-bar {
+    #rage-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #1dd1a1, #feca57, #ff4757);
+      background: linear-gradient(90deg, #1dd1a1 0%, #feca57 50%, #ff4757 100%);
       border-radius: 9px;
-      box-shadow: 0 0 10px rgba(255, 71, 87, 0.6);
+      box-shadow: 0 0 12px rgba(255, 71, 87, 0.7);
       transition: width 0.05s linear;
     }
 
-    /* Нижняя пухлая 3D кнопка «ТЫГЫДЫКАТЬ!» */
-    #tap-zone {
+    /* ОСНОВНАЯ 3D-СЦЕНА */
+    #scene-stage {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    /* Верхняя 3D-клетка */
+    .cage-container {
+      position: relative;
+      width: 320px;
+      height: 185px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .cage-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.55));
+    }
+
+    /* Нижняя лежанка с таксой */
+    .doge-container {
+      position: relative;
+      width: 290px;
+      height: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .doge-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 18px 30px rgba(0,0,0,0.65));
+    }
+
+    /* Летающие 3D Zzz... */
+    .zzz-text {
       position: absolute;
-      bottom: 24px;
-      left: 18px;
-      right: 18px;
+      right: 25px;
+      top: -30px;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 26px;
+      letter-spacing: 2px;
+      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.7));
+      animation: zzzFloat 2.2s infinite ease-in-out;
+      font-family: system-ui;
+    }
+    @keyframes zzzFloat {
+      0%, 100% { transform: translateY(0) rotate(-6deg); opacity: 0.85; }
+      50% { transform: translateY(-10px) rotate(-2deg); opacity: 1; }
+    }
+
+    /* ПУХЛАЯ 3D КНОПКА «ТЫГЫДЫКАТЬ!» */
+    #btn-tap {
+      width: 100%;
+      max-width: 420px;
       height: 90px;
-      background: linear-gradient(180deg, #ff5e7e 0%, #e0245e 40%, #a01540 100%);
-      border: 3px solid #ff85a1;
-      border-radius: 36px;
+      background: linear-gradient(180deg, #ff5e7e 0%, #e0245e 45%, #a01540 100%);
+      border: 3.5px solid #ff85a1;
+      border-radius: 44px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: #fff;
+      color: #ffffff;
       font-weight: 900;
-      font-size: 24px;
+      font-size: 25px;
       letter-spacing: 0.5px;
-      box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 30px rgba(255, 94, 126, 0.4), inset 0 4px 6px rgba(255,255,255,0.45);
+      box-shadow: 0 16px 30px rgba(0,0,0,0.5), 0 0 35px rgba(255, 94, 126, 0.35), inset 0 4px 6px rgba(255,255,255,0.45);
       cursor: pointer;
       z-index: 20;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
       transition: transform 0.06s ease, box-shadow 0.06s ease;
+      outline: none;
     }
-    #tap-zone:active {
+    #btn-tap:active {
       transform: translateY(4px) scale(0.97);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.6), inset 0 2px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.65), inset 0 3px 6px rgba(0,0,0,0.35);
     }
-    #tap-zone span {
+    #btn-tap span {
       font-size: 11px;
-      font-weight: 700;
-      opacity: 0.9;
+      font-weight: 800;
+      opacity: 0.92;
       letter-spacing: 0.8px;
       margin-top: 2px;
       text-transform: uppercase;
     }
 
-    #panic-alert {
+    /* ТРЕВОГА */
+    #alert-box {
       display: none;
       position: absolute;
-      top: 36%;
+      top: 48%;
       left: 50%;
       transform: translate(-50%, -50%);
       background: #ff1e56;
@@ -205,18 +269,50 @@
       padding: 14px 26px;
       border-radius: 24px;
       box-shadow: 0 10px 40px rgba(255, 30, 86, 0.7);
-      animation: alertAnim 0.12s infinite alternate;
+      animation: panicPulse 0.12s infinite alternate;
       z-index: 50;
       pointer-events: none;
       white-space: nowrap;
       border: 2px solid #ff7597;
     }
-    @keyframes alertAnim {
+    @keyframes panicPulse {
       0% { transform: translate(-50%, -50%) scale(0.95); }
       100% { transform: translate(-50%, -50%) scale(1.06); }
     }
 
-    /* Модалки */
+    /* СКРИМЕР */
+    #scare-screen {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ff0033;
+      z-index: 200;
+      pointer-events: none;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+      animation: screamFlash 0.07s infinite alternate;
+    }
+    @keyframes screamFlash {
+      0% { background: #d00000; }
+      100% { background: #110000; }
+    }
+    #scare-svg {
+      width: 380px;
+      height: 380px;
+      animation: scareZoom 0.22s cubic-bezier(0.1, 0.9, 0.2, 1.25) forwards;
+      filter: drop-shadow(0 0 40px #ff0000);
+    }
+    @keyframes scareZoom {
+      0% { transform: scale(0.3) rotate(-8deg); }
+      70% { transform: scale(1.4) rotate(4deg); }
+      100% { transform: scale(1.25) rotate(0deg); }
+    }
+
+    /* МОДАЛЬНЫЕ ОКНА */
     .modal {
       position: absolute;
       top: 0;
@@ -285,144 +381,304 @@
     .skin-action-btn.active { background: #1dd1a1; color: #fff; }
     .skin-action-btn.buy { background: #ffbe76; color: #171724; }
     .skin-action-btn.select { background: #54a0ff; color: #fff; }
-
-    /* Полноэкранный скример */
-    #jumpscare-overlay {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ff0033;
-      z-index: 200;
-      pointer-events: none;
-      overflow: hidden;
-      justify-content: center;
-      align-items: center;
-      animation: screamFlash 0.07s infinite alternate;
-    }
-    @keyframes screamFlash {
-      0% { background: #d00000; }
-      100% { background: #110000; }
-    }
-    #scare-face {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      animation: scareZoom 0.22s cubic-bezier(0.1, 0.9, 0.2, 1.25) forwards;
-    }
-    @keyframes scareZoom {
-      0% { transform: scale(0.3) rotate(-8deg); }
-      70% { transform: scale(1.4) rotate(4deg); }
-      100% { transform: scale(1.25) rotate(0deg); }
-    }
   </style>
 </head>
 <body>
 
-<div id="game-container">
-  <canvas id="stage"></canvas>
-
-  <div id="hud">
-    <div class="hud-pill" id="clock-pill">
-      <div class="clock-icon">L</div>
-      <span id="clock-val">03:00</span>
+<div id="app">
+  <!-- ВЕРХНИЙ ХЕДЕР -->
+  <div class="header-row">
+    <div class="pill-badge clock-badge">
+      <div class="clock-icon-wrap">L</div>
+      <span id="time-val">03:00</span>
     </div>
-    <div class="hud-pill" id="score-pill">
+    <div class="pill-badge score-badge">
       🔥 <span id="score-val">0</span>
     </div>
-    <button class="hud-pill" id="shop-btn">
+    <button class="shop-btn" id="open-shop">
       🎁 СКИНИ
     </button>
   </div>
 
-  <div id="bars-container">
-    <div class="bar-row">
-      <span class="bar-label">ХАОС (КУРАЖ)</span>
-      <div class="progress-track">
-        <div id="vibe-bar"></div>
+  <!-- ШКАЛЫ -->
+  <div class="bars-wrap">
+    <div class="bar-pill">
+      <span class="bar-title">ХАОС (КУРАЖ)</span>
+      <div class="groove-track">
+        <div id="vibe-fill"></div>
       </div>
     </div>
-    <div class="bar-row">
-      <span class="bar-label">ШУМ (ТАКСА)</span>
-      <div class="progress-track">
-        <div id="rage-bar"></div>
+    <div class="bar-pill">
+      <span class="bar-title">ШУМ (ТАКСА)</span>
+      <div class="groove-track">
+        <div id="rage-fill"></div>
       </div>
     </div>
   </div>
 
-  <div id="panic-alert">⚠️ ЗАМРИ! ТАКСА СЛЫШИТ! ⚠️</div>
+  <!-- ОСНОВНАЯ 3D-СЦЕНА (ОТРИСОВКА В ТОЧНОСТИ КАК НА ФОТО) -->
+  <div id="scene-stage">
+    <!-- КЛЕТКА И ШИНШИЛЛА -->
+    <div class="cage-container">
+      <svg class="cage-svg" viewBox="0 0 340 190">
+        <defs>
+          <!-- Градиенты прутьев и поддона -->
+          <linearGradient id="woodStep" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f5cd79"/>
+            <stop offset="50%" stop-color="#eccc68"/>
+            <stop offset="100%" stop-color="#c59b27"/>
+          </linearGradient>
+          <linearGradient id="barSheen" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#57606f"/>
+            <stop offset="50%" stop-color="#dff9fb"/>
+            <stop offset="100%" stop-color="#2f3542"/>
+          </linearGradient>
+          <radialGradient id="chinFur" cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="70%" stop-color="#f1f2f6"/>
+            <stop offset="100%" stop-color="#ced6e0"/>
+          </radialGradient>
+        </defs>
 
-  <div id="tap-zone">
-    ТЫГЫДЫКАТЬ! 🌪️
-    <span>ЖМИ БЫСТРО, НО СТОП НА КРАСНЫЙ!</span>
-  </div>
+        <!-- Тень поддона -->
+        <ellipse cx="170" cy="180" rx="160" ry="10" fill="rgba(0,0,0,0.4)"/>
 
-  <!-- СКРИМЕР ТАКСЫ -->
-  <div id="jumpscare-overlay">
-    <div id="scare-face">
-      <svg viewBox="0 0 400 400" width="380" height="380" style="filter: drop-shadow(0 0 40px #ff0000);">
-        <ellipse cx="200" cy="180" rx="130" ry="115" fill="#a04015"/>
-        <ellipse cx="140" cy="140" rx="36" ry="36" fill="#fff" stroke="#ff0000" stroke-width="4"/>
-        <ellipse cx="260" cy="140" rx="36" ry="36" fill="#fff" stroke="#ff0000" stroke-width="4"/>
-        <circle cx="140" cy="140" r="14" fill="#ff0000"/>
-        <circle cx="260" cy="140" r="14" fill="#ff0000"/>
-        <circle cx="140" cy="140" r="6" fill="#000"/>
-        <circle cx="260" cy="140" r="6" fill="#000"/>
-        <path d="M 110 210 Q 200 170 290 210 Q 310 320 200 340 Q 90 320 110 210 Z" fill="#110000"/>
-        <polygon points="120,212 135,248 145,214" fill="#fff"/>
-        <polygon points="145,214 158,238 168,214" fill="#fff"/>
-        <polygon points="168,214 180,234 190,214" fill="#fff"/>
-        <polygon points="210,214 222,234 232,214" fill="#fff"/>
-        <polygon points="255,214 265,248 280,212" fill="#fff"/>
-        <ellipse cx="200" cy="188" rx="28" ry="18" fill="#111"/>
-        <text x="200" y="375" font-size="44" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui">БАААВФ!!</text>
+        <!-- 3D деревянный брусчатый поддон -->
+        <rect x="10" y="145" width="320" height="30" rx="4" fill="#a47717"/>
+        <!-- Реечные объемные зубцы поддона -->
+        <g fill="url(#woodStep)">
+          <rect x="14" y="145" width="12" height="30" rx="2"/>
+          <rect x="30" y="145" width="12" height="30" rx="2"/>
+          <rect x="46" y="145" width="12" height="30" rx="2"/>
+          <rect x="62" y="145" width="12" height="30" rx="2"/>
+          <rect x="78" y="145" width="12" height="30" rx="2"/>
+          <rect x="94" y="145" width="12" height="30" rx="2"/>
+          <rect x="110" y="145" width="12" height="30" rx="2"/>
+          <rect x="126" y="145" width="12" height="30" rx="2"/>
+          <rect x="142" y="145" width="12" height="30" rx="2"/>
+          <rect x="158" y="145" width="12" height="30" rx="2"/>
+          <rect x="174" y="145" width="12" height="30" rx="2"/>
+          <rect x="190" y="145" width="12" height="30" rx="2"/>
+          <rect x="206" y="145" width="12" height="30" rx="2"/>
+          <rect x="222" y="145" width="12" height="30" rx="2"/>
+          <rect x="238" y="145" width="12" height="30" rx="2"/>
+          <rect x="254" y="145" width="12" height="30" rx="2"/>
+          <rect x="270" y="145" width="12" height="30" rx="2"/>
+          <rect x="286" y="145" width="12" height="30" rx="2"/>
+          <rect x="302" y="145" width="12" height="30" rx="2"/>
+          <rect x="318" y="145" width="10" height="30" rx="2"/>
+        </g>
+        <rect x="10" y="143" width="320" height="4" fill="#f8c291"/>
+
+        <!-- Задний ряд прутьев -->
+        <g stroke="#3d4454" stroke-width="3">
+          <line x1="20" y1="12" x2="20" y2="145"/>
+          <line x1="38" y1="12" x2="38" y2="145"/>
+          <line x1="56" y1="12" x2="56" y2="145"/>
+          <line x1="74" y1="12" x2="74" y2="145"/>
+          <line x1="92" y1="12" x2="92" y2="145"/>
+          <line x1="110" y1="12" x2="110" y2="145"/>
+          <line x1="128" y1="12" x2="128" y2="145"/>
+          <line x1="146" y1="12" x2="146" y2="145"/>
+          <line x1="164" y1="12" x2="164" y2="145"/>
+          <line x1="182" y1="12" x2="182" y2="145"/>
+          <line x1="200" y1="12" x2="200" y2="145"/>
+          <line x1="218" y1="12" x2="218" y2="145"/>
+          <line x1="236" y1="12" x2="236" y2="145"/>
+          <line x1="254" y1="12" x2="254" y2="145"/>
+          <line x1="272" y1="12" x2="272" y2="145"/>
+          <line x1="290" y1="12" x2="290" y2="145"/>
+          <line x1="308" y1="12" x2="308" y2="145"/>
+          <line x1="326" y1="12" x2="326" y2="145"/>
+        </g>
+
+        <!-- 3D БЕГОВОЕ КОЛЕСО -->
+        <g id="wheel-rotor" transform="translate(115, 88)">
+          <!-- Обод -->
+          <circle cx="0" cy="0" r="50" fill="none" stroke="#dfe4ea" stroke-width="7"/>
+          <circle cx="0" cy="0" r="47" fill="none" stroke="#747d8c" stroke-width="1.5"/>
+          <!-- Спицы -->
+          <g stroke="#ced6e0" stroke-width="3">
+            <line x1="0" y1="-50" x2="0" y2="50"/>
+            <line x1="-50" y1="0" x2="50" y2="0"/>
+            <line x1="-35" y1="-35" x2="35" y2="35"/>
+            <line x1="-35" y1="35" x2="35" y2="-35"/>
+          </g>
+          <circle cx="0" cy="0" r="7" fill="#f1f2f6"/>
+        </g>
+
+        <!-- ПУШИСТАЯ БЕЛАЯ 3D-ШИНШИЛЛА (КАК НА КАРТИНКЕ) -->
+        <g id="chinchilla-mesh" transform="translate(115, 96)">
+          <!-- Хвост -->
+          <ellipse cx="-18" cy="-8" rx="8" ry="14" transform="rotate(-20 -18 -8)" fill="#f1f2f6" stroke="#ced6e0" stroke-width="1.5"/>
+          <!-- Тело-шарик -->
+          <circle cx="0" cy="0" r="21" fill="url(#chinFur)"/>
+          <!-- Ушки -->
+          <circle cx="-10" cy="-18" r="8" fill="#f1f2f6"/>
+          <circle cx="-10" cy="-18" r="4.5" fill="#ffb8b8"/>
+          <circle cx="10" cy="-18" r="8" fill="#f1f2f6"/>
+          <circle cx="10" cy="-18" r="4.5" fill="#ffb8b8"/>
+          <!-- Голубые аниме-глаза с референса -->
+          <ellipse cx="6" cy="-3" rx="4.5" ry="4.5" fill="#00d2ff"/>
+          <circle cx="7.5" cy="-4.5" r="1.8" fill="#ffffff"/>
+          <circle cx="5" cy="-2" r="0.8" fill="#ffffff"/>
+          <!-- Румянец -->
+          <ellipse cx="12" cy="4" rx="4" ry="2.5" fill="rgba(255, 121, 121, 0.5)"/>
+          <ellipse cx="-2" cy="4" rx="4" ry="2.5" fill="rgba(255, 121, 121, 0.5)"/>
+          <!-- Розовые лапки -->
+          <ellipse cx="-5" cy="18" rx="3.5" ry="3" fill="#ffb8b8"/>
+          <ellipse cx="5" cy="18" rx="3.5" ry="3" fill="#ffb8b8"/>
+        </g>
+
+        <!-- Передний ряд металлических прутьев -->
+        <g stroke="url(#barSheen)" stroke-width="4">
+          <line x1="20" y1="8" x2="20" y2="145"/>
+          <line x1="38" y1="8" x2="38" y2="145"/>
+          <line x1="56" y1="8" x2="56" y2="145"/>
+          <line x1="74" y1="8" x2="74" y2="145"/>
+          <line x1="92" y1="8" x2="92" y2="145"/>
+          <line x1="110" y1="8" x2="110" y2="145"/>
+          <line x1="128" y1="8" x2="128" y2="145"/>
+          <line x1="146" y1="8" x2="146" y2="145"/>
+          <line x1="164" y1="8" x2="164" y2="145"/>
+          <line x1="182" y1="8" x2="182" y2="145"/>
+          <line x1="200" y1="8" x2="200" y2="145"/>
+          <line x1="218" y1="8" x2="218" y2="145"/>
+          <line x1="236" y1="8" x2="236" y2="145"/>
+          <line x1="254" y1="8" x2="254" y2="145"/>
+          <line x1="272" y1="8" x2="272" y2="145"/>
+          <line x1="290" y1="8" x2="290" y2="145"/>
+          <line x1="308" y1="8" x2="308" y2="145"/>
+          <line x1="326" y1="8" x2="326" y2="145"/>
+          <!-- Верхняя рама -->
+          <line x1="10" y1="8" x2="330" y2="8" stroke-width="7" stroke="#747d8c"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ЛЕЖАНКА С ТАКСОЙ И Zzz... -->
+    <div class="doge-container">
+      <!-- Парящие объемные Zzz... -->
+      <div class="zzz-text">z<span style="font-size:32px;">Z</span><span style="font-size:40px;">...</span></div>
+
+      <svg class="doge-svg" viewBox="0 0 300 150">
+        <defs>
+          <!-- Лежанка пухлая -->
+          <radialGradient id="bedShadow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#341a4a"/>
+            <stop offset="100%" stop-color="#1f0c2e"/>
+          </radialGradient>
+          <linearGradient id="bedRing" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#9b5de5"/>
+            <stop offset="50%" stop-color="#7232a8"/>
+            <stop offset="100%" stop-color="#491b70"/>
+          </linearGradient>
+          <!-- Тело таксы глиняное -->
+          <radialGradient id="dogeClay" cx="40%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#e17036"/>
+            <stop offset="70%" stop-color="#ba531d"/>
+            <stop offset="100%" stop-color="#77300c"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Тень на полу -->
+        <ellipse cx="150" cy="120" rx="135" ry="25" fill="rgba(0,0,0,0.55)"/>
+
+        <!-- Пухлая фиолетовая лежанка-пончик с картинки -->
+        <ellipse cx="150" cy="95" rx="120" ry="38" fill="url(#bedShadow)"/>
+        <!-- Объемный круглый бортик -->
+        <ellipse cx="150" cy="95" rx="122" ry="38" fill="none" stroke="url(#bedRing)" stroke-width="22"/>
+        <ellipse cx="150" cy="85" rx="116" ry="30" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/>
+
+        <!-- СПЯЩАЯ ТАКСА (ТОЧНО КАК НА РЕФЕРЕНСЕ) -->
+        <g id="doge-body-group" transform="translate(142, 90)">
+          <!-- Каплевидное сосисочное тело -->
+          <ellipse cx="-8" cy="-5" rx="66" ry="25" transform="rotate(-4 -8 -5)" fill="url(#dogeClay)"/>
+          <!-- Округлый окорочок задней лапы -->
+          <ellipse cx="-45" cy="4" rx="16" ry="12" fill="#aa4a18"/>
+          <!-- Округлая голова таксы -->
+          <ellipse cx="44" cy="-8" rx="20" ry="14" transform="rotate(12 44 -8)" fill="url(#dogeClay)"/>
+          <!-- Нос -->
+          <ellipse cx="64" cy="-4" rx="13" ry="8" transform="rotate(8 64 -4)" fill="url(#dogeClay)"/>
+          <circle cx="75" cy="-3" r="5" fill="#1e272e"/>
+          <!-- Висячее глиняное ухо -->
+          <ellipse cx="32" cy="4" rx="8" ry="17" transform="rotate(25 32 4)" fill="#682909"/>
+          <!-- Закрытый глаз-дуга -->
+          <path d="M 48 -10 Q 53 -6 58 -10" stroke="#2c1409" stroke-width="2.5" fill="none"/>
+        </g>
       </svg>
     </div>
   </div>
 
-  <!-- Старт -->
-  <div id="start-modal" class="modal">
+  <!-- ТРЕВОГА ТАКСЫ -->
+  <div id="alert-box">⚠️ ЗАМРИ! ТАКСА СЛЫШИТ! ⚠️</div>
+
+  <!-- НИЖНЯЯ ПУХЛАЯ КНОПКА «ТЫГЫДЫКАТЬ!» -->
+  <button id="btn-tap">
+    ТЫГЫДЫКАТЬ! 🌪️
+    <span>ЖМИ БЫСТРО, НО СТОП НА КРАСНЫЙ!</span>
+  </button>
+
+  <!-- СКРИМЕР ПРИ ПОИМКЕ -->
+  <div id="scare-screen">
+    <svg id="scare-svg" viewBox="0 0 350 350">
+      <ellipse cx="175" cy="160" rx="120" ry="100" fill="#a04015"/>
+      <ellipse cx="120" cy="120" rx="34" ry="34" fill="#fff" stroke="#ff0000" stroke-width="4"/>
+      <ellipse cx="230" cy="120" rx="34" ry="34" fill="#fff" stroke="#ff0000" stroke-width="4"/>
+      <circle cx="120" cy="120" r="14" fill="#ff0000"/>
+      <circle cx="230" cy="120" r="14" fill="#ff0000"/>
+      <circle cx="120" cy="120" r="6" fill="#000"/>
+      <circle cx="230" cy="120" r="6" fill="#000"/>
+      <path d="M 95 185 Q 175 145 255 185 Q 275 285 175 305 Q 75 285 95 185 Z" fill="#110000"/>
+      <polygon points="105,188 120,224 130,190" fill="#fff"/>
+      <polygon points="130,190 145,214 155,190" fill="#fff"/>
+      <polygon points="155,190 170,210 180,190" fill="#fff"/>
+      <polygon points="180,190 195,214 205,190" fill="#fff"/>
+      <polygon points="220,190 235,224 250,188" fill="#fff"/>
+      <ellipse cx="175" cy="165" rx="25" ry="15" fill="#111"/>
+      <text x="175" y="335" font-size="44" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui">БАААВФ!!</text>
+    </svg>
+  </div>
+
+  <!-- МОДАЛКА СТАРТА -->
+  <div id="modal-start" class="modal">
     <div class="card">
       <h1>🐹 НОЧНОЙ ТЫГЫДЫК 3D</h1>
       <ul style="text-align: left; font-size: 13px; color: #a4b0be; margin-bottom: 20px; line-height: 1.6; list-style: none;">
-        <li>🌙 <b>Тапай кнопку внизу</b>, запускай пушистую шиншиллу в колесе!</li>
-        <li>⚡ <b>Шкала Хаоса на 100%</b> включает Овердрайв (безопасный спам тапами).</li>
+        <li>🌙 <b>Тапай розовую кнопку внизу</b>, запускай шиншиллу в колесе!</li>
+        <li>⚡ <b>Заполняй шкалу Хаоса</b>, чтобы активировать Овердрайв.</li>
         <li>🛑 <b>ЗАМИРАЙ НА КРАСНЫЙ!</b> Если такса проснется — тебя ждет скример!</li>
       </ul>
-      <button class="main-btn" id="start-btn">ПОГНАЛИ ТЫГЫДЫКАТЬ! 🚀</button>
-      <p style="margin-top: 14px; font-size: 12px; color: #747d8c;" id="total-wallet">Всего очков: 0</p>
+      <button class="main-btn" id="start-game-btn">ПОГНАЛИ ТЫГЫДЫКАТЬ! 🚀</button>
+      <p style="margin-top: 14px; font-size: 12px; color: #747d8c;" id="wallet-text">Всего очков: 0</p>
     </div>
   </div>
 
-  <!-- Магазин -->
-  <div id="shop-modal" class="modal hidden">
+  <!-- МОДАЛКА МАГАЗИНА -->
+  <div id="modal-shop" class="modal hidden">
     <div class="card">
       <h1 style="color: #ffbe76;">🎁 ШИНШИЛЛО-ГАРДЕРОБ</h1>
-      <p style="font-size: 13px; color: #a4b0be; margin-bottom: 16px;">Баланс: <b id="shop-balance" style="color: #54a0ff;">0</b> очков</p>
-      <div id="skins-list"></div>
-      <button class="main-btn" id="close-shop-btn" style="margin-top: 10px; background: #33334d;">НАЗАД В ИГРУ</button>
+      <p style="font-size: 13px; color: #a4b0be; margin-bottom: 16px;">Баланс: <b id="shop-coins" style="color: #54a0ff;">0</b> очков</p>
+      <div id="skins-container"></div>
+      <button class="main-btn" id="close-shop" style="margin-top: 10px; background: #33334d;">НАЗАД В ИГРУ</button>
     </div>
   </div>
 
-  <!-- Game Over -->
-  <div id="over-modal" class="modal hidden">
+  <!-- МОДАЛКА GAME OVER -->
+  <div id="modal-over" class="modal hidden">
     <div class="card" style="border-color: #ff4757;">
       <h1 style="color: #ff4757;">ТАКСА СХВАТИЛА ТЕБЯ! 🐶💥</h1>
-      <p style="font-size: 14px; margin: 10px 0 16px 0; color: #f1f2f6;" id="over-desc"></p>
-      <p style="font-size: 18px; font-weight: 900; margin-bottom: 12px; color: #ffbe76;" id="over-score"></p>
-      <p style="font-size: 13px; color: #2ed573; margin-bottom: 20px;" id="earned-wallet"></p>
-      <button class="main-btn" id="restart-btn">ЕЩЕ ТЫГЫДЫК 🔄</button>
+      <p style="font-size: 14px; margin: 10px 0 16px 0; color: #f1f2f6;" id="over-reason"></p>
+      <p style="font-size: 18px; font-weight: 900; margin-bottom: 12px; color: #ffbe76;" id="over-score-txt"></p>
+      <p style="font-size: 13px; color: #2ed573; margin-bottom: 20px;" id="earned-txt"></p>
+      <button class="main-btn" id="restart-game-btn">ЕЩЕ ТЫГЫДЫК 🔄</button>
     </div>
   </div>
 </div>
 
 <script>
 (() => {
-  // --- АУДИО ---
+  // --- ЗВУКОВОЙ ДВИЖОК (WEB AUDIO) ---
   let audioCtx = null;
   function initAudio() {
     if (!audioCtx) {
@@ -466,53 +722,39 @@
         gain.gain.linearRampToValueAtTime(0.01, t + 0.6);
         osc.start(t);
         osc.stop(t + 0.6);
-      } else if (type === 'snore') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(70, t);
-        osc.frequency.linearRampToValueAtTime(95, t + 0.4);
-        gain.gain.setValueAtTime(0.03, t);
-        gain.gain.linearRampToValueAtTime(0.001, t + 0.5);
-        osc.start(t);
-        osc.stop(t + 0.5);
       }
     } catch(e) {}
   }
 
   // --- СКИНЫ ---
   const SKINS = [
-    { id: 'white', name: 'Белый пушистик 3D ❄️', cost: 0, body: '#ffffff', ear: '#ffb8b8', eye: '#00d2ff' },
-    { id: 'classic', name: 'Пепельный колобок', cost: 3000, body: '#dfe4ea', ear: '#ffa8a8', eye: '#2f3542' },
-    { id: 'pink', name: 'Зефирка 🌸', cost: 8000, body: '#ffccd5', ear: '#ff758f', eye: '#590d22' },
-    { id: 'gold', name: 'Золотой колобок ✨', cost: 20000, body: '#ffeaa7', ear: '#fdcb6e', eye: '#0984e3' }
+    { id: 'white', name: 'Белый пушистик 3D ❄️', cost: 0, fill: '#ffffff', ear: '#ffb8b8' },
+    { id: 'grey', name: 'Пепельный колобок', cost: 3000, fill: '#dfe4ea', ear: '#ffa8a8' },
+    { id: 'pink', name: 'Зефирка 🌸', cost: 8000, fill: '#ffccd5', ear: '#ff758f' },
+    { id: 'gold', name: 'Золотой колобок ✨', cost: 20000, fill: '#ffeaa7', ear: '#fdcb6e' }
   ];
 
-  let totalScore = parseInt(localStorage.getItem('tygy_wallet_3d') || '0', 10);
-  let unlockedSkins = JSON.parse(localStorage.getItem('tygy_skins_3d') || '["white"]');
-  let currentSkinId = localStorage.getItem('tygy_skin_3d') || 'white';
+  let totalScore = parseInt(localStorage.getItem('tygy_wallet_v3') || '0', 10);
+  let unlockedSkins = JSON.parse(localStorage.getItem('tygy_skins_v3') || '["white"]');
+  let currentSkinId = localStorage.getItem('tygy_skin_v3') || 'white';
 
   function saveWallet() {
-    localStorage.setItem('tygy_wallet_3d', totalScore);
-    localStorage.setItem('tygy_skins_3d', JSON.stringify(unlockedSkins));
-    localStorage.setItem('tygy_skin_3d', currentSkinId);
-    document.getElementById('total-wallet').textContent = `Всего очков: ${totalScore}`;
-    document.getElementById('shop-balance').textContent = totalScore;
+    localStorage.setItem('tygy_wallet_v3', totalScore);
+    localStorage.setItem('tygy_skins_v3', JSON.stringify(unlockedSkins));
+    localStorage.setItem('tygy_skin_v3', currentSkinId);
+    document.getElementById('wallet-text').textContent = `Всего очков: ${totalScore}`;
+    document.getElementById('shop-coins').textContent = totalScore;
+
+    // Обновляем скин на шиншилле
+    const skin = SKINS.find(s => s.id === currentSkinId) || SKINS[0];
+    const mesh = document.getElementById('chinchilla-mesh');
+    if (mesh) {
+      const bodyCircle = mesh.querySelector('circle');
+      if (bodyCircle) bodyCircle.setAttribute('fill', skin.fill);
+    }
   }
 
-  // --- CANVAS & RESIZE ---
-  const canvas = document.getElementById('stage');
-  const ctx = canvas.getContext('2d');
-  let cw = 0, ch = 0;
-
-  function resize() {
-    cw = window.innerWidth;
-    ch = window.innerHeight;
-    canvas.width = cw;
-    canvas.height = ch;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  // --- GAME STATE ---
+  // --- СОСТОЯНИЕ ИГРЫ ---
   let isRunning = false;
   let score = 0;
   let combo = 0;
@@ -527,16 +769,16 @@
   let wheelAngle = 0;
   let wheelSpeed = 0;
   let targetWheelSpeed = 0;
-  let screenShake = 0;
-  let dogBreathe = 0;
-  let snoreTimer = 0;
 
-  const panicEl = document.getElementById('panic-alert');
-  const rageBar = document.getElementById('rage-bar');
-  const vibeBar = document.getElementById('vibe-bar');
-  const clockEl = document.getElementById('clock-val');
-  const scoreEl = document.getElementById('score-val');
-  const scareOverlay = document.getElementById('jumpscare-overlay');
+  const vibeFill = document.getElementById('vibe-fill');
+  const rageFill = document.getElementById('rage-fill');
+  const timeVal = document.getElementById('time-val');
+  const scoreVal = document.getElementById('score-val');
+  const alertBox = document.getElementById('alert-box');
+  const scareScreen = document.getElementById('scare-screen');
+  const wheelRotor = document.getElementById('wheel-rotor');
+  const chinMesh = document.getElementById('chinchilla-mesh');
+  const dogeBody = document.getElementById('doge-body-group');
 
   function resetGame() {
     score = 0;
@@ -549,20 +791,19 @@
     alertDuration = 0;
     wheelSpeed = 0;
     targetWheelSpeed = 0;
-    screenShake = 0;
-    panicEl.style.display = 'none';
-    scareOverlay.style.display = 'none';
+    alertBox.style.display = 'none';
+    scareScreen.style.display = 'none';
     updateHUD();
   }
 
   function updateHUD() {
-    scoreEl.textContent = Math.floor(score);
-    rageBar.style.width = `${Math.min(noise, 100)}%`;
-    vibeBar.style.width = `${Math.min(vibe, 100)}%`;
+    scoreVal.textContent = Math.floor(score);
+    rageFill.style.width = `${Math.min(noise, 100)}%`;
+    vibeFill.style.width = `${Math.min(vibe, 100)}%`;
 
     const mins = Math.floor(gameTime / 60);
     const secs = Math.floor(gameTime % 60);
-    clockEl.textContent = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    timeVal.textContent = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
   function vibrate(type) {
@@ -573,8 +814,8 @@
     }
   }
 
-  // --- ТАП ЛОГИКА ---
-  const tapBtn = document.getElementById('tap-zone');
+  // --- ТАП КНОПКА ---
+  const btnTap = document.getElementById('btn-tap');
   let isHolding = false;
 
   function doTygydyk() {
@@ -582,7 +823,7 @@
     initAudio();
 
     if (dogAlertState === 2 && frenzyTimer <= 0) {
-      triggerJumpscare('Такса поймала тебя с поличным!');
+      triggerJumpscare('Такса навострила уши и поймала тебя!');
       return;
     }
 
@@ -596,31 +837,30 @@
       vibe = 0;
       frenzyTimer = 4.0;
       dogAlertState = 0;
-      panicEl.style.display = 'none';
+      alertBox.style.display = 'none';
       vibrate('heavy');
     }
 
     if (frenzyTimer <= 0) noise += 4.5;
     targetWheelSpeed += 0.55;
-    screenShake = 2.5;
 
     playSound('tap');
     vibrate('light');
     updateHUD();
   }
 
-  tapBtn.addEventListener('touchstart', (e) => {
+  btnTap.addEventListener('touchstart', (e) => {
     e.preventDefault();
     isHolding = true;
     doTygydyk();
   }, { passive: false });
 
-  tapBtn.addEventListener('touchend', (e) => {
+  btnTap.addEventListener('touchend', (e) => {
     e.preventDefault();
     isHolding = false;
   }, { passive: false });
 
-  tapBtn.addEventListener('mousedown', () => {
+  btnTap.addEventListener('mousedown', () => {
     isHolding = true;
     doTygydyk();
   });
@@ -632,9 +872,9 @@
 
   function triggerJumpscare(reason) {
     isRunning = false;
-    panicEl.style.display = 'none';
+    alertBox.style.display = 'none';
 
-    scareOverlay.style.display = 'flex';
+    scareScreen.style.display = 'flex';
     playSound('scream');
     vibrate('heavy');
 
@@ -643,98 +883,107 @@
     saveWallet();
 
     setTimeout(() => {
-      scareOverlay.style.display = 'none';
-      document.getElementById('over-desc').textContent = reason;
-      document.getElementById('over-score').textContent = `Счёт: ${earned}`;
-      document.getElementById('earned-wallet').textContent = `Зачислено в банк: +${earned} (Всего: ${totalScore})`;
-      document.getElementById('over-modal').classList.remove('hidden');
+      scareScreen.style.display = 'none';
+      document.getElementById('over-reason').textContent = reason;
+      document.getElementById('over-score-txt').textContent = `Счёт: ${earned}`;
+      document.getElementById('earned-txt').textContent = `Зачислено в банк: +${earned} (Всего: ${totalScore})`;
+      document.getElementById('modal-over').classList.remove('hidden');
     }, 1100);
   }
 
-  // --- GAME LOOP ---
+  // --- ИГРОВОЙ ЦИКЛ АНИМАЦИИ ---
   let lastTime = performance.now();
+  let breathePhase = 0;
 
   function loop(now) {
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
 
-    if (isRunning) update(dt);
-    render();
+    if (isRunning) {
+      gameTime += dt * 0.7;
+      breathePhase += dt * 2.2;
+
+      wheelSpeed += (targetWheelSpeed - wheelSpeed) * 0.15;
+      targetWheelSpeed *= 0.94;
+      wheelAngle += wheelSpeed;
+
+      // Вращение колеса в SVG
+      if (wheelRotor) {
+        wheelRotor.setAttribute('transform', `translate(115, 88) rotate(${wheelAngle * 57.3})`);
+      }
+
+      // Бег шиншиллы (покачивание)
+      if (chinMesh) {
+        const jig = Math.sin(Date.now() * 0.04) * (wheelSpeed * 7 + 1.2);
+        chinMesh.setAttribute('transform', `translate(115, ${96 + jig})`);
+      }
+
+      // Дыхание таксы
+      if (dogeBody) {
+        const breath = Math.sin(breathePhase) * 1.5;
+        dogeBody.setAttribute('transform', `translate(142, ${90 + breath * 0.5}) scale(${1 + breath*0.015})`);
+      }
+
+      if (noise > 0 && frenzyTimer <= 0) {
+        noise -= (dogAlertState === 2 ? 8 : 17) * dt;
+        if (noise < 0) noise = 0;
+      }
+
+      if (frenzyTimer > 0) {
+        frenzyTimer -= dt;
+        if (frenzyTimer <= 0) {
+          frenzyTimer = 0;
+          nextAlertIn = 2.0;
+        }
+      }
+
+      // Реакция таксы
+      if (frenzyTimer <= 0) {
+        if (dogAlertState === 0) {
+          nextAlertIn -= dt;
+          if (nextAlertIn <= 0.8) dogAlertState = 1;
+        } else if (dogAlertState === 1) {
+          nextAlertIn -= dt;
+          if (nextAlertIn <= 0) {
+            dogAlertState = 2;
+            alertDuration = 1.0 + Math.random() * 1.5;
+            alertBox.style.display = 'block';
+            playSound('warn');
+            vibrate('medium');
+          }
+        } else if (dogAlertState === 2) {
+          alertDuration -= dt;
+          if (isHolding || noise > 42) {
+            triggerJumpscare('Такса распахнула глаза и поймала шиншиллу!');
+            return;
+          }
+          if (alertDuration <= 0) {
+            dogAlertState = 0;
+            alertBox.style.display = 'none';
+            nextAlertIn = 2.2 + Math.random() * 2.5;
+            score += 200;
+          }
+        }
+
+        if (noise >= 100) {
+          triggerJumpscare('Шум зашкалил! Такса вскочила!');
+          return;
+        }
+      }
+
+      updateHUD();
+    }
+
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
 
-  function update(dt) {
-    gameTime += dt * 0.7;
-    dogBreathe += dt * 2.2;
-
-    wheelSpeed += (targetWheelSpeed - wheelSpeed) * 0.15;
-    targetWheelSpeed *= 0.94;
-    wheelAngle += wheelSpeed;
-
-    if (noise > 0 && frenzyTimer <= 0) {
-      noise -= (dogAlertState === 2 ? 8 : 17) * dt;
-      if (noise < 0) noise = 0;
-    }
-
-    if (screenShake > 0) screenShake *= 0.88;
-
-    if (frenzyTimer > 0) {
-      frenzyTimer -= dt;
-      if (frenzyTimer <= 0) {
-        frenzyTimer = 0;
-        nextAlertIn = 2.0;
-      }
-    }
-
-    snoreTimer += dt;
-    if (dogAlertState === 0 && snoreTimer > 2.2) {
-      snoreTimer = 0;
-      playSound('snore');
-    }
-
-    if (frenzyTimer <= 0) {
-      if (dogAlertState === 0) {
-        nextAlertIn -= dt;
-        if (nextAlertIn <= 0.8) dogAlertState = 1;
-      } else if (dogAlertState === 1) {
-        nextAlertIn -= dt;
-        if (nextAlertIn <= 0) {
-          dogAlertState = 2;
-          alertDuration = 1.0 + Math.random() * 1.5;
-          panicEl.style.display = 'block';
-          playSound('warn');
-          vibrate('medium');
-        }
-      } else if (dogAlertState === 2) {
-        alertDuration -= dt;
-        if (isHolding || noise > 42) {
-          triggerJumpscare('Такса проснулась и набросилась на витрину!');
-          return;
-        }
-        if (alertDuration <= 0) {
-          dogAlertState = 0;
-          panicEl.style.display = 'none';
-          nextAlertIn = 2.2 + Math.random() * 2.5;
-          score += 200;
-        }
-      }
-
-      if (noise >= 100) {
-        triggerJumpscare('Шум зашкалил! Такса вскочила!');
-        return;
-      }
-    }
-
-    updateHUD();
-  }
-
-  // --- МАГАЗИН ---
-  const shopModal = document.getElementById('shop-modal');
-  const skinsListEl = document.getElementById('skins-list');
+  // --- МАГАЗИН И МОДАЛКИ ---
+  const modalShop = document.getElementById('modal-shop');
+  const skinsContainer = document.getElementById('skins-container');
 
   function renderShop() {
-    skinsListEl.innerHTML = '';
+    skinsContainer.innerHTML = '';
     SKINS.forEach(skin => {
       const isUnlocked = unlockedSkins.includes(skin.id);
       const isActive = currentSkinId === skin.id;
@@ -772,406 +1021,37 @@
       };
 
       item.appendChild(btn);
-      skinsListEl.appendChild(item);
+      skinsContainer.appendChild(item);
     });
   }
 
-  document.getElementById('shop-btn').onclick = () => {
+  document.getElementById('open-shop').onclick = () => {
     renderShop();
-    shopModal.classList.remove('hidden');
+    modalShop.classList.remove('hidden');
   };
-  document.getElementById('close-shop-btn').onclick = () => {
-    shopModal.classList.add('hidden');
+  document.getElementById('close-shop').onclick = () => {
+    modalShop.classList.add('hidden');
   };
 
-  const startModal = document.getElementById('start-modal');
-  const overModal = document.getElementById('over-modal');
-  const startBtn = document.getElementById('start-btn');
-  const restartBtn = document.getElementById('restart-btn');
+  const modalStart = document.getElementById('modal-start');
+  const modalOver = document.getElementById('modal-over');
+  const btnStart = document.getElementById('start-game-btn');
+  const btnRestart = document.getElementById('restart-game-btn');
 
-  function start() {
+  function startGame() {
     initAudio();
-    startModal.classList.add('hidden');
-    overModal.classList.add('hidden');
+    modalStart.classList.add('hidden');
+    modalOver.classList.add('hidden');
     resetGame();
     isRunning = true;
   }
 
   ['click', 'touchstart'].forEach(ev => {
-    startBtn.addEventListener(ev, (e) => { e.preventDefault(); start(); }, { passive: false });
-    restartBtn.addEventListener(ev, (e) => { e.preventDefault(); start(); }, { passive: false });
+    btnStart.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
+    btnRestart.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
   });
 
   saveWallet();
-
-  // ==========================================
-  // --- ПОЛНОСТЬЮ ОБНОВЛЕННЫЙ 3D РЕНДЕР (РЕФЕРЕНС) ---
-  // ==========================================
-  function render() {
-    ctx.save();
-
-    if (screenShake > 0.4) {
-      const rx = (Math.random() - 0.5) * screenShake;
-      const ry = (Math.random() - 0.5) * screenShake;
-      ctx.translate(rx, ry);
-    }
-
-    // Тёмный фиолетово-серый градиент комнаты с референса
-    const bgGrad = ctx.createRadialGradient(cw / 2, ch * 0.4, 40, cw / 2, ch * 0.4, ch * 0.85);
-    bgGrad.addColorStop(0, '#2e2c45');
-    bgGrad.addColorStop(1, '#151522');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, cw, ch);
-
-    // 1. ВЕРХНЯЯ 3D КЛЕТКА С КОЛЕСОМ И ПУШИСТОЙ ШИНШИЛЛОЙ
-    draw3DCage(cw / 2, ch * 0.38);
-
-    // 2. НИЖНЯЯ ПУХЛАЯ 3D ЛЕЖАНКА С ТАКСОЙ
-    draw3DDashund(cw / 2, ch * 0.72);
-
-    ctx.restore();
-  }
-
-  // --- 3D КЛЕТКА, КОЛЕСО И ШИНШИЛЛА ---
-  function draw3DCage(cx, cy) {
-    const cageW = Math.min(cw * 0.88, 350);
-    const cageH = 175;
-    const x = cx - cageW / 2;
-    const y = cy - cageH / 2;
-
-    // Мягкая объёмная тень под клеткой на полу
-    ctx.fillStyle = 'rgba(10, 10, 20, 0.45)';
-    ctx.beginPath();
-    ctx.ellipse(cx, y + cageH + 12, cageW * 0.52, 22, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 1. Деревянный реечный поддон (3D брусочки желто-охристого цвета)
-    const trayH = 26;
-    const trayY = y + cageH - trayH;
-    
-    // Основа поддона
-    ctx.fillStyle = '#caa357';
-    ctx.fillRect(x, trayY, cageW, trayH);
-
-    // Вертикальные зубцы / брусочки по бортику с объемными фасками
-    const barCount = 20;
-    const barW = cageW / barCount;
-    for (let i = 0; i < barCount; i++) {
-      const bx = x + i * barW;
-      // Светлая сторона
-      ctx.fillStyle = '#e8c271';
-      ctx.fillRect(bx + 1, trayY, barW - 2, trayH);
-      // Тень бруска
-      ctx.fillStyle = '#a68239';
-      ctx.fillRect(bx + barW - 3, trayY, 2, trayH);
-    }
-
-    // 2. Задний ряд прутьев клетки (в тени)
-    ctx.strokeStyle = '#5a627a';
-    ctx.lineWidth = 3;
-    for (let px = x + 12; px < x + cageW; px += 16) {
-      ctx.beginPath();
-      ctx.moveTo(px, y + 8);
-      ctx.lineTo(px, trayY);
-      ctx.stroke();
-    }
-
-    // 3. Белое 3D беговое колесо
-    const wx = x + cageW * 0.32;
-    const wy = y + cageH * 0.44;
-    const wr = 54;
-
-    ctx.save();
-    ctx.translate(wx, wy);
-    ctx.rotate(wheelAngle);
-
-    // Толстый белый 3D обод
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 7;
-    ctx.beginPath();
-    ctx.arc(0, 0, wr, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Внутренняя фаска обода (объем)
-    ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, wr - 3, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Спицы колеса
-    ctx.strokeStyle = '#cbd5e1';
-    ctx.lineWidth = 3;
-    for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(a) * wr, Math.sin(a) * wr);
-      ctx.stroke();
-    }
-
-    // Центральная 3D втулка
-    ctx.fillStyle = '#f8fafc';
-    ctx.beginPath();
-    ctx.arc(0, 0, 9, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#94a3b8';
-    ctx.beginPath();
-    ctx.arc(0, 0, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // 4. Пушистая белая 3D Шиншилла (как на картинке)
-    const skin = SKINS.find(s => s.id === currentSkinId) || SKINS[0];
-    ctx.save();
-    const jig = Math.sin(Date.now() * 0.04) * (wheelSpeed * 8 + 1.2);
-    ctx.translate(wx, wy + 14 + jig);
-
-    // Пышный закругленный хвост
-    ctx.fillStyle = skin.body;
-    ctx.beginPath();
-    ctx.ellipse(-20, -10, 10, 16, -0.4, 0, Math.PI * 2);
-    ctx.fill();
-    // Обводка хвоста для мягкости
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Белый пушистый шарообразный корпус (Clay 3D)
-    const bodyG = ctx.createRadialGradient(-5, -6, 4, 0, 0, 24);
-    bodyG.addColorStop(0, '#ffffff');
-    bodyG.addColorStop(0.75, skin.body);
-    bodyG.addColorStop(1, '#cbd5e1');
-    ctx.fillStyle = bodyG;
-    ctx.beginPath();
-    ctx.arc(0, 0, 22, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Розовые круглые 3D ушки
-    // Заднее ушко
-    ctx.fillStyle = skin.body;
-    ctx.beginPath();
-    ctx.arc(-11, -19, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = skin.ear;
-    ctx.beginPath();
-    ctx.arc(-11, -19, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Переднее ушко
-    ctx.fillStyle = skin.body;
-    ctx.beginPath();
-    ctx.arc(11, -19, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = skin.ear;
-    ctx.beginPath();
-    ctx.arc(11, -19, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Голубые аниме-глаза с референса
-    ctx.fillStyle = skin.eye;
-    ctx.beginPath();
-    ctx.arc(7, -3, 4.2, 0, Math.PI * 2);
-    ctx.fill();
-    // Белые блики глаз
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(8.5, -4.5, 1.8, 0, Math.PI * 2);
-    ctx.arc(6.5, -1.5, 0.8, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Розовый румянец на щечках
-    ctx.fillStyle = 'rgba(255, 154, 162, 0.6)';
-    ctx.beginPath();
-    ctx.arc(13, 3, 4, 0, Math.PI * 2);
-    ctx.arc(-2, 4, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Маленькие розовые лапки внизу
-    ctx.fillStyle = '#ffb8b8';
-    ctx.beginPath();
-    ctx.arc(-6, 19, 4, 0, Math.PI * 2);
-    ctx.arc(6, 19, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // 5. Передний ряд металлических прутьев клетки с освещением
-    for (let px = x + 12; px < x + cageW; px += 16) {
-      const rodGrad = ctx.createLinearGradient(px - 2, 0, px + 2, 0);
-      rodGrad.addColorStop(0, '#64748b');
-      rodGrad.addColorStop(0.5, '#e2e8f0');
-      rodGrad.addColorStop(1, '#475569');
-      ctx.strokeStyle = rodGrad;
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.moveTo(px, y + 4);
-      ctx.lineTo(px, trayY);
-      ctx.stroke();
-    }
-
-    // Верхняя рамка клетки
-    ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 6;
-    ctx.strokeRect(x, y + 4, cageW, 4);
-  }
-
-  // --- ПУХЛАЯ 3D ЛЕЖАНКА И ГЛИНЯНАЯ ТАКСА ---
-  function draw3DDashund(cx, cy) {
-    const breath = Math.sin(dogBreathe) * 2.5;
-
-    // 1. Круглая объемная фиолетовая лежанка (Clay 3D подушка с референса)
-    ctx.save();
-    ctx.translate(cx, cy + 12);
-
-    // Глубокая тень лежанки на полу
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-    ctx.beginPath();
-    ctx.ellipse(0, 16, 130, 48, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Внутреннее углубление лежанки
-    const insideGrad = ctx.createRadialGradient(0, 4, 10, 0, 4, 90);
-    insideGrad.addColorStop(0, '#3a1c59');
-    insideGrad.addColorStop(1, '#231038');
-    ctx.fillStyle = insideGrad;
-    ctx.beginPath();
-    ctx.ellipse(0, 4, 110, 42, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Пухлый круглый валик-бортик фиолетового цвета
-    const donutGrad = ctx.createLinearGradient(-125, 0, 125, 0);
-    donutGrad.addColorStop(0, '#69389e');
-    donutGrad.addColorStop(0.4, '#9053cf');
-    donutGrad.addColorStop(1, '#69389e');
-    ctx.strokeStyle = donutGrad;
-    ctx.lineWidth = 18;
-    ctx.beginPath();
-    ctx.ellipse(0, 2, 114, 42, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Верхний светлый блик бортика (создает ощущение мягкой резины/глины)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.ellipse(0, -6, 110, 36, 0, Math.PI, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-
-    // 2. 3D Пластилиновая спящая такса
-    ctx.save();
-    ctx.translate(cx - 8, cy);
-
-    // Объемное каплевидное тело таксы
-    const bodyGrad = ctx.createRadialGradient(-8, -8, 8, 0, 0, 70);
-    bodyGrad.addColorStop(0, '#e56a38');
-    bodyGrad.addColorStop(0.6, '#b84e20');
-    bodyGrad.addColorStop(1, '#6e2b0e');
-    ctx.fillStyle = bodyGrad;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 68 + breath, 26 + breath * 0.5, -0.05, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Гладкий глиняный блик на спине
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
-    ctx.beginPath();
-    ctx.ellipse(0, -8, 48, 10, -0.05, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Задняя округлая лапка (окорочок)
-    ctx.fillStyle = '#b84e20';
-    ctx.beginPath();
-    ctx.ellipse(-42, 8, 16, 12, 0.4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Передние подогнутые лапки
-    ctx.fillStyle = '#a04218';
-    ctx.beginPath();
-    ctx.ellipse(24, 16, 10, 6, -0.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Округлая голова таксы с длинной мордочкой
-    const headGrad = ctx.createRadialGradient(48, -6, 6, 52, -4, 28);
-    headGrad.addColorStop(0, '#e56a38');
-    headGrad.addColorStop(0.7, '#b84e20');
-    headGrad.addColorStop(1, '#6e2b0e');
-    ctx.fillStyle = headGrad;
-    ctx.beginPath();
-    ctx.ellipse(48, -6, 22, 15, 0.15, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Вытянутый нос
-    ctx.beginPath();
-    ctx.ellipse(70, -2, 13, 8, 0.1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Черный шарик-носик
-    ctx.fillStyle = '#1e272e';
-    ctx.beginPath();
-    ctx.arc(81, -2, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Висячее ухо (темнее тела, из пластилина)
-    const earGrad = ctx.createLinearGradient(36, -6, 36, 18);
-    earGrad.addColorStop(0, '#753013');
-    earGrad.addColorStop(1, '#4d1e0a');
-    ctx.fillStyle = earGrad;
-    ctx.beginPath();
-    ctx.ellipse(36, 5, 9, 18, 0.35, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Состояния глаз
-    if (dogAlertState === 0) {
-      // Закрытые спящие глазки-полумесяцы
-      ctx.strokeStyle = '#2d140a';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.arc(54, -7, 5.5, 0.15, Math.PI - 0.15);
-      ctx.stroke();
-
-      // 3D летающие белые "Zzz..." как на референсе
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = 'rgba(0, 210, 255, 0.6)';
-      ctx.shadowBlur = 8;
-      ctx.font = '900 18px system-ui';
-      ctx.fillText('z', 72, -26);
-      ctx.font = '900 24px system-ui';
-      ctx.fillText('Z', 85, -42);
-      ctx.font = '900 32px system-ui';
-      ctx.fillText('Z...', 104, -60);
-      ctx.shadowBlur = 0;
-
-    } else if (dogAlertState === 1) {
-      // Подозрительный приоткрытый глаз
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(54, -8, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(55, -8, 2.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#ffbe76';
-      ctx.font = '900 28px system-ui';
-      ctx.fillText('?', 52, -26);
-
-    } else {
-      // Большие красные глаза тревоги
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(52, -9, 8.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#ff4757';
-      ctx.beginPath();
-      ctx.arc(53, -9, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#ff1e56';
-      ctx.font = '900 38px system-ui';
-      ctx.fillText('!', 50, -32);
-    }
-
-    ctx.restore();
-  }
 })();
 </script>
 </body>
