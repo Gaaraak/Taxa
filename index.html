@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Такса-Раннер</title>
+  <title>Такса-Раннер PRO</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #12131c;
-      --card: #1d2030;
-      --accent: #ffa502;
-      --btn: #ff4757;
+      --bg: #0b0d17;
+      --card: #151828;
+      --accent: #f59e0b;
+      --btn: #ef4444;
+      --bonus: #10b981;
     }
 
     * {
@@ -37,35 +38,35 @@
 
     header {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 4px;
+      padding: 4px 6px;
     }
 
     .badge {
       background: var(--card);
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 0.85rem;
       font-weight: 700;
       border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     #game-container {
       position: relative;
       width: 100%;
-      max-width: 420px;
-      height: 380px;
-      background: linear-gradient(180deg, #1e2746 0%, #2f3654 60%, #404b69 100%);
-      border-radius: 18px;
+      max-width: 440px;
+      height: 420px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.45);
-      border: 2px solid #373e5c;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      border: 2px solid #282c40;
     }
 
     canvas {
@@ -74,23 +75,21 @@
       display: block;
     }
 
-    /* Оверлей меню/рестарта */
     .overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 17, 26, 0.85);
-      backdrop-filter: blur(4px);
+      background: rgba(15, 17, 26, 0.88);
+      backdrop-filter: blur(6px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
       text-align: center;
       z-index: 10;
-      transition: opacity 0.2s;
     }
 
     .overlay.hidden {
@@ -98,28 +97,29 @@
     }
 
     .overlay h2 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       color: var(--accent);
       margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
     }
 
     .overlay p {
       font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 18px;
-      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 20px;
+      line-height: 1.5;
     }
 
     .btn {
       background: var(--btn);
       color: #fff;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      padding: 14px 28px;
-      border-radius: 14px;
+      padding: 14px 34px;
+      border-radius: 16px;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
       transition: transform 0.1s;
     }
 
@@ -130,7 +130,7 @@
     .controls-hint {
       font-size: 0.8rem;
       color: rgba(255, 255, 255, 0.5);
-      margin-top: 8px;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -138,20 +138,25 @@
 
   <header>
     <div class="badge">🌭 Длина: <span id="length-val" style="color: var(--accent);">1</span> м</div>
+    <div class="badge">Время: <span id="time-val">☀️ День</span></div>
     <div class="badge">🏆 Рекорд: <span id="best-val">0</span> м</div>
   </header>
 
   <div id="game-container">
-    <canvas id="canvas" width="420" height="380"></canvas>
+    <canvas id="canvas" width="440" height="420"></canvas>
 
     <div class="overlay" id="overlay">
-      <h2 id="overlay-title">🐶 Длинная Такса</h2>
-      <p id="overlay-desc">Тапай по экрану, чтобы прыгать!<br>Собирай сосиски 🌭 и удлиняй таксу.<br>Берегись заборов 🪵 и котов 🐱!</p>
-      <button class="btn" id="start-btn" onclick="startGame()">ИГРАТЬ</button>
+      <h2 id="overlay-title">🐶 Такса-Раннер PRO</h2>
+      <p id="overlay-desc">
+        • Тапай для прыжка (есть <b>двойной прыжок</b>!)<br>
+        • Собирай 🌭 для удлинения и 🦴 для щита<br>
+        • Следи за сменой дня и ночи ☀️🌙
+      </p>
+      <button class="btn" id="start-btn" onclick="startGame()">ПОГНАЛИ</button>
     </div>
   </div>
 
-  <div class="controls-hint">Тапни в любом месте игрового поля для прыжка</div>
+  <div class="controls-hint">Двойной тап в воздухе = двойной прыжок!</div>
 
   <script>
     const tg = window.Telegram?.WebApp;
@@ -163,11 +168,12 @@
     function haptic(type) {
       if (!tg?.HapticFeedback) return;
       if (type === 'impact') tg.HapticFeedback.impactOccurred('medium');
+      if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
       if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
       if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
     }
 
-    // Аудио эффекты
+    // Аудио эффекты (Web Audio)
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -176,20 +182,54 @@
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function playTone(freq, duration, type = 'sine') {
+    function soundJump(isDouble = false) {
+      initAudio();
       try {
-        if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(isDouble ? 480 : 320, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(isDouble ? 700 : 520, audioCtx.currentTime + 0.12);
         gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
+        osc.stop(audioCtx.currentTime + 0.12);
+      } catch(e){}
+    }
+
+    function soundEat(isBone = false) {
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = isBone ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(isBone ? 600 : 540, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(isBone ? 900 : 720, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.18);
+      } catch(e){}
+    }
+
+    function soundHit() {
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(90, audioCtx.currentTime + 0.28);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.28);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.28);
+      } catch(e){}
     }
 
     const canvas = document.getElementById('canvas');
@@ -199,111 +239,158 @@
     const overlayTitle = document.getElementById('overlay-title');
     const overlayDesc = document.getElementById('overlay-desc');
     const lengthVal = document.getElementById('length-val');
+    const timeVal = document.getElementById('time-val');
     const bestVal = document.getElementById('best-val');
 
     let bestScore = parseInt(localStorage.getItem('taxa_runner_best') || '1');
     bestVal.textContent = bestScore;
 
-    // Загрузка фото таксы для мордочки
     const taxaImg = new Image();
     taxaImg.src = 'taxa.jpg';
 
-    // Параметры игры
     let isPlaying = false;
     let frame = 0;
-    let groundY = 310;
-    let speed = 4;
-    let sausageCount = 0;
+    const groundY = 345;
+    let speed = 4.2;
+    let bonesCollected = 0;
+    let shieldTimer = 0;
 
-    // Персонаж: Такса
+    // Цикл дня и ночи (период ~1200 кадров ≈ 20 сек)
+    const DAY_CYCLE_FRAMES = 1200;
+
     const taxa = {
-      x: 70,
+      x: 80,
       y: groundY - 32,
       baseW: 34,
-      bodySegmentLen: 12,
-      segments: 2, // длина таксы
+      segmentLen: 12,
+      segments: 2,
       h: 28,
       vy: 0,
       gravity: 0.72,
-      jumpStrength: -11.5,
-      isGrounded: true
+      jumpForce: -11.5,
+      jumpsLeft: 2
     };
 
-    let items = []; // Сосиски и препятствия
+    let items = [];
+    let particles = [];
+    let clouds = [
+      { x: 30, y: 40, s: 0.5 },
+      { x: 220, y: 65, s: 0.7 },
+      { x: 380, y: 35, s: 0.4 }
+    ];
+
+    // Звезды ночного неба
+    let stars = [];
+    for (let i = 0; i < 35; i++) {
+      stars.push({
+        x: Math.random() * 440,
+        y: Math.random() * (groundY - 80),
+        size: 1 + Math.random() * 2,
+        twinkleOffset: Math.random() * Math.PI * 2
+      });
+    }
+
+    function createDust(x, y) {
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          x: x + Math.random() * 8,
+          y: y + Math.random() * 4,
+          vx: -(speed * 0.4) - Math.random() * 1.5,
+          vy: -Math.random() * 1.2,
+          alpha: 0.7,
+          size: 3 + Math.random() * 3
+        });
+      }
+    }
 
     function resetGame() {
       taxa.y = groundY - taxa.h;
       taxa.vy = 0;
       taxa.segments = 2;
-      taxa.isGrounded = true;
-      sausageCount = 0;
-      speed = 4;
+      taxa.jumpsLeft = 2;
+      speed = 4.2;
+      bonesCollected = 0;
+      shieldTimer = 0;
       items = [];
+      particles = [];
       frame = 0;
       updateUI();
     }
 
     function updateUI() {
-      const currentLen = Math.floor(taxa.segments * 0.5);
-      lengthVal.textContent = currentLen;
-      if (currentLen > bestScore) {
-        bestScore = currentLen;
+      const curLen = Math.floor(taxa.segments * 0.5);
+      lengthVal.textContent = curLen;
+      if (curLen > bestScore) {
+        bestScore = curLen;
         localStorage.setItem('taxa_runner_best', bestScore);
         bestVal.textContent = bestScore;
       }
     }
 
-    function jump() {
+    function handleJump() {
       if (!isPlaying) return;
       initAudio();
-      if (taxa.isGrounded) {
-        taxa.vy = taxa.jumpStrength;
-        taxa.isGrounded = false;
-        playTone(380, 0.12, 'square');
-        haptic('impact');
+
+      if (taxa.jumpsLeft > 0) {
+        const isDouble = (taxa.jumpsLeft === 1);
+        taxa.vy = isDouble ? taxa.jumpForce * 0.95 : taxa.jumpForce;
+        taxa.jumpsLeft--;
+        soundJump(isDouble);
+        haptic(isDouble ? 'heavy' : 'impact');
+        createDust(taxa.x - (taxa.segments * taxa.segmentLen), groundY);
       }
     }
 
-    // Слушатели клика/тапа для прыжка
     canvas.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      jump();
+      handleJump();
     });
 
-    function spawnObjects() {
-      // Спавн сосисок
-      if (frame % 85 === 0) {
+    function spawnItems() {
+      // 1. Сосиски
+      if (frame % 80 === 0) {
         items.push({
           type: 'sausage',
           x: canvas.width + 20,
-          y: groundY - 30 - Math.random() * 55,
+          y: groundY - 32 - Math.random() * 65,
           w: 24,
           h: 14,
           icon: '🌭'
         });
       }
 
-      // Спавн препятствий (забор или кот)
-      if (frame % 150 === 0 && frame > 40) {
-        const isCat = Math.random() > 0.5;
+      // 2. Косточка щита
+      if (frame % 380 === 0 && Math.random() > 0.4) {
         items.push({
-          type: 'obstacle',
+          type: 'bone',
           x: canvas.width + 30,
-          y: groundY - 32,
-          w: 26,
-          h: 30,
-          icon: isCat ? '🐱' : '🪵'
+          y: groundY - 70 - Math.random() * 40,
+          w: 24,
+          h: 20,
+          icon: '🦴'
         });
+      }
+
+      // 3. Препятствия
+      if (frame % 140 === 0 && frame > 60) {
+        const rand = Math.random();
+        if (rand < 0.4) {
+          items.push({ type: 'obs', x: canvas.width + 30, y: groundY - 30, w: 26, h: 30, icon: '🪵' });
+        } else if (rand < 0.75) {
+          items.push({ type: 'obs', x: canvas.width + 30, y: groundY - 32, w: 28, h: 32, icon: '🐱' });
+        } else {
+          items.push({ type: 'obs', x: canvas.width + 30, y: groundY - 75, w: 28, h: 26, icon: '🦅' });
+        }
       }
     }
 
     function gameOver() {
       isPlaying = false;
-      playTone(180, 0.35, 'sawtooth');
+      soundHit();
       haptic('error');
 
-      overlayTitle.textContent = 'Ой! Столкновение 💥';
-      overlayDesc.innerHTML = `Твоя такса выросла до <b>${Math.floor(taxa.segments * 0.5)} м</b>!<br>Собрано сосисок: <b>${sausageCount}</b> шт.`;
+      overlayTitle.textContent = 'Ой! Споткнулся 💥';
+      overlayDesc.innerHTML = `Твоя такса выросла до <b>${Math.floor(taxa.segments * 0.5)} м</b>!<br>Косточек собрано: <b>${bonesCollected}</b> 🦴`;
       document.getElementById('start-btn').textContent = 'ЕЩЁ РАЗ';
       overlay.classList.remove('hidden');
     }
@@ -312,38 +399,60 @@
       if (!isPlaying) return;
       frame++;
 
+      if (shieldTimer > 0) shieldTimer--;
+
+      // Обновление индикатора день/ночь в шапке
+      const cycleProg = (frame % DAY_CYCLE_FRAMES) / DAY_CYCLE_FRAMES;
+      const isNight = cycleProg > 0.45 && cycleProg < 0.95;
+      timeVal.textContent = isNight ? '🌙 Ночь' : '☀️ День';
+
       // Физика прыжка
       taxa.vy += taxa.gravity;
       taxa.y += taxa.vy;
+
       if (taxa.y >= groundY - taxa.h) {
         taxa.y = groundY - taxa.h;
         taxa.vy = 0;
-        taxa.isGrounded = true;
+        taxa.jumpsLeft = 2;
+        if (frame % 6 === 0) {
+          createDust(taxa.x - (taxa.segments * taxa.segmentLen) + 10, groundY - 2);
+        }
       }
 
-      spawnObjects();
+      // Облака
+      clouds.forEach(c => {
+        c.x -= c.s * 0.8;
+        if (c.x < -60) c.x = canvas.width + 40;
+      });
 
-      // Движение и коллизии
+      // Частицы пыли
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.025;
+        if (p.alpha <= 0) particles.splice(i, 1);
+      }
+
+      spawnItems();
+
+      // Движение объектов и коллизии
       for (let i = items.length - 1; i >= 0; i--) {
         const obj = items[i];
         obj.x -= speed;
 
-        // Коллизия с сосиской
-        if (obj.type === 'sausage') {
-          const taxaFullWidth = taxa.baseW + (taxa.segments * taxa.bodySegmentLen);
-          const taxaLeft = taxa.x - (taxa.segments * taxa.bodySegmentLen);
+        const taxaTailX = taxa.x - (taxa.segments * taxa.segmentLen);
 
+        if (obj.type === 'sausage') {
           if (
             taxa.x + taxa.baseW > obj.x &&
-            taxaLeft < obj.x + obj.w &&
+            taxaTailX < obj.x + obj.w &&
             taxa.y + taxa.h > obj.y &&
             taxa.y < obj.y + obj.h
           ) {
-            // Съел сосиску
-            sausageCount++;
-            taxa.segments += 1; // Удлиняем туловище!
-            speed = Math.min(8.5, 4 + taxa.segments * 0.15); // ускоряем бег
-            playTone(660, 0.1, 'sine');
+            taxa.segments++;
+            speed = Math.min(9.0, 4.2 + taxa.segments * 0.12);
+            soundEat(false);
             haptic('impact');
             items.splice(i, 1);
             updateUI();
@@ -351,85 +460,218 @@
           }
         }
 
-        // Коллизия с препятствием (хрупкая зона: голова и передние лапы)
-        if (obj.type === 'obstacle') {
-          const taxaHeadX = taxa.x + 10;
+        if (obj.type === 'bone') {
           if (
-            taxaHeadX + 20 > obj.x + 4 &&
-            taxaHeadX < obj.x + obj.w - 4 &&
-            taxa.y + taxa.h > obj.y + 6
+            taxa.x + taxa.baseW > obj.x &&
+            taxaTailX < obj.x + obj.w &&
+            taxa.y + taxa.h > obj.y &&
+            taxa.y < obj.y + obj.h
           ) {
-            gameOver();
-            return;
+            bonesCollected++;
+            shieldTimer = 300;
+            soundEat(true);
+            haptic('success');
+            items.splice(i, 1);
+            updateUI();
+            continue;
           }
         }
 
-        // Удаление ушедших за экран объектов
-        if (obj.x < -60) {
-          items.splice(i, 1);
+        if (obj.type === 'obs') {
+          const hitHeadX = taxa.x + 8;
+          if (
+            hitHeadX + 22 > obj.x + 4 &&
+            hitHeadX < obj.x + obj.w - 4 &&
+            taxa.y + taxa.h > obj.y + 6 &&
+            taxa.y < obj.y + obj.h - 4
+          ) {
+            if (shieldTimer > 0) {
+              shieldTimer = 0;
+              soundHit();
+              haptic('heavy');
+              items.splice(i, 1);
+              continue;
+            } else {
+              gameOver();
+              return;
+            }
+          }
         }
+
+        if (obj.x < -60) items.splice(i, 1);
       }
+    }
+
+    // Вспомогательная функция для интерполяции цветов
+    function interpolateColor(color1, color2, factor) {
+      const result = color1.slice();
+      for (let i = 0; i < 3; i++) {
+        result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+      }
+      return `rgb(${result[0]}, ${result[1]}, ${result[2]})`;
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Земля / газон
-      ctx.fillStyle = '#27ae60';
+      // --- РАСЧЁТ ЦИКЛА ДЕНЬ / НОЧЬ ---
+      const cycle = (frame % DAY_CYCLE_FRAMES) / DAY_CYCLE_FRAMES; // 0.0 -> 1.0
+      // 0 = полдень, 0.5 = полночь
+      const nightFactor = Math.sin(cycle * Math.PI); // 0 (день) до 1 (ночь)
+
+      // Цвета неба
+      const dayTop = [70, 140, 240];
+      const dayBottom = [170, 215, 255];
+      const nightTop = [8, 12, 30];
+      const nightBottom = [24, 32, 60];
+
+      const curSkyTop = interpolateColor(dayTop, nightTop, nightFactor);
+      const curSkyBottom = interpolateColor(dayBottom, nightBottom, nightFactor);
+
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+      skyGrad.addColorStop(0, curSkyTop);
+      skyGrad.addColorStop(1, curSkyBottom);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, canvas.width, groundY);
+
+      // ЗВЁЗДЫ (видны ночью)
+      if (nightFactor > 0.25) {
+        const starAlpha = Math.min(1, (nightFactor - 0.25) * 1.5);
+        stars.forEach(st => {
+          const twinkle = 0.5 + 0.5 * Math.sin(frame * 0.08 + st.twinkleOffset);
+          ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha * twinkle})`;
+          ctx.beginPath();
+          ctx.arc(st.x, st.y, st.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // СОЛНЦЕ И ЛУНА
+      const celestialAngle = cycle * Math.PI * 2 - Math.PI / 2;
+      const celestialRadius = 150;
+      const centerX = canvas.width / 2;
+      const centerY = groundY - 40;
+
+      // Солнце
+      const sunX = centerX + Math.cos(celestialAngle) * celestialRadius;
+      const sunY = centerY + Math.sin(celestialAngle) * 90;
+      if (sunY < groundY + 20) {
+        ctx.fillStyle = '#f59e0b';
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0; // Сброс тени
+      }
+
+      // Луна
+      const moonX = centerX + Math.cos(celestialAngle + Math.PI) * celestialRadius;
+      const moonY = centerY + Math.sin(celestialAngle + Math.PI) * 90;
+      if (moonY < groundY + 20) {
+        ctx.fillStyle = '#e2e8f0';
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(moonX, moonY, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Эффект серпа луны
+        ctx.fillStyle = curSkyTop;
+        ctx.beginPath();
+        ctx.arc(moonX + 5, moonY - 3, 11, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ОБЛАКА
+      const cloudAlpha = 0.25 - (nightFactor * 0.15);
+      ctx.fillStyle = `rgba(255, 255, 255, ${cloudAlpha})`;
+      clouds.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 22, 0, Math.PI * 2);
+        ctx.arc(c.x + 18, c.y - 8, 28, 0, Math.PI * 2);
+        ctx.arc(c.x + 36, c.y, 20, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // ЗЕМЛЯ (темнеет ночью)
+      const dayGrass = [34, 197, 94];
+      const nightGrass = [15, 80, 42];
+      ctx.fillStyle = interpolateColor(dayGrass, nightGrass, nightFactor);
       ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
-      // Декоративная полоса грунта
-      ctx.fillStyle = '#1e824c';
-      ctx.fillRect(0, groundY + 8, canvas.width, 4);
+      // Полоска грунта
+      const daySoil = [22, 163, 74];
+      const nightSoil = [9, 58, 30];
+      ctx.fillStyle = interpolateColor(daySoil, nightSoil, nightFactor);
+      ctx.fillRect(0, groundY + 8, canvas.width, 5);
 
-      // Отрисовка сосисок и препятствий
-      ctx.font = '22px sans-serif';
+      // Пыль из-под лап
+      particles.forEach(p => {
+        ctx.fillStyle = `rgba(200, 200, 200, ${p.alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Объекты (сосиски, бонусы, враги)
+      ctx.font = '24px sans-serif';
       ctx.textAlign = 'center';
       for (const obj of items) {
         ctx.fillText(obj.icon, obj.x + obj.w / 2, obj.y + obj.h - 2);
       }
 
-      // Отрисовка Таксы
+      // ТАКСА
       const bodyY = taxa.y + 4;
       const bodyH = 20;
-      const segmentW = taxa.bodySegmentLen;
+      const segmentW = taxa.segmentLen;
       const totalBodyLen = taxa.segments * segmentW;
 
-      // 1. Длинное коричневое туловище
-      ctx.fillStyle = '#3d2314'; // Тёмно-коричневый
+      // Аура щита
+      if (shieldTimer > 0) {
+        ctx.save();
+        ctx.strokeStyle = `rgba(16, 185, 129, ${0.4 + Math.sin(frame * 0.2) * 0.3})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(taxa.x - totalBodyLen - 8, bodyY - 10, totalBodyLen + 40, bodyH + 26, 16);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Туловище
+      ctx.fillStyle = '#422415';
       ctx.beginPath();
       ctx.roundRect(taxa.x - totalBodyLen, bodyY, totalBodyLen + 15, bodyH, 10);
       ctx.fill();
 
       // Ошейник
-      ctx.fillStyle = '#e74c3c';
+      ctx.fillStyle = '#ef4444';
       ctx.fillRect(taxa.x + 10, bodyY + 2, 5, bodyH - 4);
 
-      // 2. Лапы (анимируются при беге)
-      const legOffset = Math.sin(frame * 0.35) * 5;
-      ctx.strokeStyle = '#2b180d';
+      // Лапы
+      const legRun = Math.sin(frame * 0.4) * 6;
+      ctx.strokeStyle = '#2d180e';
       ctx.lineWidth = 4;
       ctx.lineCap = 'round';
 
-      // Передние лапы
       ctx.beginPath();
       ctx.moveTo(taxa.x + 8, bodyY + bodyH);
-      ctx.lineTo(taxa.x + 8 + (taxa.isGrounded ? legOffset : -3), bodyY + bodyH + 9);
+      ctx.lineTo(taxa.x + 8 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 9);
       ctx.stroke();
 
-      // Задние лапы (у самого хвоста)
       ctx.beginPath();
       ctx.moveTo(taxa.x - totalBodyLen + 6, bodyY + bodyH);
-      ctx.lineTo(taxa.x - totalBodyLen + 6 - (taxa.isGrounded ? legOffset : 3), bodyY + bodyH + 9);
+      ctx.lineTo(taxa.x - totalBodyLen + 6 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 9);
       ctx.stroke();
 
-      // Хвостик
+      // Хвост
       ctx.beginPath();
-      ctx.moveTo(taxa.x - totalBodyLen + 2, bodyY + 5);
-      ctx.lineTo(taxa.x - totalBodyLen - 8, bodyY - 4 + Math.sin(frame * 0.4) * 3);
+      ctx.moveTo(taxa.x - totalBodyLen + 2, bodyY + 6);
+      ctx.lineTo(taxa.x - totalBodyLen - 8, bodyY - 4 + Math.sin(frame * 0.35) * 4);
       ctx.stroke();
 
-      // 3. Мордочка (Фото таксы или стилизованная голова)
+      // Мордочка (Фото)
       const headX = taxa.x + 12;
       const headY = taxa.y - 6;
       const headSize = 34;
@@ -442,9 +684,8 @@
         ctx.drawImage(taxaImg, headX, headY, headSize, headSize);
         ctx.restore();
 
-        // Рамочка вокруг фото мордочки
-        ctx.strokeStyle = '#ffa502';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
         ctx.arc(headX + headSize/2, headY + headSize/2, headSize/2, 0, Math.PI * 2);
         ctx.stroke();
@@ -468,7 +709,6 @@
       haptic('impact');
     }
 
-    // Первичный запуск отрисовки
     resetGame();
     gameLoop();
   </script>
