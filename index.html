@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Такса-Раннер PRO Realistic</title>
+  <title>Такса vs Шиншилла</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -12,6 +12,7 @@
       --accent: #f59e0b;
       --btn: #ef4444;
       --bonus: #10b981;
+      --chinchilla: #a0aec0;
     }
 
     * {
@@ -97,7 +98,7 @@
     }
 
     .overlay h2 {
-      font-size: 2rem;
+      font-size: 1.85rem;
       color: var(--accent);
       margin-bottom: 8px;
       text-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
@@ -146,13 +147,13 @@
     <canvas id="canvas" width="440" height="420"></canvas>
 
     <div class="overlay" id="overlay">
-      <h2 id="overlay-title">🐶 Такса-Раннер REAL</h2>
+      <h2 id="overlay-title">🐶 Побег от Шиншиллы!</h2>
       <p id="overlay-desc">
-        • Тапай для прыжка (есть <b>двойной прыжок</b>!)<br>
-        • Лови настоящие сочные сосиски гриль 🌭<br>
-        • Уворачивайся от пикирующего орла 🦅 и котов 🐱!
+        • Тапай для прыжка (двойной тап = двойной прыжок)<br>
+        • Собирай 🌭 для роста и 🌰 для турбо-ускорения<br>
+        • Не дай рычащей шиншилле 🐭 тебя поймать!
       </p>
-      <button class="btn" id="start-btn" onclick="startGame()">В ИГРУ</button>
+      <button class="btn" id="start-btn" onclick="startGame()">УБЕГАТЬ!</button>
     </div>
   </div>
 
@@ -173,6 +174,7 @@
       if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
     }
 
+    // Аудиодвижок
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -186,8 +188,8 @@
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(isDouble ? 480 : 320, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(isDouble ? 700 : 520, audioCtx.currentTime + 0.12);
+        osc.frequency.setValueAtTime(isDouble ? 460 : 320, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(isDouble ? 680 : 500, audioCtx.currentTime + 0.12);
         gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
         osc.connect(gain);
@@ -197,20 +199,54 @@
       } catch(e){}
     }
 
-    function soundEat(isBone = false) {
+    function soundEat() {
       initAudio();
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = isBone ? 'triangle' : 'sine';
-        osc.frequency.setValueAtTime(isBone ? 600 : 540, audioCtx.currentTime);
-        osc.frequency.setValueAtTime(isBone ? 900 : 720, audioCtx.currentTime + 0.08);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(540, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(740, audioCtx.currentTime + 0.08);
         gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.18);
+      } catch(e){}
+    }
+
+    // Процедурный синтез рычания / сердитого шипения шиншиллы
+    function soundChinchillaGrowl() {
+      initAudio();
+      try {
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const mod = audioCtx.createOscillator();
+        const modGain = audioCtx.createGain();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(95, t);
+        osc.frequency.linearRampToValueAtTime(65, t + 0.35);
+
+        // Частотная модуляция для хриплого рычания
+        mod.type = 'square';
+        mod.frequency.setValueAtTime(38, t);
+        modGain.gain.setValueAtTime(60, t);
+        mod.connect(osc.frequency);
+
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.linearRampToValueAtTime(0.28, t + 0.15);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        mod.start(t);
+        osc.start(t);
+        mod.stop(t + 0.35);
+        osc.stop(t + 0.35);
       } catch(e){}
     }
 
@@ -221,8 +257,8 @@
         const gain = audioCtx.createGain();
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(260, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(90, audioCtx.currentTime + 0.28);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.28);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.28);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -241,7 +277,7 @@
     const timeVal = document.getElementById('time-val');
     const bestVal = document.getElementById('best-val');
 
-    let bestScore = parseInt(localStorage.getItem('taxa_runner_best') || '1');
+    let bestScore = parseInt(localStorage.getItem('taxa_chinchilla_best') || '1');
     bestVal.textContent = bestScore;
 
     const taxaImg = new Image();
@@ -251,8 +287,7 @@
     let frame = 0;
     const groundY = 345;
     let speed = 4.2;
-    let bonesCollected = 0;
-    let shieldTimer = 0;
+    let boostTimer = 0;
 
     const DAY_CYCLE_FRAMES = 1200;
 
@@ -306,8 +341,7 @@
       taxa.segments = 2;
       taxa.jumpsLeft = 2;
       speed = 4.2;
-      bonesCollected = 0;
-      shieldTimer = 0;
+      boostTimer = 0;
       items = [];
       particles = [];
       frame = 0;
@@ -319,7 +353,7 @@
       lengthVal.textContent = curLen;
       if (curLen > bestScore) {
         bestScore = curLen;
-        localStorage.setItem('taxa_runner_best', bestScore);
+        localStorage.setItem('taxa_chinchilla_best', bestScore);
         bestVal.textContent = bestScore;
       }
     }
@@ -345,7 +379,7 @@
 
     function spawnItems() {
       // 1. Сосиски
-      if (frame % 80 === 0) {
+      if (frame % 75 === 0) {
         items.push({
           type: 'sausage',
           x: canvas.width + 20,
@@ -355,35 +389,36 @@
         });
       }
 
-      // 2. Косточка щита
-      if (frame % 380 === 0 && Math.random() > 0.4) {
+      // 2. Орешек (турбо-ускорение)
+      if (frame % 320 === 0 && Math.random() > 0.3) {
         items.push({
-          type: 'bone',
+          type: 'nut',
           x: canvas.width + 30,
-          y: groundY - 70 - Math.random() * 40,
-          w: 26,
-          h: 16
+          y: groundY - 65 - Math.random() * 40,
+          w: 24,
+          h: 24
         });
       }
 
-      // 3. Препятствия
-      if (frame % 140 === 0 && frame > 60) {
-        const rand = Math.random();
-        if (rand < 0.4) {
-          items.push({ type: 'log', x: canvas.width + 30, y: groundY - 26, w: 32, h: 26 });
-        } else if (rand < 0.72) {
-          items.push({ type: 'cat', x: canvas.width + 30, y: groundY - 32, w: 30, h: 32 });
-        } else {
-          // Орёл в воздухе с собственной анимацией покачивания
-          items.push({ 
-            type: 'eagle', 
-            x: canvas.width + 40, 
-            y: groundY - 95 - Math.random() * 30, 
-            w: 48, 
-            h: 30,
-            baseY: groundY - 95 - Math.random() * 30
-          });
-        }
+      // 3. Бревно
+      if (frame % 160 === 0 && frame > 40) {
+        items.push({ type: 'log', x: canvas.width + 30, y: groundY - 26, w: 34, h: 26 });
+      }
+
+      // 4. Нападающая ШИНШИЛЛА (на земле или сверху)
+      if (frame % 190 === 0 && frame > 60) {
+        const isFlying = Math.random() > 0.5;
+        items.push({
+          type: 'chinchilla',
+          x: canvas.width + 35,
+          y: isFlying ? groundY - 85 - Math.random() * 25 : groundY - 34,
+          w: 38,
+          h: 34,
+          isFlying: isFlying,
+          baseY: isFlying ? groundY - 90 : groundY - 34
+        });
+        soundChinchillaGrowl();
+        haptic('heavy');
       }
     }
 
@@ -392,9 +427,9 @@
       soundHit();
       haptic('error');
 
-      overlayTitle.textContent = 'Ой! Столкновение 💥';
-      overlayDesc.innerHTML = `Твоя такса выросла до <b>${Math.floor(taxa.segments * 0.5)} м</b>!<br>Косточек собрано: <b>${bonesCollected}</b> 🦴`;
-      document.getElementById('start-btn').textContent = 'ЕЩЁ РАЗ';
+      overlayTitle.textContent = 'Шиншилла поймала таксу! 🐭💥';
+      overlayDesc.innerHTML = `Такса успела вырасти до <b>${Math.floor(taxa.segments * 0.5)} м</b>!<br>Берегись рычания шиншиллы в следующий раз!`;
+      document.getElementById('start-btn').textContent = 'ПОПРОБОВАТЬ СНОВА';
       overlay.classList.remove('hidden');
     }
 
@@ -402,7 +437,7 @@
       if (!isPlaying) return;
       frame++;
 
-      if (shieldTimer > 0) shieldTimer--;
+      if (boostTimer > 0) boostTimer--;
 
       const cycleProg = (frame % DAY_CYCLE_FRAMES) / DAY_CYCLE_FRAMES;
       const isNight = cycleProg > 0.45 && cycleProg < 0.95;
@@ -435,12 +470,14 @@
 
       spawnItems();
 
+      const currentSpeed = boostTimer > 0 ? speed * 1.5 : speed;
+
       for (let i = items.length - 1; i >= 0; i--) {
         const obj = items[i];
-        obj.x -= speed;
+        obj.x -= currentSpeed;
 
-        if (obj.type === 'eagle') {
-          obj.y = obj.baseY + Math.sin(frame * 0.08) * 12;
+        if (obj.type === 'chinchilla' && obj.isFlying) {
+          obj.y = obj.baseY + Math.sin(frame * 0.12) * 15;
         }
 
         const taxaTailX = taxa.x - (taxa.segments * taxa.segmentLen);
@@ -453,8 +490,8 @@
             taxa.y < obj.y + obj.h
           ) {
             taxa.segments++;
-            speed = Math.min(9.0, 4.2 + taxa.segments * 0.12);
-            soundEat(false);
+            speed = Math.min(8.8, 4.2 + taxa.segments * 0.12);
+            soundEat();
             haptic('impact');
             items.splice(i, 1);
             updateUI();
@@ -462,24 +499,22 @@
           }
         }
 
-        if (obj.type === 'bone') {
+        if (obj.type === 'nut') {
           if (
             taxa.x + taxa.baseW > obj.x &&
             taxaTailX < obj.x + obj.w &&
             taxa.y + taxa.h > obj.y &&
             taxa.y < obj.y + obj.h
           ) {
-            bonesCollected++;
-            shieldTimer = 300;
-            soundEat(true);
+            boostTimer = 220; // ускорение
+            soundEat();
             haptic('success');
             items.splice(i, 1);
-            updateUI();
             continue;
           }
         }
 
-        if (obj.type === 'log' || obj.type === 'cat' || obj.type === 'eagle') {
+        if (obj.type === 'log' || obj.type === 'chinchilla') {
           const hitHeadX = taxa.x + 8;
           if (
             hitHeadX + 24 > obj.x + 4 &&
@@ -487,8 +522,8 @@
             taxa.y + taxa.h > obj.y + 4 &&
             taxa.y < obj.y + obj.h - 4
           ) {
-            if (shieldTimer > 0) {
-              shieldTimer = 0;
+            if (boostTimer > 0) {
+              // В режиме турбо такса сбивает шиншиллу/бревно
               soundHit();
               haptic('heavy');
               items.splice(i, 1);
@@ -512,14 +547,105 @@
       return `rgb(${result[0]}, ${result[1]}, ${result[2]})`;
     }
 
-    // --- РЕАЛИСТИЧНАЯ ОТРИСОВКА ОБЪЕКТОВ ---
+    // --- ОТРИСОВКА РЕАЛИСТИЧНОЙ ШИНШИЛЛЫ ---
+    function drawRealisticChinchilla(x, y, w, h, isFlying) {
+      ctx.save();
+      const jumpBob = isFlying ? 0 : Math.abs(Math.sin(frame * 0.3)) * 6;
+      ctx.translate(x + w / 2, y + h / 2 - jumpBob);
+
+      // Пушистый длинный хвост дугой вверх
+      ctx.strokeStyle = '#8d99ae';
+      ctx.lineWidth = 7;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(10, 6);
+      ctx.quadraticCurveTo(24, -4, 20, -16);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#d0d6df';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(10, 6);
+      ctx.quadraticCurveTo(24, -4, 20, -16);
+      ctx.stroke();
+
+      // Круглое пушистое тело
+      const furGrad = ctx.createRadialGradient(-2, 0, 4, 0, 0, 16);
+      furGrad.addColorStop(0, '#edf2f7');
+      furGrad.addColorStop(0.5, '#a0aec0');
+      furGrad.addColorStop(1, '#4a5568');
+      ctx.fillStyle = furGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, 4, 15, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Круглая голова
+      ctx.beginPath();
+      ctx.arc(-8, -2, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Большие круглые ушки шиншиллы
+      ctx.fillStyle = '#718096';
+      ctx.beginPath();
+      ctx.ellipse(-6, -15, 5, 8, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fbb6ce'; // розовая внутренняя часть
+      ctx.beginPath();
+      ctx.ellipse(-6, -15, 2.5, 5, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#718096';
+      ctx.beginPath();
+      ctx.ellipse(2, -14, 5, 8, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fbb6ce';
+      ctx.beginPath();
+      ctx.ellipse(2, -14, 2.5, 5, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Чёрный блестящий глаз бусинка
+      ctx.fillStyle = '#1a202c';
+      ctx.beginPath();
+      ctx.arc(-11, -3, 2.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(-12, -4, 1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Розовый носик
+      ctx.fillStyle = '#f687b3';
+      ctx.beginPath();
+      ctx.arc(-17, 0, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Тонкие длинные усы
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-16, 0);
+      ctx.lineTo(-24, -4);
+      ctx.moveTo(-16, 1);
+      ctx.lineTo(-25, 2);
+      ctx.moveTo(-16, 2);
+      ctx.lineTo(-23, 7);
+      ctx.stroke();
+
+      // Маленькие лапки
+      ctx.fillStyle = '#fbb6ce';
+      ctx.beginPath();
+      ctx.arc(-6, 15, 3, 0, Math.PI * 2);
+      ctx.arc(4, 15, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
 
     function drawRealisticSausage(x, y, w, h) {
       ctx.save();
       ctx.translate(x + w / 2, y + h / 2);
       ctx.rotate(-0.08);
 
-      // Тело сосиски с градиентом жарки
       const grad = ctx.createLinearGradient(0, -h/2, 0, h/2);
       grad.addColorStop(0, '#c0392b');
       grad.addColorStop(0.3, '#d35400');
@@ -531,14 +657,12 @@
       ctx.roundRect(-w/2, -h/2, w, h, 8);
       ctx.fill();
 
-      // Блик сочности сверху
       ctx.strokeStyle = 'rgba(255, 230, 200, 0.45)';
       ctx.lineWidth = 1.8;
       ctx.beginPath();
       ctx.roundRect(-w/2 + 4, -h/2 + 2, w - 8, 3, 2);
       ctx.stroke();
 
-      // Поперечные насечки от гриля
       ctx.strokeStyle = '#4a1712';
       ctx.lineWidth = 2;
       for (let offset = -w/3; offset <= w/3; offset += 9) {
@@ -548,7 +672,6 @@
         ctx.stroke();
       }
 
-      // Хвостики оболочки по краям
       ctx.fillStyle = '#641e16';
       ctx.beginPath();
       ctx.arc(-w/2 - 1, 0, 2.5, 0, Math.PI * 2);
@@ -558,32 +681,27 @@
       ctx.restore();
     }
 
-    function drawRealisticBone(x, y, w, h) {
+    function drawRealisticNut(x, y, w, h) {
       ctx.save();
       ctx.translate(x + w / 2, y + h / 2);
-      const bGrad = ctx.createLinearGradient(0, -h/2, 0, h/2);
-      bGrad.addColorStop(0, '#fffdf7');
-      bGrad.addColorStop(0.5, '#f6e58d');
-      bGrad.addColorStop(1, '#dff9fb');
-
-      ctx.fillStyle = bGrad;
+      // Свечение орешка
+      ctx.shadowColor = '#f59e0b';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#d97706';
       ctx.beginPath();
-      ctx.roundRect(-w/2 + 4, -3, w - 8, 6, 3);
+      ctx.arc(0, 0, 9, 0, Math.PI * 2);
       ctx.fill();
+      ctx.shadowBlur = 0;
 
-      // Шарообразные суставы по краям
+      ctx.fillStyle = '#b45309';
       ctx.beginPath();
-      ctx.arc(-w/2 + 4, -4, 4.5, 0, Math.PI * 2);
-      ctx.arc(-w/2 + 4, 4, 4.5, 0, Math.PI * 2);
-      ctx.arc(w/2 - 4, -4, 4.5, 0, Math.PI * 2);
-      ctx.arc(w/2 - 4, 4, 4.5, 0, Math.PI * 2);
+      ctx.arc(0, -3, 8, Math.PI, 0);
       ctx.fill();
       ctx.restore();
     }
 
     function drawRealisticLog(x, y, w, h) {
       ctx.save();
-      // Кора бревна
       const barkGrad = ctx.createLinearGradient(x, y, x, y + h);
       barkGrad.addColorStop(0, '#5c4033');
       barkGrad.addColorStop(0.5, '#3e2723');
@@ -593,162 +711,16 @@
       ctx.roundRect(x, y, w, h, 6);
       ctx.fill();
 
-      // Боковой срез дерева
       ctx.fillStyle = '#d7ccc8';
       ctx.beginPath();
       ctx.ellipse(x + 5, y + h/2, 5, h/2 - 2, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Годичные кольца на спиле
       ctx.strokeStyle = '#8d6e63';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.ellipse(x + 5, y + h/2, 3, h/4, 0, 0, Math.PI * 2);
       ctx.stroke();
-
-      // Борозды на коре
-      ctx.strokeStyle = '#271711';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(x + 12, y + 4);
-      ctx.lineTo(x + w - 4, y + 5);
-      ctx.moveTo(x + 10, y + h - 5);
-      ctx.lineTo(x + w - 6, y + h - 4);
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawRealisticCat(x, y, w, h) {
-      ctx.save();
-      // Туловище присевшего кота
-      const catGrad = ctx.createLinearGradient(x, y, x, y + h);
-      catGrad.addColorStop(0, '#555');
-      catGrad.addColorStop(0.5, '#333');
-      catGrad.addColorStop(1, '#1a1a1a');
-      ctx.fillStyle = catGrad;
-
-      // Тело
-      ctx.beginPath();
-      ctx.ellipse(x + w/2 + 2, y + h - 10, 12, 10, -0.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Голова
-      ctx.beginPath();
-      ctx.arc(x + 10, y + 10, 9, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Ушки
-      ctx.beginPath();
-      ctx.moveTo(x + 3, y + 6);
-      ctx.lineTo(x + 7, y - 2);
-      ctx.lineTo(x + 11, y + 4);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(x + 10, y + 4);
-      ctx.lineTo(x + 14, y - 2);
-      ctx.lineTo(x + 17, y + 6);
-      ctx.fill();
-
-      // Глаза кота
-      ctx.fillStyle = '#f1c40f';
-      ctx.beginPath();
-      ctx.ellipse(x + 6, y + 10, 2.5, 1.8, 0, 0, Math.PI * 2);
-      ctx.ellipse(x + 12, y + 10, 2.5, 1.8, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.fillRect(x + 5.5, y + 9, 1, 2.5);
-      ctx.fillRect(x + 11.5, y + 9, 1, 2.5);
-
-      // Хвост трубой с изгибом
-      ctx.strokeStyle = '#222';
-      ctx.lineWidth = 3.5;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(x + w - 2, y + h - 8);
-      ctx.quadraticCurveTo(x + w + 8, y + 8, x + w - 2, y + 4);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function drawRealisticEagle(x, y, w, h) {
-      ctx.save();
-      const wingFlap = Math.sin(frame * 0.28) * 12; // анимация маха крыльев
-
-      // 1. Хвост с белыми перьями
-      ctx.fillStyle = '#f5f6fa';
-      ctx.beginPath();
-      ctx.moveTo(x + w - 4, y + 10);
-      ctx.lineTo(x + w + 8, y + 6);
-      ctx.lineTo(x + w + 8, y + 14);
-      ctx.closePath();
-      ctx.fill();
-
-      // 2. Крыло дальнее (верхний мах)
-      ctx.fillStyle = '#3a271d';
-      ctx.beginPath();
-      ctx.moveTo(x + 18, y + 6);
-      ctx.quadraticCurveTo(x + 24, y - 16 + wingFlap, x + 38, y - 22 + wingFlap);
-      ctx.lineTo(x + 28, y + 8);
-      ctx.closePath();
-      ctx.fill();
-
-      // 3. Туловище тёмно-коричневое
-      const bodyGrad = ctx.createLinearGradient(x + 8, y, x + 30, y + 14);
-      bodyGrad.addColorStop(0, '#4a3325');
-      bodyGrad.addColorStop(1, '#2b1d15');
-      ctx.fillStyle = bodyGrad;
-      ctx.beginPath();
-      ctx.ellipse(x + 22, y + 10, 15, 7, -0.15, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 4. Белая голова орла
-      ctx.fillStyle = '#f8f9fa';
-      ctx.beginPath();
-      ctx.ellipse(x + 8, y + 7, 7, 6, -0.1, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 5. Острый желтый хищный клюв
-      ctx.fillStyle = '#f39c12';
-      ctx.beginPath();
-      ctx.moveTo(x + 3, y + 4);
-      ctx.lineTo(x - 5, y + 7);
-      ctx.quadraticCurveTo(x - 2, y + 11, x + 3, y + 10);
-      ctx.closePath();
-      ctx.fill();
-
-      // Глаз орла
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(x + 6, y + 6, 1.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 6. Крыло ближнее (переднее, мощное оперение)
-      const wingGrad = ctx.createLinearGradient(x + 10, y + 8, x + 24, y - 18 + wingFlap);
-      wingGrad.addColorStop(0, '#2b1d15');
-      wingGrad.addColorStop(0.6, '#4a3325');
-      wingGrad.addColorStop(1, '#1b120d');
-      ctx.fillStyle = wingGrad;
-
-      ctx.beginPath();
-      ctx.moveTo(x + 12, y + 10);
-      ctx.quadraticCurveTo(x + 18, y - 18 + wingFlap, x + 32, y - 26 + wingFlap);
-      ctx.lineTo(x + 38, y - 18 + wingFlap);
-      ctx.lineTo(x + 26, y + 12);
-      ctx.closePath();
-      ctx.fill();
-
-      // Перья на кончиках крыла
-      ctx.strokeStyle = '#1b120d';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(x + 32, y - 26 + wingFlap);
-      ctx.lineTo(x + 36, y - 30 + wingFlap);
-      ctx.moveTo(x + 35, y - 22 + wingFlap);
-      ctx.lineTo(x + 40, y - 25 + wingFlap);
-      ctx.stroke();
-
       ctx.restore();
     }
 
@@ -760,16 +732,16 @@
 
       ctx.save();
 
-      // Щит
-      if (shieldTimer > 0) {
-        ctx.strokeStyle = `rgba(16, 185, 129, ${0.45 + Math.sin(frame * 0.2) * 0.35})`;
+      // Эффект турбо-ускорения от ореха
+      if (boostTimer > 0) {
+        ctx.strokeStyle = `rgba(245, 158, 11, ${0.4 + Math.sin(frame * 0.3) * 0.3})`;
         ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.roundRect(taxa.x - totalBodyLen - 12, bodyY - 12, totalBodyLen + 48, bodyH + 30, 18);
+        ctx.roundRect(taxa.x - totalBodyLen - 12, bodyY - 10, totalBodyLen + 46, bodyH + 26, 16);
         ctx.stroke();
       }
 
-      // Хвост таксы (тонкий, слегка изогнутый кверху)
+      // Хвост таксы
       ctx.strokeStyle = '#1d120c';
       ctx.lineWidth = 3.5;
       ctx.lineCap = 'round';
@@ -778,7 +750,7 @@
       ctx.quadraticCurveTo(taxa.x - totalBodyLen - 8, bodyY - 2 + Math.sin(frame * 0.35) * 4, taxa.x - totalBodyLen - 12, bodyY - 6 + Math.sin(frame * 0.35) * 3);
       ctx.stroke();
 
-      // Задние анатомические лапки (с рыжими подпалинами на пальцах)
+      // Задние лапки
       ctx.strokeStyle = '#1f130b';
       ctx.lineWidth = 4;
       ctx.beginPath();
@@ -786,27 +758,19 @@
       ctx.lineTo(taxa.x - totalBodyLen + 6 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 9);
       ctx.stroke();
 
-      // Рыжие коготки/носочки задних лап
-      ctx.strokeStyle = '#a65b29';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(taxa.x - totalBodyLen + 6 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 7);
-      ctx.lineTo(taxa.x - totalBodyLen + 8 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 9);
-      ctx.stroke();
-
-      // ДЛИННОЕ ТЕЛО ТАКСЫ (чёрно-подпалый гладкий окрас)
+      // ТЕЛО ТАКСЫ
       const bodyGrad = ctx.createLinearGradient(0, bodyY, 0, bodyY + bodyH);
-      bodyGrad.addColorStop(0, '#2d1c14'); // Тёмная спинка
-      bodyGrad.addColorStop(0.4, '#1b110b'); // Чёрный перелив
+      bodyGrad.addColorStop(0, '#2d1c14');
+      bodyGrad.addColorStop(0.4, '#1b110b');
       bodyGrad.addColorStop(0.85, '#22140d');
-      bodyGrad.addColorStop(1, '#a65b29'); // Рыжеватый тёплый животик
+      bodyGrad.addColorStop(1, '#a65b29');
 
       ctx.fillStyle = bodyGrad;
       ctx.beginPath();
       ctx.roundRect(taxa.x - totalBodyLen, bodyY, totalBodyLen + 18, bodyH, 10);
       ctx.fill();
 
-      // Передние анатомические лапки
+      // Передние лапки
       ctx.strokeStyle = '#1f130b';
       ctx.lineWidth = 4;
       ctx.beginPath();
@@ -814,23 +778,11 @@
       ctx.lineTo(taxa.x + 10 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 9);
       ctx.stroke();
 
-      // Рыжие носочки передних лап
-      ctx.strokeStyle = '#a65b29';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(taxa.x + 10 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 7);
-      ctx.lineTo(taxa.x + 13 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 9);
-      ctx.stroke();
-
-      // Реалистичный кожаный ошейник
+      // Ошейник
       ctx.fillStyle = '#b71515';
       ctx.fillRect(taxa.x + 12, bodyY + 1, 6, bodyH - 3);
-      ctx.fillStyle = '#f1c40f'; // Медальон
-      ctx.beginPath();
-      ctx.arc(taxa.x + 15, bodyY + bodyH - 1, 2.5, 0, Math.PI * 2);
-      ctx.fill();
 
-      // Голова: фото таксы пользователя (с идеальной посадкой)
+      // Голова таксы (фото)
       const headX = taxa.x + 14;
       const headY = taxa.y - 7;
       const headSize = 35;
@@ -843,31 +795,15 @@
         ctx.drawImage(taxaImg, headX, headY, headSize, headSize);
         ctx.restore();
 
-        // Тонкая естественная окантовка мордочки
         ctx.strokeStyle = '#a65b29';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(headX + headSize/2, headY + headSize/2, headSize/2, 0, Math.PI * 2);
         ctx.stroke();
       } else {
-        // Запасная реалистичная мордочка, если фото ещё не загрузилось
         ctx.fillStyle = '#1c120c';
         ctx.beginPath();
         ctx.ellipse(headX + 16, headY + 16, 14, 10, 0.1, 0, Math.PI * 2);
-        ctx.fill();
-        // Носик
-        ctx.fillStyle = '#a65b29';
-        ctx.beginPath();
-        ctx.ellipse(headX + 26, headY + 18, 6, 4, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(headX + 29, headY + 17, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-        // Ушко
-        ctx.fillStyle = '#140c07';
-        ctx.beginPath();
-        ctx.ellipse(headX + 10, headY + 18, 5, 10, 0.35, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -933,7 +869,6 @@
         ctx.arc(moonX, moonY, 14, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
-
         ctx.fillStyle = curSkyTop;
         ctx.beginPath();
         ctx.arc(moonX + 5, moonY - 3, 11, 0, Math.PI * 2);
@@ -950,7 +885,7 @@
         ctx.fill();
       });
 
-      // Земля и газон
+      // Земля
       const dayGrass = [34, 197, 94];
       const nightGrass = [15, 80, 42];
       ctx.fillStyle = interpolateColor(dayGrass, nightGrass, nightFactor);
@@ -961,7 +896,6 @@
       ctx.fillStyle = interpolateColor(daySoil, nightSoil, nightFactor);
       ctx.fillRect(0, groundY + 8, canvas.width, 5);
 
-      // Пыль из-под лап
       particles.forEach(p => {
         ctx.fillStyle = `rgba(200, 200, 200, ${p.alpha})`;
         ctx.beginPath();
@@ -969,18 +903,16 @@
         ctx.fill();
       });
 
-      // Отрисовка реалистичных объектов
+      // Отрисовка объектов
       for (const obj of items) {
         if (obj.type === 'sausage') {
           drawRealisticSausage(obj.x, obj.y, obj.w, obj.h);
-        } else if (obj.type === 'bone') {
-          drawRealisticBone(obj.x, obj.y, obj.w, obj.h);
+        } else if (obj.type === 'nut') {
+          drawRealisticNut(obj.x, obj.y, obj.w, obj.h);
         } else if (obj.type === 'log') {
           drawRealisticLog(obj.x, obj.y, obj.w, obj.h);
-        } else if (obj.type === 'cat') {
-          drawRealisticCat(obj.x, obj.y, obj.w, obj.h);
-        } else if (obj.type === 'eagle') {
-          drawRealisticEagle(obj.x, obj.y, obj.w, obj.h);
+        } else if (obj.type === 'chinchilla') {
+          drawRealisticChinchilla(obj.x, obj.y, obj.w, obj.h, obj.isFlying);
         }
       }
 
