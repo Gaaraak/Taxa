@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ночной Тыгыдык 3D</title>
+  <title>Silly Sausage Ultra Smooth</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,311 +16,97 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #181926;
+      background: #120814;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-
-    /* Фоновый объемный градиент с референса */
-    #app {
+    #game-container {
       position: relative;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      background: radial-gradient(circle at 50% 35%, #2a2a3f 0%, #161722 100%);
-      padding: 16px 20px 24px 20px;
-      overflow: hidden;
-    }
-
-    /* ВЕРХНИЙ ХЕДЕР (HUD) */
-    .header-row {
-      width: 100%;
-      max-width: 420px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .pill-badge {
-      background: #25263a;
-      border: 1.5px solid #363752;
-      border-radius: 24px;
-      padding: 6px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.12);
-    }
-
-    .clock-badge {
-      color: #ff3366;
-      font-family: monospace;
-      font-weight: 900;
-      font-size: 20px;
-      letter-spacing: 0.5px;
-    }
-    .clock-icon-wrap {
-      width: 22px;
-      height: 22px;
-      background: #6e82a3;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      color: #1a1a2b;
-      font-size: 13px;
-      font-weight: 900;
-      box-shadow: inset 0 2px 3px rgba(0,0,0,0.35);
-    }
-
-    .score-badge {
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 18px;
-    }
-
-    .shop-btn {
-      background: linear-gradient(180deg, #ff9f43 0%, #ee5253 100%);
-      border: 1.5px solid #ffbe76;
-      border-radius: 20px;
-      padding: 8px 16px;
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: 0.6px;
-      display: flex;
       align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(238, 82, 83, 0.45), inset 0 2px 2px rgba(255,255,255,0.4);
-      outline: none;
+      background: radial-gradient(circle at 50% 40%, #291229 0%, #0d040e 100%);
     }
-    .shop-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* ШКАЛЫ ПРОГРЕССА С ОБЪЕМНЫМИ ВДАВЛИВАНИЯМИ */
-    .bars-wrap {
-      width: 100%;
-      max-width: 420px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 10px;
-      z-index: 10;
-    }
-    .bar-pill {
-      background: #25263a;
-      border: 1.5px solid #363752;
-      border-radius: 20px;
-      padding: 6px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.1);
-    }
-    .bar-title {
-      color: #8b9bb2;
-      font-size: 12px;
-      font-weight: 900;
-      width: 95px;
-      letter-spacing: 0.5px;
-    }
-    .groove-track {
-      flex: 1;
-      height: 18px;
-      background: #151624;
-      border-radius: 9px;
-      overflow: hidden;
-      border: 1px solid #2b2c42;
-      box-shadow: inset 0 3px 6px rgba(0,0,0,0.65);
-      position: relative;
-    }
-    #vibe-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #ff416c 0%, #8a2387 50%, #00d2ff 100%);
-      border-radius: 9px;
-      box-shadow: 0 0 12px rgba(0, 210, 255, 0.7);
-      transition: width 0.05s linear;
-    }
-    #rage-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #1dd1a1 0%, #feca57 50%, #ff4757 100%);
-      border-radius: 9px;
-      box-shadow: 0 0 12px rgba(255, 71, 87, 0.7);
-      transition: width 0.05s linear;
+    canvas {
+      display: block;
+      touch-action: none;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
+      border-radius: 12px;
     }
 
-    /* ОСНОВНАЯ 3D-СЦЕНА */
-    #scene-stage {
-      position: relative;
-      width: 100%;
-      max-width: 420px;
-      flex: 1;
+    /* HUD */
+    #hud {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
       display: flex;
-      flex-direction: column;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
       pointer-events: none;
+      z-index: 10;
     }
-
-    /* Верхняя 3D-клетка */
-    .cage-container {
-      position: relative;
-      width: 320px;
-      height: 185px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .cage-svg {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.55));
-    }
-
-    /* Нижняя лежанка с таксой */
-    .doge-container {
-      position: relative;
-      width: 290px;
-      height: 140px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    .doge-svg {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 18px 30px rgba(0,0,0,0.65));
-    }
-
-    /* Летающие 3D Zzz... */
-    .zzz-text {
-      position: absolute;
-      right: 25px;
-      top: -30px;
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 26px;
-      letter-spacing: 2px;
-      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.7));
-      animation: zzzFloat 2.2s infinite ease-in-out;
-      font-family: system-ui;
-    }
-    @keyframes zzzFloat {
-      0%, 100% { transform: translateY(0) rotate(-6deg); opacity: 0.85; }
-      50% { transform: translateY(-10px) rotate(-2deg); opacity: 1; }
-    }
-
-    /* ПУХЛАЯ 3D КНОПКА «ТЫГЫДЫКАТЬ!» */
-    #btn-tap {
-      width: 100%;
-      max-width: 420px;
-      height: 90px;
-      background: linear-gradient(180deg, #ff5e7e 0%, #e0245e 45%, #a01540 100%);
-      border: 3.5px solid #ff85a1;
-      border-radius: 44px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 25px;
-      letter-spacing: 0.5px;
-      box-shadow: 0 16px 30px rgba(0,0,0,0.5), 0 0 35px rgba(255, 94, 126, 0.35), inset 0 4px 6px rgba(255,255,255,0.45);
-      cursor: pointer;
-      z-index: 20;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      transition: transform 0.06s ease, box-shadow 0.06s ease;
-      outline: none;
-    }
-    #btn-tap:active {
-      transform: translateY(4px) scale(0.97);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.65), inset 0 3px 6px rgba(0,0,0,0.35);
-    }
-    #btn-tap span {
-      font-size: 11px;
-      font-weight: 800;
-      opacity: 0.92;
-      letter-spacing: 0.8px;
-      margin-top: 2px;
-      text-transform: uppercase;
-    }
-
-    /* ТРЕВОГА */
-    #alert-box {
-      display: none;
-      position: absolute;
-      top: 48%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #ff1e56;
+    .hud-pill {
+      background: rgba(36, 14, 38, 0.85);
+      border: 2px solid #ff79c6;
       color: #fff;
-      font-size: 21px;
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 14px;
       font-weight: 900;
-      padding: 14px 26px;
-      border-radius: 24px;
-      box-shadow: 0 10px 40px rgba(255, 30, 86, 0.7);
-      animation: panicPulse 0.12s infinite alternate;
-      z-index: 50;
-      pointer-events: none;
-      white-space: nowrap;
-      border: 2px solid #ff7597;
-    }
-    @keyframes panicPulse {
-      0% { transform: translate(-50%, -50%) scale(0.95); }
-      100% { transform: translate(-50%, -50%) scale(1.06); }
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
     }
 
-    /* СКРИМЕР */
-    #scare-screen {
-      display: none;
+    /* Виртуальный D-Pad под палец */
+    #dpad {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ff0033;
-      z-index: 200;
-      pointer-events: none;
-      overflow: hidden;
-      justify-content: center;
+      bottom: 18px;
+      width: 175px;
+      height: 175px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 6px;
+      touch-action: none;
+    }
+    .d-btn {
+      background: rgba(255, 121, 198, 0.2);
+      border: 2px solid #ff79c6;
+      border-radius: 16px;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      display: flex;
       align-items: center;
-      animation: screamFlash 0.07s infinite alternate;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: background 0.05s ease, transform 0.05s ease;
     }
-    @keyframes screamFlash {
-      0% { background: #d00000; }
-      100% { background: #110000; }
+    .d-btn:active {
+      background: #ff79c6;
+      color: #120814;
+      transform: scale(0.92);
     }
-    #scare-svg {
-      width: 380px;
-      height: 380px;
-      animation: scareZoom 0.22s cubic-bezier(0.1, 0.9, 0.2, 1.25) forwards;
-      filter: drop-shadow(0 0 40px #ff0000);
-    }
-    @keyframes scareZoom {
-      0% { transform: scale(0.3) rotate(-8deg); }
-      70% { transform: scale(1.4) rotate(4deg); }
-      100% { transform: scale(1.25) rotate(0deg); }
-    }
+    #btn-up { grid-column: 2; grid-row: 1; }
+    #btn-left { grid-column: 1; grid-row: 2; }
+    #btn-right { grid-column: 3; grid-row: 2; }
+    #btn-down { grid-column: 2; grid-row: 3; }
 
-    /* МОДАЛЬНЫЕ ОКНА */
+    /* Модалки */
     .modal {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 15, 26, 0.88);
-      backdrop-filter: blur(12px);
+      background: rgba(18, 8, 20, 0.88);
+      backdrop-filter: blur(10px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -329,365 +115,91 @@
     }
     .modal.hidden { display: none !important; }
     .card {
-      background: #232338;
-      border: 2px solid #484869;
-      border-radius: 30px;
-      padding: 26px 22px;
+      background: #2b122e;
+      border: 3px solid #ff79c6;
+      border-radius: 26px;
+      padding: 24px 20px;
       width: 100%;
-      max-width: 350px;
+      max-width: 340px;
       text-align: center;
       color: #fff;
-      box-shadow: 0 16px 45px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.1);
-      max-height: 90vh;
-      overflow-y: auto;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.8);
     }
-    .card h1 { font-size: 22px; margin-bottom: 12px; color: #ffbe76; }
+    .card h1 { font-size: 20px; color: #50fa7b; margin-bottom: 12px; }
+    .card ul {
+      text-align: left;
+      font-size: 13px;
+      color: #f8f8f2;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      list-style: none;
+    }
     .main-btn {
       width: 100%;
-      background: linear-gradient(180deg, #ff5e7e 0%, #e0245e 100%);
-      color: #fff;
+      background: linear-gradient(135deg, #50fa7b, #8be9fd);
+      color: #120814;
       border: none;
-      padding: 16px;
-      border-radius: 20px;
-      font-size: 18px;
+      padding: 15px;
+      border-radius: 18px;
+      font-size: 17px;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(224, 36, 94, 0.45), inset 0 2px 2px rgba(255,255,255,0.4);
-      outline: none;
+      box-shadow: 0 6px 20px rgba(80, 250, 123, 0.45);
     }
-    .main-btn:active { transform: scale(0.97); }
-
-    .skin-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #191929;
-      padding: 12px;
-      border-radius: 16px;
-      margin-bottom: 10px;
-      border: 1px solid #33334d;
-    }
-    .skin-info { text-align: left; }
-    .skin-name { font-weight: 800; font-size: 14px; }
-    .skin-cost { font-size: 12px; color: #ffbe76; margin-top: 2px; }
-    .skin-action-btn {
-      padding: 8px 14px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 800;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .skin-action-btn.active { background: #1dd1a1; color: #fff; }
-    .skin-action-btn.buy { background: #ffbe76; color: #171724; }
-    .skin-action-btn.select { background: #54a0ff; color: #fff; }
+    .main-btn:active { transform: scale(0.96); }
   </style>
 </head>
 <body>
 
-<div id="app">
-  <!-- ВЕРХНИЙ ХЕДЕР -->
-  <div class="header-row">
-    <div class="pill-badge clock-badge">
-      <div class="clock-icon-wrap">L</div>
-      <span id="time-val">03:00</span>
-    </div>
-    <div class="pill-badge score-badge">
-      🔥 <span id="score-val">0</span>
-    </div>
-    <button class="shop-btn" id="open-shop">
-      🎁 СКИНИ
-    </button>
+<div id="game-container">
+  <canvas id="stage"></canvas>
+
+  <div id="hud">
+    <div class="hud-pill" id="score-box">🌭 0 / 12</div>
+    <div class="hud-pill" id="cp-box">🚩 СТАРТ</div>
   </div>
 
-  <!-- ШКАЛЫ -->
-  <div class="bars-wrap">
-    <div class="bar-pill">
-      <span class="bar-title">ХАОС (КУРАЖ)</span>
-      <div class="groove-track">
-        <div id="vibe-fill"></div>
-      </div>
-    </div>
-    <div class="bar-pill">
-      <span class="bar-title">ШУМ (ТАКСА)</span>
-      <div class="groove-track">
-        <div id="rage-fill"></div>
-      </div>
-    </div>
+  <div id="dpad">
+    <button class="d-btn" id="btn-up">▲</button>
+    <button class="d-btn" id="btn-left">◀</button>
+    <button class="d-btn" id="btn-right">▶</button>
+    <button class="d-btn" id="btn-down">▼</button>
   </div>
 
-  <!-- ОСНОВНАЯ 3D-СЦЕНА (ОТРИСОВКА В ТОЧНОСТИ КАК НА ФОТО) -->
-  <div id="scene-stage">
-    <!-- КЛЕТКА И ШИНШИЛЛА -->
-    <div class="cage-container">
-      <svg class="cage-svg" viewBox="0 0 340 190">
-        <defs>
-          <!-- Градиенты прутьев и поддона -->
-          <linearGradient id="woodStep" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#f5cd79"/>
-            <stop offset="50%" stop-color="#eccc68"/>
-            <stop offset="100%" stop-color="#c59b27"/>
-          </linearGradient>
-          <linearGradient id="barSheen" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#57606f"/>
-            <stop offset="50%" stop-color="#dff9fb"/>
-            <stop offset="100%" stop-color="#2f3542"/>
-          </linearGradient>
-          <radialGradient id="chinFur" cx="35%" cy="30%" r="65%">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="70%" stop-color="#f1f2f6"/>
-            <stop offset="100%" stop-color="#ced6e0"/>
-          </radialGradient>
-        </defs>
-
-        <!-- Тень поддона -->
-        <ellipse cx="170" cy="180" rx="160" ry="10" fill="rgba(0,0,0,0.4)"/>
-
-        <!-- 3D деревянный брусчатый поддон -->
-        <rect x="10" y="145" width="320" height="30" rx="4" fill="#a47717"/>
-        <!-- Реечные объемные зубцы поддона -->
-        <g fill="url(#woodStep)">
-          <rect x="14" y="145" width="12" height="30" rx="2"/>
-          <rect x="30" y="145" width="12" height="30" rx="2"/>
-          <rect x="46" y="145" width="12" height="30" rx="2"/>
-          <rect x="62" y="145" width="12" height="30" rx="2"/>
-          <rect x="78" y="145" width="12" height="30" rx="2"/>
-          <rect x="94" y="145" width="12" height="30" rx="2"/>
-          <rect x="110" y="145" width="12" height="30" rx="2"/>
-          <rect x="126" y="145" width="12" height="30" rx="2"/>
-          <rect x="142" y="145" width="12" height="30" rx="2"/>
-          <rect x="158" y="145" width="12" height="30" rx="2"/>
-          <rect x="174" y="145" width="12" height="30" rx="2"/>
-          <rect x="190" y="145" width="12" height="30" rx="2"/>
-          <rect x="206" y="145" width="12" height="30" rx="2"/>
-          <rect x="222" y="145" width="12" height="30" rx="2"/>
-          <rect x="238" y="145" width="12" height="30" rx="2"/>
-          <rect x="254" y="145" width="12" height="30" rx="2"/>
-          <rect x="270" y="145" width="12" height="30" rx="2"/>
-          <rect x="286" y="145" width="12" height="30" rx="2"/>
-          <rect x="302" y="145" width="12" height="30" rx="2"/>
-          <rect x="318" y="145" width="10" height="30" rx="2"/>
-        </g>
-        <rect x="10" y="143" width="320" height="4" fill="#f8c291"/>
-
-        <!-- Задний ряд прутьев -->
-        <g stroke="#3d4454" stroke-width="3">
-          <line x1="20" y1="12" x2="20" y2="145"/>
-          <line x1="38" y1="12" x2="38" y2="145"/>
-          <line x1="56" y1="12" x2="56" y2="145"/>
-          <line x1="74" y1="12" x2="74" y2="145"/>
-          <line x1="92" y1="12" x2="92" y2="145"/>
-          <line x1="110" y1="12" x2="110" y2="145"/>
-          <line x1="128" y1="12" x2="128" y2="145"/>
-          <line x1="146" y1="12" x2="146" y2="145"/>
-          <line x1="164" y1="12" x2="164" y2="145"/>
-          <line x1="182" y1="12" x2="182" y2="145"/>
-          <line x1="200" y1="12" x2="200" y2="145"/>
-          <line x1="218" y1="12" x2="218" y2="145"/>
-          <line x1="236" y1="12" x2="236" y2="145"/>
-          <line x1="254" y1="12" x2="254" y2="145"/>
-          <line x1="272" y1="12" x2="272" y2="145"/>
-          <line x1="290" y1="12" x2="290" y2="145"/>
-          <line x1="308" y1="12" x2="308" y2="145"/>
-          <line x1="326" y1="12" x2="326" y2="145"/>
-        </g>
-
-        <!-- 3D БЕГОВОЕ КОЛЕСО -->
-        <g id="wheel-rotor" transform="translate(115, 88)">
-          <!-- Обод -->
-          <circle cx="0" cy="0" r="50" fill="none" stroke="#dfe4ea" stroke-width="7"/>
-          <circle cx="0" cy="0" r="47" fill="none" stroke="#747d8c" stroke-width="1.5"/>
-          <!-- Спицы -->
-          <g stroke="#ced6e0" stroke-width="3">
-            <line x1="0" y1="-50" x2="0" y2="50"/>
-            <line x1="-50" y1="0" x2="50" y2="0"/>
-            <line x1="-35" y1="-35" x2="35" y2="35"/>
-            <line x1="-35" y1="35" x2="35" y2="-35"/>
-          </g>
-          <circle cx="0" cy="0" r="7" fill="#f1f2f6"/>
-        </g>
-
-        <!-- ПУШИСТАЯ БЕЛАЯ 3D-ШИНШИЛЛА (КАК НА КАРТИНКЕ) -->
-        <g id="chinchilla-mesh" transform="translate(115, 96)">
-          <!-- Хвост -->
-          <ellipse cx="-18" cy="-8" rx="8" ry="14" transform="rotate(-20 -18 -8)" fill="#f1f2f6" stroke="#ced6e0" stroke-width="1.5"/>
-          <!-- Тело-шарик -->
-          <circle cx="0" cy="0" r="21" fill="url(#chinFur)"/>
-          <!-- Ушки -->
-          <circle cx="-10" cy="-18" r="8" fill="#f1f2f6"/>
-          <circle cx="-10" cy="-18" r="4.5" fill="#ffb8b8"/>
-          <circle cx="10" cy="-18" r="8" fill="#f1f2f6"/>
-          <circle cx="10" cy="-18" r="4.5" fill="#ffb8b8"/>
-          <!-- Голубые аниме-глаза с референса -->
-          <ellipse cx="6" cy="-3" rx="4.5" ry="4.5" fill="#00d2ff"/>
-          <circle cx="7.5" cy="-4.5" r="1.8" fill="#ffffff"/>
-          <circle cx="5" cy="-2" r="0.8" fill="#ffffff"/>
-          <!-- Румянец -->
-          <ellipse cx="12" cy="4" rx="4" ry="2.5" fill="rgba(255, 121, 121, 0.5)"/>
-          <ellipse cx="-2" cy="4" rx="4" ry="2.5" fill="rgba(255, 121, 121, 0.5)"/>
-          <!-- Розовые лапки -->
-          <ellipse cx="-5" cy="18" rx="3.5" ry="3" fill="#ffb8b8"/>
-          <ellipse cx="5" cy="18" rx="3.5" ry="3" fill="#ffb8b8"/>
-        </g>
-
-        <!-- Передний ряд металлических прутьев -->
-        <g stroke="url(#barSheen)" stroke-width="4">
-          <line x1="20" y1="8" x2="20" y2="145"/>
-          <line x1="38" y1="8" x2="38" y2="145"/>
-          <line x1="56" y1="8" x2="56" y2="145"/>
-          <line x1="74" y1="8" x2="74" y2="145"/>
-          <line x1="92" y1="8" x2="92" y2="145"/>
-          <line x1="110" y1="8" x2="110" y2="145"/>
-          <line x1="128" y1="8" x2="128" y2="145"/>
-          <line x1="146" y1="8" x2="146" y2="145"/>
-          <line x1="164" y1="8" x2="164" y2="145"/>
-          <line x1="182" y1="8" x2="182" y2="145"/>
-          <line x1="200" y1="8" x2="200" y2="145"/>
-          <line x1="218" y1="8" x2="218" y2="145"/>
-          <line x1="236" y1="8" x2="236" y2="145"/>
-          <line x1="254" y1="8" x2="254" y2="145"/>
-          <line x1="272" y1="8" x2="272" y2="145"/>
-          <line x1="290" y1="8" x2="290" y2="145"/>
-          <line x1="308" y1="8" x2="308" y2="145"/>
-          <line x1="326" y1="8" x2="326" y2="145"/>
-          <!-- Верхняя рама -->
-          <line x1="10" y1="8" x2="330" y2="8" stroke-width="7" stroke="#747d8c"/>
-        </g>
-      </svg>
-    </div>
-
-    <!-- ЛЕЖАНКА С ТАКСОЙ И Zzz... -->
-    <div class="doge-container">
-      <!-- Парящие объемные Zzz... -->
-      <div class="zzz-text">z<span style="font-size:32px;">Z</span><span style="font-size:40px;">...</span></div>
-
-      <svg class="doge-svg" viewBox="0 0 300 150">
-        <defs>
-          <!-- Лежанка пухлая -->
-          <radialGradient id="bedShadow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#341a4a"/>
-            <stop offset="100%" stop-color="#1f0c2e"/>
-          </radialGradient>
-          <linearGradient id="bedRing" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#9b5de5"/>
-            <stop offset="50%" stop-color="#7232a8"/>
-            <stop offset="100%" stop-color="#491b70"/>
-          </linearGradient>
-          <!-- Тело таксы глиняное -->
-          <radialGradient id="dogeClay" cx="40%" cy="30%" r="65%">
-            <stop offset="0%" stop-color="#e17036"/>
-            <stop offset="70%" stop-color="#ba531d"/>
-            <stop offset="100%" stop-color="#77300c"/>
-          </radialGradient>
-        </defs>
-
-        <!-- Тень на полу -->
-        <ellipse cx="150" cy="120" rx="135" ry="25" fill="rgba(0,0,0,0.55)"/>
-
-        <!-- Пухлая фиолетовая лежанка-пончик с картинки -->
-        <ellipse cx="150" cy="95" rx="120" ry="38" fill="url(#bedShadow)"/>
-        <!-- Объемный круглый бортик -->
-        <ellipse cx="150" cy="95" rx="122" ry="38" fill="none" stroke="url(#bedRing)" stroke-width="22"/>
-        <ellipse cx="150" cy="85" rx="116" ry="30" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="4"/>
-
-        <!-- СПЯЩАЯ ТАКСА (ТОЧНО КАК НА РЕФЕРЕНСЕ) -->
-        <g id="doge-body-group" transform="translate(142, 90)">
-          <!-- Каплевидное сосисочное тело -->
-          <ellipse cx="-8" cy="-5" rx="66" ry="25" transform="rotate(-4 -8 -5)" fill="url(#dogeClay)"/>
-          <!-- Округлый окорочок задней лапы -->
-          <ellipse cx="-45" cy="4" rx="16" ry="12" fill="#aa4a18"/>
-          <!-- Округлая голова таксы -->
-          <ellipse cx="44" cy="-8" rx="20" ry="14" transform="rotate(12 44 -8)" fill="url(#dogeClay)"/>
-          <!-- Нос -->
-          <ellipse cx="64" cy="-4" rx="13" ry="8" transform="rotate(8 64 -4)" fill="url(#dogeClay)"/>
-          <circle cx="75" cy="-3" r="5" fill="#1e272e"/>
-          <!-- Висячее глиняное ухо -->
-          <ellipse cx="32" cy="4" rx="8" ry="17" transform="rotate(25 32 4)" fill="#682909"/>
-          <!-- Закрытый глаз-дуга -->
-          <path d="M 48 -10 Q 53 -6 58 -10" stroke="#2c1409" stroke-width="2.5" fill="none"/>
-        </g>
-      </svg>
-    </div>
-  </div>
-
-  <!-- ТРЕВОГА ТАКСЫ -->
-  <div id="alert-box">⚠️ ЗАМРИ! ТАКСА СЛЫШИТ! ⚠️</div>
-
-  <!-- НИЖНЯЯ ПУХЛАЯ КНОПКА «ТЫГЫДЫКАТЬ!» -->
-  <button id="btn-tap">
-    ТЫГЫДЫКАТЬ! 🌪️
-    <span>ЖМИ БЫСТРО, НО СТОП НА КРАСНЫЙ!</span>
-  </button>
-
-  <!-- СКРИМЕР ПРИ ПОИМКЕ -->
-  <div id="scare-screen">
-    <svg id="scare-svg" viewBox="0 0 350 350">
-      <ellipse cx="175" cy="160" rx="120" ry="100" fill="#a04015"/>
-      <ellipse cx="120" cy="120" rx="34" ry="34" fill="#fff" stroke="#ff0000" stroke-width="4"/>
-      <ellipse cx="230" cy="120" rx="34" ry="34" fill="#fff" stroke="#ff0000" stroke-width="4"/>
-      <circle cx="120" cy="120" r="14" fill="#ff0000"/>
-      <circle cx="230" cy="120" r="14" fill="#ff0000"/>
-      <circle cx="120" cy="120" r="6" fill="#000"/>
-      <circle cx="230" cy="120" r="6" fill="#000"/>
-      <path d="M 95 185 Q 175 145 255 185 Q 275 285 175 305 Q 75 285 95 185 Z" fill="#110000"/>
-      <polygon points="105,188 120,224 130,190" fill="#fff"/>
-      <polygon points="130,190 145,214 155,190" fill="#fff"/>
-      <polygon points="155,190 170,210 180,190" fill="#fff"/>
-      <polygon points="180,190 195,214 205,190" fill="#fff"/>
-      <polygon points="220,190 235,224 250,188" fill="#fff"/>
-      <ellipse cx="175" cy="165" rx="25" ry="15" fill="#111"/>
-      <text x="175" y="335" font-size="44" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui">БАААВФ!!</text>
-    </svg>
-  </div>
-
-  <!-- МОДАЛКА СТАРТА -->
-  <div id="modal-start" class="modal">
+  <!-- Старт -->
+  <div id="start-modal" class="modal">
     <div class="card">
-      <h1>🐹 НОЧНОЙ ТЫГЫДЫК 3D</h1>
-      <ul style="text-align: left; font-size: 13px; color: #a4b0be; margin-bottom: 20px; line-height: 1.6; list-style: none;">
-        <li>🌙 <b>Тапай розовую кнопку внизу</b>, запускай шиншиллу в колесе!</li>
-        <li>⚡ <b>Заполняй шкалу Хаоса</b>, чтобы активировать Овердрайв.</li>
-        <li>🛑 <b>ЗАМИРАЙ НА КРАСНЫЙ!</b> Если такса проснется — тебя ждет скример!</li>
+      <h1>🌭 SILLY SAUSAGE 60FPS</h1>
+      <ul>
+        <li>↕️ <b>Тяни таксу:</b> жми D-pad внизу или свайпай по экрану.</li>
+        <li>🧱 <b>Цепляйся за стены:</b> пока тело в воздухе, оно тянется как резина!</li>
+        <li>🐭 <b>Шиншилла на спине:</b> собирает сосиски и балансирует на хвосте.</li>
+        <li>⚙️ <b>Опасайся пил:</b> растянутое тело разрезается мгновенно!</li>
       </ul>
-      <button class="main-btn" id="start-game-btn">ПОГНАЛИ ТЫГЫДЫКАТЬ! 🚀</button>
-      <p style="margin-top: 14px; font-size: 12px; color: #747d8c;" id="wallet-text">Всего очков: 0</p>
+      <button class="main-btn" id="start-btn">ПОГНАЛИ ТЯНУТЬСЯ! 🚀</button>
     </div>
   </div>
 
-  <!-- МОДАЛКА МАГАЗИНА -->
-  <div id="modal-shop" class="modal hidden">
+  <!-- Game Over -->
+  <div id="end-modal" class="modal hidden">
     <div class="card">
-      <h1 style="color: #ffbe76;">🎁 ШИНШИЛЛО-ГАРДЕРОБ</h1>
-      <p style="font-size: 13px; color: #a4b0be; margin-bottom: 16px;">Баланс: <b id="shop-coins" style="color: #54a0ff;">0</b> очков</p>
-      <div id="skins-container"></div>
-      <button class="main-btn" id="close-shop" style="margin-top: 10px; background: #33334d;">НАЗАД В ИГРУ</button>
-    </div>
-  </div>
-
-  <!-- МОДАЛКА GAME OVER -->
-  <div id="modal-over" class="modal hidden">
-    <div class="card" style="border-color: #ff4757;">
-      <h1 style="color: #ff4757;">ТАКСА СХВАТИЛА ТЕБЯ! 🐶💥</h1>
-      <p style="font-size: 14px; margin: 10px 0 16px 0; color: #f1f2f6;" id="over-reason"></p>
-      <p style="font-size: 18px; font-weight: 900; margin-bottom: 12px; color: #ffbe76;" id="over-score-txt"></p>
-      <p style="font-size: 13px; color: #2ed573; margin-bottom: 20px;" id="earned-txt"></p>
-      <button class="main-btn" id="restart-game-btn">ЕЩЕ ТЫГЫДЫК 🔄</button>
+      <h1 id="end-title" style="color:#ff5555;">ТЕБЯ РАСПИЛИЛО! ⚙️💥</h1>
+      <p style="font-size: 14px; margin: 10px 0 20px 0;" id="end-desc"></p>
+      <button class="main-btn" id="restart-btn">С ЧЕКПОИНТА 🔄</button>
     </div>
   </div>
 </div>
 
 <script>
 (() => {
-  // --- ЗВУКОВОЙ ДВИЖОК (WEB AUDIO) ---
+  // --- АУДИО (WEB AUDIO API БЕЗ ЗАВИСАНИЙ) ---
   let audioCtx = null;
   function initAudio() {
     if (!audioCtx) {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (AC) audioCtx = new AC();
     }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   }
 
   function playSound(type) {
@@ -699,360 +211,483 @@
       osc.connect(gain);
       gain.connect(audioCtx.destination);
 
-      if (type === 'tap') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(280 + Math.random() * 200, t);
-        osc.frequency.exponentialRampToValueAtTime(80, t + 0.08);
-        gain.gain.setValueAtTime(0.25, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.08);
-        osc.start(t);
-        osc.stop(t + 0.08);
-      } else if (type === 'warn') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(600, t);
+      if (type === 'stretch') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(200, t);
+        osc.frequency.exponentialRampToValueAtTime(360, t + 0.07);
         gain.gain.setValueAtTime(0.2, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.2);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.07);
         osc.start(t);
-        osc.stop(t + 0.2);
-      } else if (type === 'scream') {
+        osc.stop(t + 0.07);
+      } else if (type === 'pull') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(380, t);
+        osc.frequency.exponentialRampToValueAtTime(140, t + 0.12);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.12);
+        osc.start(t);
+        osc.stop(t + 0.12);
+      } else if (type === 'eat') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(420, t);
+        osc.frequency.setValueAtTime(740, t + 0.05);
+        gain.gain.setValueAtTime(0.22, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.1);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      } else if (type === 'cut') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(140, t);
-        osc.frequency.exponentialRampToValueAtTime(30, t + 0.6);
-        gain.gain.setValueAtTime(1.0, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.6);
+        osc.frequency.setValueAtTime(180, t);
+        osc.frequency.exponentialRampToValueAtTime(35, t + 0.35);
+        gain.gain.setValueAtTime(0.7, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
         osc.start(t);
-        osc.stop(t + 0.6);
+        osc.stop(t + 0.35);
       }
     } catch(e) {}
   }
 
-  // --- СКИНЫ ---
-  const SKINS = [
-    { id: 'white', name: 'Белый пушистик 3D ❄️', cost: 0, fill: '#ffffff', ear: '#ffb8b8' },
-    { id: 'grey', name: 'Пепельный колобок', cost: 3000, fill: '#dfe4ea', ear: '#ffa8a8' },
-    { id: 'pink', name: 'Зефирка 🌸', cost: 8000, fill: '#ffccd5', ear: '#ff758f' },
-    { id: 'gold', name: 'Золотой колобок ✨', cost: 20000, fill: '#ffeaa7', ear: '#fdcb6e' }
+  // --- ХОЛСТ И ГЕОМЕТРИЯ СЕТКИ ---
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const TILE = 32;
+  const COLS = 11;
+  const ROWS = 16;
+  const baseW = COLS * TILE;
+  const baseH = ROWS * TILE;
+
+  // Retina / High-DPI масштабирование
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = baseW * dpr;
+  canvas.height = baseH * dpr;
+  canvas.style.width = `${baseW}px`;
+  canvas.style.height = `${baseH}px`;
+  ctx.scale(dpr, dpr);
+
+  // Карта (1: Стена, 0: Пусто, 2: Сосиска, 3: Пила, 4: Чекпоинт)
+  const MAP_DEF = [
+    [1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,1,2,0,0,0,2,1],
+    [1,0,1,0,1,0,1,1,1,0,1],
+    [1,2,1,0,0,0,0,3,1,0,1],
+    [1,0,1,1,1,1,0,0,1,0,1],
+    [1,0,0,0,2,1,1,0,0,0,1],
+    [1,1,1,0,0,0,1,0,1,1,1],
+    [1,4,1,1,3,0,1,0,2,0,1],
+    [1,0,0,0,0,0,0,0,1,0,1],
+    [1,0,1,1,1,0,1,1,1,0,1],
+    [1,2,1,3,0,0,0,3,1,2,1],
+    [1,0,1,0,1,1,1,0,1,0,1],
+    [1,0,0,0,0,2,0,0,0,0,1],
+    [1,1,1,0,1,1,1,0,1,1,1],
+    [1,2,0,0,0,0,0,0,0,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1]
   ];
 
-  let totalScore = parseInt(localStorage.getItem('tygy_wallet_v3') || '0', 10);
-  let unlockedSkins = JSON.parse(localStorage.getItem('tygy_skins_v3') || '["white"]');
-  let currentSkinId = localStorage.getItem('tygy_skin_v3') || 'white';
+  let currentMap = [];
+  let totalSausages = 0;
+  let eatenSausages = 0;
 
-  function saveWallet() {
-    localStorage.setItem('tygy_wallet_v3', totalScore);
-    localStorage.setItem('tygy_skins_v3', JSON.stringify(unlockedSkins));
-    localStorage.setItem('tygy_skin_v3', currentSkinId);
-    document.getElementById('wallet-text').textContent = `Всего очков: ${totalScore}`;
-    document.getElementById('shop-coins').textContent = totalScore;
+  // Сегменты таксы с интерполяцией положения для сверх-плавности
+  let bodyNodes = [];
+  let headDir = { x: 0, y: -1 };
+  let sawRotation = 0;
+  let activeCp = { x: 5, y: 14 };
+  let isRunning = false;
+  let particles = [];
 
-    // Обновляем скин на шиншилле
-    const skin = SKINS.find(s => s.id === currentSkinId) || SKINS[0];
-    const mesh = document.getElementById('chinchilla-mesh');
-    if (mesh) {
-      const bodyCircle = mesh.querySelector('circle');
-      if (bodyCircle) bodyCircle.setAttribute('fill', skin.fill);
+  function initLevel() {
+    currentMap = JSON.parse(JSON.stringify(MAP_DEF));
+    totalSausages = 0;
+    eatenSausages = 0;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (currentMap[r][c] === 2) totalSausages++;
+      }
     }
+    respawn();
   }
 
-  // --- СОСТОЯНИЕ ИГРЫ ---
-  let isRunning = false;
-  let score = 0;
-  let combo = 0;
-  let gameTime = 180;
-  let noise = 0;
-  let vibe = 0;
-  let dogAlertState = 0;
-  let nextAlertIn = 3.0;
-  let alertDuration = 0;
-  let frenzyTimer = 0;
-
-  let wheelAngle = 0;
-  let wheelSpeed = 0;
-  let targetWheelSpeed = 0;
-
-  const vibeFill = document.getElementById('vibe-fill');
-  const rageFill = document.getElementById('rage-fill');
-  const timeVal = document.getElementById('time-val');
-  const scoreVal = document.getElementById('score-val');
-  const alertBox = document.getElementById('alert-box');
-  const scareScreen = document.getElementById('scare-screen');
-  const wheelRotor = document.getElementById('wheel-rotor');
-  const chinMesh = document.getElementById('chinchilla-mesh');
-  const dogeBody = document.getElementById('doge-body-group');
-
-  function resetGame() {
-    score = 0;
-    combo = 0;
-    noise = 0;
-    vibe = 0;
-    frenzyTimer = 0;
-    dogAlertState = 0;
-    nextAlertIn = 2.5 + Math.random() * 2.5;
-    alertDuration = 0;
-    wheelSpeed = 0;
-    targetWheelSpeed = 0;
-    alertBox.style.display = 'none';
-    scareScreen.style.display = 'none';
+  function respawn() {
+    const px = activeCp.x * TILE + TILE / 2;
+    const py = activeCp.y * TILE + TILE / 2;
+    bodyNodes = [{ x: activeCp.x, y: activeCp.y, renderX: px, renderY: py }];
     updateHUD();
   }
 
   function updateHUD() {
-    scoreVal.textContent = Math.floor(score);
-    rageFill.style.width = `${Math.min(noise, 100)}%`;
-    vibeFill.style.width = `${Math.min(vibe, 100)}%`;
-
-    const mins = Math.floor(gameTime / 60);
-    const secs = Math.floor(gameTime % 60);
-    timeVal.textContent = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    document.getElementById('score-box').textContent = `🌭 ${eatenSausages} / ${totalSausages}`;
+    document.getElementById('cp-box').textContent = (activeCp.y < 14) ? '🚩 ЧЕКПОИНТ 1' : '🚩 СТАРТ';
   }
 
-  function vibrate(type) {
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-      window.Telegram.WebApp.HapticFeedback.impactOccurred(type || 'medium');
-    } else if (navigator.vibrate) {
-      navigator.vibrate(type === 'heavy' ? 120 : 30);
+  function canMoveTo(tx, ty) {
+    if (tx < 0 || tx >= COLS || ty < 0 || ty >= ROWS) return false;
+    if (currentMap[ty][tx] === 1) return false;
+    for (let i = 1; i < bodyNodes.length - 1; i++) {
+      if (bodyNodes[i].x === tx && bodyNodes[i].y === ty) return false;
     }
+    return true;
   }
 
-  // --- ТАП КНОПКА ---
-  const btnTap = document.getElementById('btn-tap');
-  let isHolding = false;
+  function isAdjacentSolid(gx, gy) {
+    const checks = [
+      { x: gx, y: gy - 1 },
+      { x: gx, y: gy + 1 },
+      { x: gx - 1, y: gy },
+      { x: gx + 1, y: gy }
+    ];
+    for (const n of checks) {
+      if (n.x < 0 || n.x >= COLS || n.y < 0 || n.y >= ROWS) return true;
+      if (currentMap[n.y][n.x] === 1) return true;
+    }
+    return false;
+  }
 
-  function doTygydyk() {
+  function tryMove(dx, dy) {
     if (!isRunning) return;
     initAudio();
 
-    if (dogAlertState === 2 && frenzyTimer <= 0) {
-      triggerJumpscare('Такса навострила уши и поймала тебя!');
+    const head = bodyNodes[0];
+    const nx = head.x + dx;
+    const ny = head.y + dy;
+
+    if (!canMoveTo(nx, ny)) return;
+
+    headDir = { x: dx, y: dy };
+    // Добавляем сегмент с плавной интерполяцией
+    bodyNodes.unshift({
+      x: nx,
+      y: ny,
+      renderX: head.renderX,
+      renderY: head.renderY
+    });
+    playSound('stretch');
+
+    // Сбор лакомства
+    if (currentMap[ny][nx] === 2) {
+      currentMap[ny][nx] = 0;
+      eatenSausages++;
+      playSound('eat');
+      spawnSparks(nx * TILE + 16, ny * TILE + 16, '#f1fa8c');
+      updateHUD();
+    }
+
+    // Чекпоинт
+    if (currentMap[ny][nx] === 4) {
+      activeCp = { x: nx, y: ny };
+      spawnSparks(nx * TILE + 16, ny * TILE + 16, '#50fa7b');
+      updateHUD();
+    }
+
+    // Столкновение носом с пилой
+    if (currentMap[ny][nx] === 3) {
+      killDoge('Такса наткнулась носом на циркулярную пилу!');
       return;
     }
 
-    combo++;
-    const mult = frenzyTimer > 0 ? 3 : 1;
-    const gain = Math.floor(15 * (1 + Math.min(combo * 0.05, 4)) * mult);
-    score += gain;
-
-    vibe += 3.5;
-    if (vibe >= 100) {
-      vibe = 0;
-      frenzyTimer = 4.0;
-      dogAlertState = 0;
-      alertBox.style.display = 'none';
-      vibrate('heavy');
+    // Закрепление на стене: сжимаем хвост к голове
+    if (isAdjacentSolid(nx, ny) && bodyNodes.length > 1) {
+      bodyNodes = [{
+        x: nx,
+        y: ny,
+        renderX: bodyNodes[0].renderX,
+        renderY: bodyNodes[0].renderY
+      }];
+      playSound('pull');
+      spawnSparks(nx * TILE + 16, ny * TILE + 16, '#ff79c6');
     }
-
-    if (frenzyTimer <= 0) noise += 4.5;
-    targetWheelSpeed += 0.55;
-
-    playSound('tap');
-    vibrate('light');
-    updateHUD();
   }
 
-  btnTap.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    isHolding = true;
-    doTygydyk();
-  }, { passive: false });
-
-  btnTap.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    isHolding = false;
-  }, { passive: false });
-
-  btnTap.addEventListener('mousedown', () => {
-    isHolding = true;
-    doTygydyk();
-  });
-  window.addEventListener('mouseup', () => isHolding = false);
-
-  window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && !e.repeat) doTygydyk();
-  });
-
-  function triggerJumpscare(reason) {
+  function killDoge(reason) {
+    playSound('cut');
     isRunning = false;
-    alertBox.style.display = 'none';
-
-    scareScreen.style.display = 'flex';
-    playSound('scream');
-    vibrate('heavy');
-
-    const earned = Math.floor(score);
-    totalScore += earned;
-    saveWallet();
-
-    setTimeout(() => {
-      scareScreen.style.display = 'none';
-      document.getElementById('over-reason').textContent = reason;
-      document.getElementById('over-score-txt').textContent = `Счёт: ${earned}`;
-      document.getElementById('earned-txt').textContent = `Зачислено в банк: +${earned} (Всего: ${totalScore})`;
-      document.getElementById('modal-over').classList.remove('hidden');
-    }, 1100);
+    document.getElementById('end-desc').textContent = reason;
+    document.getElementById('end-modal').classList.remove('hidden');
   }
 
-  // --- ИГРОВОЙ ЦИКЛ АНИМАЦИИ ---
+  function spawnSparks(x, y, color) {
+    for (let i = 0; i < 8; i++) {
+      particles.push({
+        x: x,
+        y: y,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6,
+        color: color,
+        life: 1.0
+      });
+    }
+  }
+
+  // --- ОБРАБОТКА ВВОДА БЕЗ ЗАДЕРЖКИ (POINTERDOWN) ---
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' || e.key === 'KeyW') tryMove(0, -1);
+    if (e.key === 'ArrowDown' || e.key === 'KeyS') tryMove(0, 1);
+    if (e.key === 'ArrowLeft' || e.key === 'KeyA') tryMove(-1, 0);
+    if (e.key === 'ArrowRight' || e.key === 'KeyD') tryMove(1, 0);
+  });
+
+  const bindPad = (id, dx, dy) => {
+    const el = document.getElementById(id);
+    el.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      tryMove(dx, dy);
+    });
+  };
+  bindPad('btn-up', 0, -1);
+  bindPad('btn-down', 0, 1);
+  bindPad('btn-left', -1, 0);
+  bindPad('btn-right', 1, 0);
+
+  // Свайпы
+  let touchX = 0, touchY = 0;
+  canvas.addEventListener('pointerdown', e => {
+    touchX = e.clientX;
+    touchY = e.clientY;
+  });
+  canvas.addEventListener('pointerup', e => {
+    const dx = e.clientX - touchX;
+    const dy = e.clientY - touchY;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (Math.abs(dx) > 18) tryMove(dx > 0 ? 1 : -1, 0);
+    } else {
+      if (Math.abs(dy) > 18) tryMove(0, dy > 0 ? 1 : -1);
+    }
+  });
+
+  // --- ИГРОВОЙ ЦИКЛ 60–120 FPS ---
   let lastTime = performance.now();
-  let breathePhase = 0;
 
   function loop(now) {
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
 
-    if (isRunning) {
-      gameTime += dt * 0.7;
-      breathePhase += dt * 2.2;
-
-      wheelSpeed += (targetWheelSpeed - wheelSpeed) * 0.15;
-      targetWheelSpeed *= 0.94;
-      wheelAngle += wheelSpeed;
-
-      // Вращение колеса в SVG
-      if (wheelRotor) {
-        wheelRotor.setAttribute('transform', `translate(115, 88) rotate(${wheelAngle * 57.3})`);
-      }
-
-      // Бег шиншиллы (покачивание)
-      if (chinMesh) {
-        const jig = Math.sin(Date.now() * 0.04) * (wheelSpeed * 7 + 1.2);
-        chinMesh.setAttribute('transform', `translate(115, ${96 + jig})`);
-      }
-
-      // Дыхание таксы
-      if (dogeBody) {
-        const breath = Math.sin(breathePhase) * 1.5;
-        dogeBody.setAttribute('transform', `translate(142, ${90 + breath * 0.5}) scale(${1 + breath*0.015})`);
-      }
-
-      if (noise > 0 && frenzyTimer <= 0) {
-        noise -= (dogAlertState === 2 ? 8 : 17) * dt;
-        if (noise < 0) noise = 0;
-      }
-
-      if (frenzyTimer > 0) {
-        frenzyTimer -= dt;
-        if (frenzyTimer <= 0) {
-          frenzyTimer = 0;
-          nextAlertIn = 2.0;
-        }
-      }
-
-      // Реакция таксы
-      if (frenzyTimer <= 0) {
-        if (dogAlertState === 0) {
-          nextAlertIn -= dt;
-          if (nextAlertIn <= 0.8) dogAlertState = 1;
-        } else if (dogAlertState === 1) {
-          nextAlertIn -= dt;
-          if (nextAlertIn <= 0) {
-            dogAlertState = 2;
-            alertDuration = 1.0 + Math.random() * 1.5;
-            alertBox.style.display = 'block';
-            playSound('warn');
-            vibrate('medium');
-          }
-        } else if (dogAlertState === 2) {
-          alertDuration -= dt;
-          if (isHolding || noise > 42) {
-            triggerJumpscare('Такса распахнула глаза и поймала шиншиллу!');
-            return;
-          }
-          if (alertDuration <= 0) {
-            dogAlertState = 0;
-            alertBox.style.display = 'none';
-            nextAlertIn = 2.2 + Math.random() * 2.5;
-            score += 200;
-          }
-        }
-
-        if (noise >= 100) {
-          triggerJumpscare('Шум зашкалил! Такса вскочила!');
-          return;
-        }
-      }
-
-      updateHUD();
-    }
-
+    update(dt);
+    render();
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
 
-  // --- МАГАЗИН И МОДАЛКИ ---
-  const modalShop = document.getElementById('modal-shop');
-  const skinsContainer = document.getElementById('skins-container');
+  function update(dt) {
+    sawRotation += 4.5 * dt;
 
-  function renderShop() {
-    skinsContainer.innerHTML = '';
-    SKINS.forEach(skin => {
-      const isUnlocked = unlockedSkins.includes(skin.id);
-      const isActive = currentSkinId === skin.id;
+    // Плавная интерполяция сегментов тела таксы (LERP)
+    for (let i = 0; i < bodyNodes.length; i++) {
+      const seg = bodyNodes[i];
+      const targetX = seg.x * TILE + TILE / 2;
+      const targetY = seg.y * TILE + TILE / 2;
+      seg.renderX += (targetX - seg.renderX) * 0.35;
+      seg.renderY += (targetY - seg.renderY) * 0.35;
+    }
 
-      const item = document.createElement('div');
-      item.className = 'skin-item';
-      item.innerHTML = `
-        <div class="skin-info">
-          <div class="skin-name" style="color:#fff">${skin.name}</div>
-          <div class="skin-cost">${isUnlocked ? 'В гардеробе' : `Цена: ${skin.cost} очков`}</div>
-        </div>
-      `;
-
-      const btn = document.createElement('button');
-      btn.className = `skin-action-btn ${isActive ? 'active' : (isUnlocked ? 'select' : 'buy')}`;
-      btn.textContent = isActive ? 'ВЫБРАНО' : (isUnlocked ? 'НАДЕТЬ' : 'КУПИТЬ');
-
-      btn.onclick = () => {
-        if (isActive) return;
-        if (isUnlocked) {
-          currentSkinId = skin.id;
-          saveWallet();
-          renderShop();
-        } else {
-          if (totalScore >= skin.cost) {
-            totalScore -= skin.cost;
-            unlockedSkins.push(skin.id);
-            currentSkinId = skin.id;
-            saveWallet();
-            renderShop();
-          } else {
-            alert('Не хватает очков!');
+    // Проверка столкновения натянутого тела с вращающимися пилами
+    if (isRunning && bodyNodes.length > 1) {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (currentMap[r][c] === 3) {
+            const sawX = c * TILE + TILE / 2;
+            const sawY = r * TILE + TILE / 2;
+            for (let i = 0; i < bodyNodes.length; i++) {
+              const seg = bodyNodes[i];
+              if (Math.hypot(sawX - seg.renderX, sawY - seg.renderY) < 16) {
+                killDoge('Растянутую сосиску разрезало пилой!');
+                return;
+              }
+            }
           }
         }
-      };
+      }
+    }
 
-      item.appendChild(btn);
-      skinsContainer.appendChild(item);
-    });
+    // Частицы
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= dt * 2.5;
+      if (p.life <= 0) particles.splice(i, 1);
+    }
   }
 
-  document.getElementById('open-shop').onclick = () => {
-    renderShop();
-    modalShop.classList.remove('hidden');
-  };
-  document.getElementById('close-shop').onclick = () => {
-    modalShop.classList.add('hidden');
-  };
+  // --- ОТРИСОВКА (CANVAS) ---
+  function render() {
+    ctx.clearRect(0, 0, baseW, baseH);
 
-  const modalStart = document.getElementById('modal-start');
-  const modalOver = document.getElementById('modal-over');
-  const btnStart = document.getElementById('start-game-btn');
-  const btnRestart = document.getElementById('restart-game-btn');
+    // 1. Стены и лабиринт
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const type = currentMap[r][c];
+        const px = c * TILE;
+        const py = r * TILE;
 
-  function startGame() {
+        if (type === 1) {
+          // Мясные блоки лабиринта
+          ctx.fillStyle = '#4c1e40';
+          ctx.fillRect(px, py, TILE, TILE);
+          ctx.strokeStyle = '#321029';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
+          // Блики на кирпичах
+          ctx.fillStyle = '#6e2b5d';
+          ctx.fillRect(px + 4, py + 4, 8, 4);
+        } else {
+          ctx.fillStyle = '#1e0c21';
+          ctx.fillRect(px, py, TILE, TILE);
+        }
+
+        // Сосиски-лакомства
+        if (type === 2) {
+          ctx.fillStyle = '#ff5555';
+          ctx.beginPath();
+          ctx.roundRect(px + 7, py + 10, 18, 12, 6);
+          ctx.fill();
+          ctx.fillStyle = '#f1fa8c';
+          ctx.fillRect(px + 12, py + 12, 8, 8);
+        }
+
+        // Циркулярная пила
+        if (type === 3) {
+          ctx.save();
+          ctx.translate(px + TILE / 2, py + TILE / 2);
+          ctx.rotate(sawRotation);
+          ctx.fillStyle = '#bd93f9';
+          ctx.beginPath();
+          ctx.arc(0, 0, 13, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#f8f8f2';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          // Зубья пилы
+          for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+            ctx.fillStyle = '#ff79c6';
+            ctx.fillRect(Math.cos(a) * 12 - 2, Math.sin(a) * 12 - 2, 4, 4);
+          }
+          ctx.restore();
+        }
+
+        // Чекпоинт
+        if (type === 4) {
+          ctx.fillStyle = '#50fa7b';
+          ctx.beginPath();
+          ctx.ellipse(px + 16, py + 22, 12, 6, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#120814';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.fillText('★', px + 11, py + 24);
+        }
+      }
+    }
+
+    // 2. Растягивающаяся такса и шиншилла
+    if (bodyNodes.length > 0) {
+      // Плавное соединительное тело-резинка
+      if (bodyNodes.length > 1) {
+        ctx.strokeStyle = '#ff79c6';
+        ctx.lineWidth = 20;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(bodyNodes[0].renderX, bodyNodes[0].renderY);
+        for (let i = 1; i < bodyNodes.length; i++) {
+          ctx.lineTo(bodyNodes[i].renderX, bodyNodes[i].renderY);
+        }
+        ctx.stroke();
+
+        // Световой блик по хребту
+        ctx.strokeStyle = '#ff92d0';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(bodyNodes[0].renderX, bodyNodes[0].renderY);
+        for (let i = 1; i < bodyNodes.length; i++) {
+          ctx.lineTo(bodyNodes[i].renderX, bodyNodes[i].renderY);
+        }
+        ctx.stroke();
+      }
+
+      // Отрисовка хвоста и шиншиллы
+      const tail = bodyNodes[bodyNodes.length - 1];
+      ctx.fillStyle = '#d63384';
+      ctx.beginPath();
+      ctx.arc(tail.renderX, tail.renderY, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ШИНШИЛЛА НА ХВОСТЕ
+      ctx.save();
+      ctx.translate(tail.renderX, tail.renderY - 7);
+      ctx.fillStyle = '#f8f8f2';
+      ctx.beginPath();
+      ctx.arc(0, 0, 9, 0, Math.PI * 2);
+      ctx.fill();
+      // Розовые ушки
+      ctx.fillStyle = '#ffb8b8';
+      ctx.beginPath();
+      ctx.arc(-5, -8, 3.5, 0, Math.PI * 2);
+      ctx.arc(5, -8, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      // Голубой глазик
+      ctx.fillStyle = '#8be9fd';
+      ctx.beginPath();
+      ctx.arc(3, -1, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // ГОЛОВА ТАКСЫ
+      const head = bodyNodes[0];
+      ctx.fillStyle = '#ff79c6';
+      ctx.beginPath();
+      ctx.arc(head.renderX, head.renderY, 13, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Глаза с направлением взгляда
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(head.renderX + headDir.x * 5 - 3, head.renderY + headDir.y * 5 - 3, 3.5, 0, Math.PI * 2);
+      ctx.arc(head.renderX + headDir.x * 5 + 3, head.renderY + headDir.y * 5 - 3, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#120814';
+      ctx.beginPath();
+      ctx.arc(head.renderX + headDir.x * 6 - 3, head.renderY + headDir.y * 6 - 3, 1.8, 0, Math.PI * 2);
+      ctx.arc(head.renderX + headDir.x * 6 + 3, head.renderY + headDir.y * 6 - 3, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Нос
+      ctx.fillStyle = '#120814';
+      ctx.beginPath();
+      ctx.arc(head.renderX + headDir.x * 10, head.renderY + headDir.y * 10, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Частицы
+    for (const p of particles) {
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+  }
+
+  // --- СТАРТ И РЕСТАРТ ---
+  const startModal = document.getElementById('start-modal');
+  const endModal = document.getElementById('end-modal');
+  const startBtn = document.getElementById('start-btn');
+  const restartBtn = document.getElementById('restart-btn');
+
+  function start() {
     initAudio();
-    modalStart.classList.add('hidden');
-    modalOver.classList.add('hidden');
-    resetGame();
+    startModal.classList.add('hidden');
+    endModal.classList.add('hidden');
+    initLevel();
     isRunning = true;
   }
 
-  ['click', 'touchstart'].forEach(ev => {
-    btnStart.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
-    btnRestart.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
+  startBtn.addEventListener('click', start);
+  restartBtn.addEventListener('click', () => {
+    endModal.classList.add('hidden');
+    respawn();
+    isRunning = true;
   });
-
-  saveWallet();
 })();
 </script>
 </body>
-  </html>
+</html>
