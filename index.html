@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Где такса?</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-color: var(--tg-theme-bg-color, #1a1a2e);
+      --text-color: var(--tg-theme-text-color, #ffffff);
+      --card-bg: var(--tg-theme-secondary-bg-color, #16213e);
+      --btn-color: var(--tg-theme-button-color, #e94560);
+      --btn-text: var(--tg-theme-button-text-color, #ffffff);
+      --accent: #f39c12;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 16px;
+      overflow: hidden;
+    }
+
+    header {
+      text-align: center;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    .badge {
+      background: var(--card-bg);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 600;
+    }
+
+    .status {
+      font-size: 1.1rem;
+      height: 28px;
+      margin: 16px 0;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .game-area {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      height: 140px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      perspective: 800px;
+    }
+
+    .cup-slot {
+      position: relative;
+      width: 90px;
+      height: 110px;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .item-behind {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 38px;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      pointer-events: none;
+    }
+
+    .box {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #0f3460, #16213e);
+      border: 2px solid #533483;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+      z-index: 2;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cup-slot.revealed .box {
+      transform: translateY(-50px) scale(0.9);
+    }
+
+    .cup-slot.revealed .item-behind {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-10px) scale(1.15);
+    }
+
+    .controls {
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      background: var(--btn-color);
+      color: var(--btn-text);
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(233, 69, 96, 0.4);
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🐶 Где такса?</h1>
+    <div class="stats">
+      <div class="badge">Счёт: <span id="score">0</span></div>
+      <div class="badge">Серия: <span id="streak">0</span> 🔥</div>
+    </div>
+  </header>
+
+  <div class="status" id="status-text">Нажми «Перемешать», чтобы начать</div>
+
+  <div class="game-area" id="board">
+    <div class="cup-slot" data-index="0" onclick="chooseCup(0)">
+      <div class="item-behind" id="item-0">🌭</div>
+      <div class="box">📦</div>
+    </div>
+    <div class="cup-slot" data-index="1" onclick="chooseCup(1)">
+      <div class="item-behind" id="item-1">🌭</div>
+      <div class="box">📦</div>
+    </div>
+    <div class="cup-slot" data-index="2" onclick="chooseCup(2)">
+      <div class="item-behind" id="item-2">🌭</div>
+      <div class="box">📦</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="start-btn" onclick="startShuffle()">Перемешать коробки</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    function haptic(type) {
+      if (!tg?.HapticFeedback) return;
+      if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
+      else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
+      else if (type === 'impact') tg.HapticFeedback.impactOccurred('medium');
+    }
+
+    let score = 0;
+    let streak = 0;
+    let targetIndex = 1;
+    let isShuffling = false;
+    let isInteractive = false;
+
+    const slots = document.querySelectorAll('.cup-slot');
+    const statusText = document.getElementById('status-text');
+    const startBtn = document.getElementById('start-btn');
+    const scoreVal = document.getElementById('score');
+    const streakVal = document.getElementById('streak');
+
+    function updateIcons() {
+      for (let i = 0; i < 3; i++) {
+        const item = document.getElementById(`item-${i}`);
+        item.textContent = (i === targetIndex) ? '🐕' : '💨';
+      }
+    }
+
+    async function startShuffle() {
+      if (isShuffling) return;
+      haptic('impact');
+
+      isInteractive = false;
+      isShuffling = true;
+      startBtn.disabled = true;
+      statusText.textContent = 'Такса прячется...';
+
+      // Закрываем все коробки
+      slots.forEach(slot => slot.classList.remove('revealed'));
+      await sleep(350);
+
+      // Случайное новое место
+      targetIndex = Math.floor(Math.random() * 3);
+      updateIcons();
+
+      statusText.textContent = 'Внимательно следи!';
+
+      // Перемешивание (смена визуальных позиций translateX)
+      const swaps = 6 + Math.min(streak, 6);
+      const speed = Math.max(160, 320 - streak * 15);
+      let order = [0, 1, 2];
+
+      for (let i = 0; i < swaps; i++) {
+        const i1 = Math.floor(Math.random() * 3);
+        let i2 = Math.floor(Math.random() * 3);
+        while (i2 === i1) i2 = Math.floor(Math.random() * 3);
+
+        const temp = order[i1];
+        order[i1] = order[i2];
+        order[i2] = temp;
+
+        applyPositions(order);
+        haptic('impact');
+        await sleep(speed);
+      }
+
+      // Возврат на нормальную разметку без смещений с сохранением спрятанной таксы
+      slots.forEach(slot => slot.style.transform = 'none');
+      targetIndex = order.indexOf(targetIndex);
+      updateIcons();
+
+      statusText.textContent = 'Где спряталась такса? Выбирай!';
+      isShuffling = false;
+      isInteractive = true;
+    }
+
+    function applyPositions(order) {
+      const distance = 110; // ширина шага между коробками
+      for (let currentPos = 0; currentPos < 3; currentPos++) {
+        const originalIndex = order[currentPos];
+        const offset = (currentPos - originalIndex) * distance;
+        slots[originalIndex].style.transform = `translateX(${offset}px)`;
+      }
+    }
+
+    function chooseCup(chosenIndex) {
+      if (!isInteractive || isShuffling) return;
+      isInteractive = false;
+
+      // Открываем все коробки
+      slots.forEach(slot => slot.classList.add('revealed'));
+
+      if (chosenIndex === targetIndex) {
+        haptic('success');
+        score += 10 + (streak * 2);
+        streak += 1;
+        statusText.textContent = 'Нашёл! Это такса! 🎉';
+      } else {
+        haptic('error');
+        streak = 0;
+        statusText.textContent = 'Там пусто! Такса убежала 💨';
+      }
+
+      scoreVal.textContent = score;
+      streakVal.textContent = streak;
+      startBtn.disabled = false;
+      startBtn.textContent = 'Сыграть ещё раз';
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    updateIcons();
+  </script>
+</body>
+</html>
