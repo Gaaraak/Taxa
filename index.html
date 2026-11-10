@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Такса-Раннер PRO</title>
+  <title>Такса-Раннер PRO Realistic</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -146,13 +146,13 @@
     <canvas id="canvas" width="440" height="420"></canvas>
 
     <div class="overlay" id="overlay">
-      <h2 id="overlay-title">🐶 Такса-Раннер PRO</h2>
+      <h2 id="overlay-title">🐶 Такса-Раннер REAL</h2>
       <p id="overlay-desc">
         • Тапай для прыжка (есть <b>двойной прыжок</b>!)<br>
-        • Собирай 🌭 для удлинения и 🦴 для щита<br>
-        • Следи за сменой дня и ночи ☀️🌙
+        • Лови настоящие сочные сосиски гриль 🌭<br>
+        • Уворачивайся от пикирующего орла 🦅 и котов 🐱!
       </p>
-      <button class="btn" id="start-btn" onclick="startGame()">ПОГНАЛИ</button>
+      <button class="btn" id="start-btn" onclick="startGame()">В ИГРУ</button>
     </div>
   </div>
 
@@ -173,7 +173,6 @@
       if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
     }
 
-    // Аудио эффекты (Web Audio)
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -255,13 +254,12 @@
     let bonesCollected = 0;
     let shieldTimer = 0;
 
-    // Цикл дня и ночи (период ~1200 кадров ≈ 20 сек)
     const DAY_CYCLE_FRAMES = 1200;
 
     const taxa = {
       x: 80,
       y: groundY - 32,
-      baseW: 34,
+      baseW: 36,
       segmentLen: 12,
       segments: 2,
       h: 28,
@@ -279,7 +277,6 @@
       { x: 380, y: 35, s: 0.4 }
     ];
 
-    // Звезды ночного неба
     let stars = [];
     for (let i = 0; i < 35; i++) {
       stars.push({
@@ -353,9 +350,8 @@
           type: 'sausage',
           x: canvas.width + 20,
           y: groundY - 32 - Math.random() * 65,
-          w: 24,
-          h: 14,
-          icon: '🌭'
+          w: 36,
+          h: 18
         });
       }
 
@@ -365,9 +361,8 @@
           type: 'bone',
           x: canvas.width + 30,
           y: groundY - 70 - Math.random() * 40,
-          w: 24,
-          h: 20,
-          icon: '🦴'
+          w: 26,
+          h: 16
         });
       }
 
@@ -375,11 +370,19 @@
       if (frame % 140 === 0 && frame > 60) {
         const rand = Math.random();
         if (rand < 0.4) {
-          items.push({ type: 'obs', x: canvas.width + 30, y: groundY - 30, w: 26, h: 30, icon: '🪵' });
-        } else if (rand < 0.75) {
-          items.push({ type: 'obs', x: canvas.width + 30, y: groundY - 32, w: 28, h: 32, icon: '🐱' });
+          items.push({ type: 'log', x: canvas.width + 30, y: groundY - 26, w: 32, h: 26 });
+        } else if (rand < 0.72) {
+          items.push({ type: 'cat', x: canvas.width + 30, y: groundY - 32, w: 30, h: 32 });
         } else {
-          items.push({ type: 'obs', x: canvas.width + 30, y: groundY - 75, w: 28, h: 26, icon: '🦅' });
+          // Орёл в воздухе с собственной анимацией покачивания
+          items.push({ 
+            type: 'eagle', 
+            x: canvas.width + 40, 
+            y: groundY - 95 - Math.random() * 30, 
+            w: 48, 
+            h: 30,
+            baseY: groundY - 95 - Math.random() * 30
+          });
         }
       }
     }
@@ -389,7 +392,7 @@
       soundHit();
       haptic('error');
 
-      overlayTitle.textContent = 'Ой! Споткнулся 💥';
+      overlayTitle.textContent = 'Ой! Столкновение 💥';
       overlayDesc.innerHTML = `Твоя такса выросла до <b>${Math.floor(taxa.segments * 0.5)} м</b>!<br>Косточек собрано: <b>${bonesCollected}</b> 🦴`;
       document.getElementById('start-btn').textContent = 'ЕЩЁ РАЗ';
       overlay.classList.remove('hidden');
@@ -401,12 +404,10 @@
 
       if (shieldTimer > 0) shieldTimer--;
 
-      // Обновление индикатора день/ночь в шапке
       const cycleProg = (frame % DAY_CYCLE_FRAMES) / DAY_CYCLE_FRAMES;
       const isNight = cycleProg > 0.45 && cycleProg < 0.95;
       timeVal.textContent = isNight ? '🌙 Ночь' : '☀️ День';
 
-      // Физика прыжка
       taxa.vy += taxa.gravity;
       taxa.y += taxa.vy;
 
@@ -419,13 +420,11 @@
         }
       }
 
-      // Облака
       clouds.forEach(c => {
         c.x -= c.s * 0.8;
         if (c.x < -60) c.x = canvas.width + 40;
       });
 
-      // Частицы пыли
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
@@ -436,10 +435,13 @@
 
       spawnItems();
 
-      // Движение объектов и коллизии
       for (let i = items.length - 1; i >= 0; i--) {
         const obj = items[i];
         obj.x -= speed;
+
+        if (obj.type === 'eagle') {
+          obj.y = obj.baseY + Math.sin(frame * 0.08) * 12;
+        }
 
         const taxaTailX = taxa.x - (taxa.segments * taxa.segmentLen);
 
@@ -477,12 +479,12 @@
           }
         }
 
-        if (obj.type === 'obs') {
+        if (obj.type === 'log' || obj.type === 'cat' || obj.type === 'eagle') {
           const hitHeadX = taxa.x + 8;
           if (
-            hitHeadX + 22 > obj.x + 4 &&
+            hitHeadX + 24 > obj.x + 4 &&
             hitHeadX < obj.x + obj.w - 4 &&
-            taxa.y + taxa.h > obj.y + 6 &&
+            taxa.y + taxa.h > obj.y + 4 &&
             taxa.y < obj.y + obj.h - 4
           ) {
             if (shieldTimer > 0) {
@@ -498,11 +500,10 @@
           }
         }
 
-        if (obj.x < -60) items.splice(i, 1);
+        if (obj.x < -70) items.splice(i, 1);
       }
     }
 
-    // Вспомогательная функция для интерполяции цветов
     function interpolateColor(color1, color2, factor) {
       const result = color1.slice();
       for (let i = 0; i < 3; i++) {
@@ -511,15 +512,375 @@
       return `rgb(${result[0]}, ${result[1]}, ${result[2]})`;
     }
 
+    // --- РЕАЛИСТИЧНАЯ ОТРИСОВКА ОБЪЕКТОВ ---
+
+    function drawRealisticSausage(x, y, w, h) {
+      ctx.save();
+      ctx.translate(x + w / 2, y + h / 2);
+      ctx.rotate(-0.08);
+
+      // Тело сосиски с градиентом жарки
+      const grad = ctx.createLinearGradient(0, -h/2, 0, h/2);
+      grad.addColorStop(0, '#c0392b');
+      grad.addColorStop(0.3, '#d35400');
+      grad.addColorStop(0.7, '#a93226');
+      grad.addColorStop(1, '#78281f');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(-w/2, -h/2, w, h, 8);
+      ctx.fill();
+
+      // Блик сочности сверху
+      ctx.strokeStyle = 'rgba(255, 230, 200, 0.45)';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.roundRect(-w/2 + 4, -h/2 + 2, w - 8, 3, 2);
+      ctx.stroke();
+
+      // Поперечные насечки от гриля
+      ctx.strokeStyle = '#4a1712';
+      ctx.lineWidth = 2;
+      for (let offset = -w/3; offset <= w/3; offset += 9) {
+        ctx.beginPath();
+        ctx.moveTo(offset, -h/2 + 3);
+        ctx.lineTo(offset + 3, h/2 - 3);
+        ctx.stroke();
+      }
+
+      // Хвостики оболочки по краям
+      ctx.fillStyle = '#641e16';
+      ctx.beginPath();
+      ctx.arc(-w/2 - 1, 0, 2.5, 0, Math.PI * 2);
+      ctx.arc(w/2 + 1, 0, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawRealisticBone(x, y, w, h) {
+      ctx.save();
+      ctx.translate(x + w / 2, y + h / 2);
+      const bGrad = ctx.createLinearGradient(0, -h/2, 0, h/2);
+      bGrad.addColorStop(0, '#fffdf7');
+      bGrad.addColorStop(0.5, '#f6e58d');
+      bGrad.addColorStop(1, '#dff9fb');
+
+      ctx.fillStyle = bGrad;
+      ctx.beginPath();
+      ctx.roundRect(-w/2 + 4, -3, w - 8, 6, 3);
+      ctx.fill();
+
+      // Шарообразные суставы по краям
+      ctx.beginPath();
+      ctx.arc(-w/2 + 4, -4, 4.5, 0, Math.PI * 2);
+      ctx.arc(-w/2 + 4, 4, 4.5, 0, Math.PI * 2);
+      ctx.arc(w/2 - 4, -4, 4.5, 0, Math.PI * 2);
+      ctx.arc(w/2 - 4, 4, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawRealisticLog(x, y, w, h) {
+      ctx.save();
+      // Кора бревна
+      const barkGrad = ctx.createLinearGradient(x, y, x, y + h);
+      barkGrad.addColorStop(0, '#5c4033');
+      barkGrad.addColorStop(0.5, '#3e2723');
+      barkGrad.addColorStop(1, '#2c1810');
+      ctx.fillStyle = barkGrad;
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, 6);
+      ctx.fill();
+
+      // Боковой срез дерева
+      ctx.fillStyle = '#d7ccc8';
+      ctx.beginPath();
+      ctx.ellipse(x + 5, y + h/2, 5, h/2 - 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Годичные кольца на спиле
+      ctx.strokeStyle = '#8d6e63';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(x + 5, y + h/2, 3, h/4, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Борозды на коре
+      ctx.strokeStyle = '#271711';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + 12, y + 4);
+      ctx.lineTo(x + w - 4, y + 5);
+      ctx.moveTo(x + 10, y + h - 5);
+      ctx.lineTo(x + w - 6, y + h - 4);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawRealisticCat(x, y, w, h) {
+      ctx.save();
+      // Туловище присевшего кота
+      const catGrad = ctx.createLinearGradient(x, y, x, y + h);
+      catGrad.addColorStop(0, '#555');
+      catGrad.addColorStop(0.5, '#333');
+      catGrad.addColorStop(1, '#1a1a1a');
+      ctx.fillStyle = catGrad;
+
+      // Тело
+      ctx.beginPath();
+      ctx.ellipse(x + w/2 + 2, y + h - 10, 12, 10, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Голова
+      ctx.beginPath();
+      ctx.arc(x + 10, y + 10, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ушки
+      ctx.beginPath();
+      ctx.moveTo(x + 3, y + 6);
+      ctx.lineTo(x + 7, y - 2);
+      ctx.lineTo(x + 11, y + 4);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(x + 10, y + 4);
+      ctx.lineTo(x + 14, y - 2);
+      ctx.lineTo(x + 17, y + 6);
+      ctx.fill();
+
+      // Глаза кота
+      ctx.fillStyle = '#f1c40f';
+      ctx.beginPath();
+      ctx.ellipse(x + 6, y + 10, 2.5, 1.8, 0, 0, Math.PI * 2);
+      ctx.ellipse(x + 12, y + 10, 2.5, 1.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.fillRect(x + 5.5, y + 9, 1, 2.5);
+      ctx.fillRect(x + 11.5, y + 9, 1, 2.5);
+
+      // Хвост трубой с изгибом
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x + w - 2, y + h - 8);
+      ctx.quadraticCurveTo(x + w + 8, y + 8, x + w - 2, y + 4);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawRealisticEagle(x, y, w, h) {
+      ctx.save();
+      const wingFlap = Math.sin(frame * 0.28) * 12; // анимация маха крыльев
+
+      // 1. Хвост с белыми перьями
+      ctx.fillStyle = '#f5f6fa';
+      ctx.beginPath();
+      ctx.moveTo(x + w - 4, y + 10);
+      ctx.lineTo(x + w + 8, y + 6);
+      ctx.lineTo(x + w + 8, y + 14);
+      ctx.closePath();
+      ctx.fill();
+
+      // 2. Крыло дальнее (верхний мах)
+      ctx.fillStyle = '#3a271d';
+      ctx.beginPath();
+      ctx.moveTo(x + 18, y + 6);
+      ctx.quadraticCurveTo(x + 24, y - 16 + wingFlap, x + 38, y - 22 + wingFlap);
+      ctx.lineTo(x + 28, y + 8);
+      ctx.closePath();
+      ctx.fill();
+
+      // 3. Туловище тёмно-коричневое
+      const bodyGrad = ctx.createLinearGradient(x + 8, y, x + 30, y + 14);
+      bodyGrad.addColorStop(0, '#4a3325');
+      bodyGrad.addColorStop(1, '#2b1d15');
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.ellipse(x + 22, y + 10, 15, 7, -0.15, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4. Белая голова орла
+      ctx.fillStyle = '#f8f9fa';
+      ctx.beginPath();
+      ctx.ellipse(x + 8, y + 7, 7, 6, -0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 5. Острый желтый хищный клюв
+      ctx.fillStyle = '#f39c12';
+      ctx.beginPath();
+      ctx.moveTo(x + 3, y + 4);
+      ctx.lineTo(x - 5, y + 7);
+      ctx.quadraticCurveTo(x - 2, y + 11, x + 3, y + 10);
+      ctx.closePath();
+      ctx.fill();
+
+      // Глаз орла
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(x + 6, y + 6, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 6. Крыло ближнее (переднее, мощное оперение)
+      const wingGrad = ctx.createLinearGradient(x + 10, y + 8, x + 24, y - 18 + wingFlap);
+      wingGrad.addColorStop(0, '#2b1d15');
+      wingGrad.addColorStop(0.6, '#4a3325');
+      wingGrad.addColorStop(1, '#1b120d');
+      ctx.fillStyle = wingGrad;
+
+      ctx.beginPath();
+      ctx.moveTo(x + 12, y + 10);
+      ctx.quadraticCurveTo(x + 18, y - 18 + wingFlap, x + 32, y - 26 + wingFlap);
+      ctx.lineTo(x + 38, y - 18 + wingFlap);
+      ctx.lineTo(x + 26, y + 12);
+      ctx.closePath();
+      ctx.fill();
+
+      // Перья на кончиках крыла
+      ctx.strokeStyle = '#1b120d';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + 32, y - 26 + wingFlap);
+      ctx.lineTo(x + 36, y - 30 + wingFlap);
+      ctx.moveTo(x + 35, y - 22 + wingFlap);
+      ctx.lineTo(x + 40, y - 25 + wingFlap);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawRealisticDachshund(taxa, groundY) {
+      const bodyY = taxa.y + 4;
+      const bodyH = 20;
+      const totalBodyLen = taxa.segments * taxa.segmentLen;
+      const legRun = Math.sin(frame * 0.42) * 6;
+
+      ctx.save();
+
+      // Щит
+      if (shieldTimer > 0) {
+        ctx.strokeStyle = `rgba(16, 185, 129, ${0.45 + Math.sin(frame * 0.2) * 0.35})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(taxa.x - totalBodyLen - 12, bodyY - 12, totalBodyLen + 48, bodyH + 30, 18);
+        ctx.stroke();
+      }
+
+      // Хвост таксы (тонкий, слегка изогнутый кверху)
+      ctx.strokeStyle = '#1d120c';
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(taxa.x - totalBodyLen + 2, bodyY + 6);
+      ctx.quadraticCurveTo(taxa.x - totalBodyLen - 8, bodyY - 2 + Math.sin(frame * 0.35) * 4, taxa.x - totalBodyLen - 12, bodyY - 6 + Math.sin(frame * 0.35) * 3);
+      ctx.stroke();
+
+      // Задние анатомические лапки (с рыжими подпалинами на пальцах)
+      ctx.strokeStyle = '#1f130b';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(taxa.x - totalBodyLen + 6, bodyY + bodyH - 2);
+      ctx.lineTo(taxa.x - totalBodyLen + 6 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 9);
+      ctx.stroke();
+
+      // Рыжие коготки/носочки задних лап
+      ctx.strokeStyle = '#a65b29';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(taxa.x - totalBodyLen + 6 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 7);
+      ctx.lineTo(taxa.x - totalBodyLen + 8 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 9);
+      ctx.stroke();
+
+      // ДЛИННОЕ ТЕЛО ТАКСЫ (чёрно-подпалый гладкий окрас)
+      const bodyGrad = ctx.createLinearGradient(0, bodyY, 0, bodyY + bodyH);
+      bodyGrad.addColorStop(0, '#2d1c14'); // Тёмная спинка
+      bodyGrad.addColorStop(0.4, '#1b110b'); // Чёрный перелив
+      bodyGrad.addColorStop(0.85, '#22140d');
+      bodyGrad.addColorStop(1, '#a65b29'); // Рыжеватый тёплый животик
+
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.roundRect(taxa.x - totalBodyLen, bodyY, totalBodyLen + 18, bodyH, 10);
+      ctx.fill();
+
+      // Передние анатомические лапки
+      ctx.strokeStyle = '#1f130b';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(taxa.x + 10, bodyY + bodyH - 2);
+      ctx.lineTo(taxa.x + 10 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 9);
+      ctx.stroke();
+
+      // Рыжие носочки передних лап
+      ctx.strokeStyle = '#a65b29';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(taxa.x + 10 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 7);
+      ctx.lineTo(taxa.x + 13 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 9);
+      ctx.stroke();
+
+      // Реалистичный кожаный ошейник
+      ctx.fillStyle = '#b71515';
+      ctx.fillRect(taxa.x + 12, bodyY + 1, 6, bodyH - 3);
+      ctx.fillStyle = '#f1c40f'; // Медальон
+      ctx.beginPath();
+      ctx.arc(taxa.x + 15, bodyY + bodyH - 1, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Голова: фото таксы пользователя (с идеальной посадкой)
+      const headX = taxa.x + 14;
+      const headY = taxa.y - 7;
+      const headSize = 35;
+
+      if (taxaImg.complete && taxaImg.naturalWidth !== 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(headX + headSize/2, headY + headSize/2, headSize/2, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(taxaImg, headX, headY, headSize, headSize);
+        ctx.restore();
+
+        // Тонкая естественная окантовка мордочки
+        ctx.strokeStyle = '#a65b29';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(headX + headSize/2, headY + headSize/2, headSize/2, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        // Запасная реалистичная мордочка, если фото ещё не загрузилось
+        ctx.fillStyle = '#1c120c';
+        ctx.beginPath();
+        ctx.ellipse(headX + 16, headY + 16, 14, 10, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        // Носик
+        ctx.fillStyle = '#a65b29';
+        ctx.beginPath();
+        ctx.ellipse(headX + 26, headY + 18, 6, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(headX + 29, headY + 17, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Ушко
+        ctx.fillStyle = '#140c07';
+        ctx.beginPath();
+        ctx.ellipse(headX + 10, headY + 18, 5, 10, 0.35, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // --- РАСЧЁТ ЦИКЛА ДЕНЬ / НОЧЬ ---
-      const cycle = (frame % DAY_CYCLE_FRAMES) / DAY_CYCLE_FRAMES; // 0.0 -> 1.0
-      // 0 = полдень, 0.5 = полночь
-      const nightFactor = Math.sin(cycle * Math.PI); // 0 (день) до 1 (ночь)
+      // ДЕНЬ / НОЧЬ
+      const cycle = (frame % DAY_CYCLE_FRAMES) / DAY_CYCLE_FRAMES;
+      const nightFactor = Math.sin(cycle * Math.PI);
 
-      // Цвета неба
       const dayTop = [70, 140, 240];
       const dayBottom = [170, 215, 255];
       const nightTop = [8, 12, 30];
@@ -534,7 +895,6 @@
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, canvas.width, groundY);
 
-      // ЗВЁЗДЫ (видны ночью)
       if (nightFactor > 0.25) {
         const starAlpha = Math.min(1, (nightFactor - 0.25) * 1.5);
         stars.forEach(st => {
@@ -546,13 +906,11 @@
         });
       }
 
-      // СОЛНЦЕ И ЛУНА
       const celestialAngle = cycle * Math.PI * 2 - Math.PI / 2;
       const celestialRadius = 150;
       const centerX = canvas.width / 2;
       const centerY = groundY - 40;
 
-      // Солнце
       const sunX = centerX + Math.cos(celestialAngle) * celestialRadius;
       const sunY = centerY + Math.sin(celestialAngle) * 90;
       if (sunY < groundY + 20) {
@@ -562,10 +920,9 @@
         ctx.beginPath();
         ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0; // Сброс тени
+        ctx.shadowBlur = 0;
       }
 
-      // Луна
       const moonX = centerX + Math.cos(celestialAngle + Math.PI) * celestialRadius;
       const moonY = centerY + Math.sin(celestialAngle + Math.PI) * 90;
       if (moonY < groundY + 20) {
@@ -577,14 +934,12 @@
         ctx.fill();
         ctx.shadowBlur = 0;
 
-        // Эффект серпа луны
         ctx.fillStyle = curSkyTop;
         ctx.beginPath();
         ctx.arc(moonX + 5, moonY - 3, 11, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ОБЛАКА
       const cloudAlpha = 0.25 - (nightFactor * 0.15);
       ctx.fillStyle = `rgba(255, 255, 255, ${cloudAlpha})`;
       clouds.forEach(c => {
@@ -595,13 +950,12 @@
         ctx.fill();
       });
 
-      // ЗЕМЛЯ (темнеет ночью)
+      // Земля и газон
       const dayGrass = [34, 197, 94];
       const nightGrass = [15, 80, 42];
       ctx.fillStyle = interpolateColor(dayGrass, nightGrass, nightFactor);
       ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
-      // Полоска грунта
       const daySoil = [22, 163, 74];
       const nightSoil = [9, 58, 30];
       ctx.fillStyle = interpolateColor(daySoil, nightSoil, nightFactor);
@@ -615,84 +969,23 @@
         ctx.fill();
       });
 
-      // Объекты (сосиски, бонусы, враги)
-      ctx.font = '24px sans-serif';
-      ctx.textAlign = 'center';
+      // Отрисовка реалистичных объектов
       for (const obj of items) {
-        ctx.fillText(obj.icon, obj.x + obj.w / 2, obj.y + obj.h - 2);
+        if (obj.type === 'sausage') {
+          drawRealisticSausage(obj.x, obj.y, obj.w, obj.h);
+        } else if (obj.type === 'bone') {
+          drawRealisticBone(obj.x, obj.y, obj.w, obj.h);
+        } else if (obj.type === 'log') {
+          drawRealisticLog(obj.x, obj.y, obj.w, obj.h);
+        } else if (obj.type === 'cat') {
+          drawRealisticCat(obj.x, obj.y, obj.w, obj.h);
+        } else if (obj.type === 'eagle') {
+          drawRealisticEagle(obj.x, obj.y, obj.w, obj.h);
+        }
       }
 
-      // ТАКСА
-      const bodyY = taxa.y + 4;
-      const bodyH = 20;
-      const segmentW = taxa.segmentLen;
-      const totalBodyLen = taxa.segments * segmentW;
-
-      // Аура щита
-      if (shieldTimer > 0) {
-        ctx.save();
-        ctx.strokeStyle = `rgba(16, 185, 129, ${0.4 + Math.sin(frame * 0.2) * 0.3})`;
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.roundRect(taxa.x - totalBodyLen - 8, bodyY - 10, totalBodyLen + 40, bodyH + 26, 16);
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      // Туловище
-      ctx.fillStyle = '#422415';
-      ctx.beginPath();
-      ctx.roundRect(taxa.x - totalBodyLen, bodyY, totalBodyLen + 15, bodyH, 10);
-      ctx.fill();
-
-      // Ошейник
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(taxa.x + 10, bodyY + 2, 5, bodyH - 4);
-
-      // Лапы
-      const legRun = Math.sin(frame * 0.4) * 6;
-      ctx.strokeStyle = '#2d180e';
-      ctx.lineWidth = 4;
-      ctx.lineCap = 'round';
-
-      ctx.beginPath();
-      ctx.moveTo(taxa.x + 8, bodyY + bodyH);
-      ctx.lineTo(taxa.x + 8 + (taxa.vy === 0 ? legRun : -2), bodyY + bodyH + 9);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(taxa.x - totalBodyLen + 6, bodyY + bodyH);
-      ctx.lineTo(taxa.x - totalBodyLen + 6 - (taxa.vy === 0 ? legRun : 3), bodyY + bodyH + 9);
-      ctx.stroke();
-
-      // Хвост
-      ctx.beginPath();
-      ctx.moveTo(taxa.x - totalBodyLen + 2, bodyY + 6);
-      ctx.lineTo(taxa.x - totalBodyLen - 8, bodyY - 4 + Math.sin(frame * 0.35) * 4);
-      ctx.stroke();
-
-      // Мордочка (Фото)
-      const headX = taxa.x + 12;
-      const headY = taxa.y - 6;
-      const headSize = 34;
-
-      if (taxaImg.complete && taxaImg.naturalWidth !== 0) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(headX + headSize/2, headY + headSize/2, headSize/2, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(taxaImg, headX, headY, headSize, headSize);
-        ctx.restore();
-
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(headX + headSize/2, headY + headSize/2, headSize/2, 0, Math.PI * 2);
-        ctx.stroke();
-      } else {
-        ctx.font = '30px sans-serif';
-        ctx.fillText('🐶', headX + headSize/2, headY + headSize - 4);
-      }
+      // Отрисовка таксы
+      drawRealisticDachshund(taxa, groundY);
     }
 
     function gameLoop() {
