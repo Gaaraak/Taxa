@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chinchilla Parkour: The Grand Climb</title>
+  <title>Chinchilla vs Dachshund: Boss Climb</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -19,7 +19,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #0d1117;
+      background-color: #070913;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       touch-action: none;
     }
@@ -59,10 +59,10 @@
     }
 
     .hud-chip {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 20px;
       padding: 6px 14px;
       color: #fff;
@@ -71,7 +71,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
 
     .zone-indicator {
@@ -79,13 +79,13 @@
       flex-direction: column;
       align-items: center;
       background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid rgba(245, 158, 11, 0.4);
       padding: 5px 16px;
       border-radius: 20px;
     }
     .zone-indicator span.sub {
       font-size: 9px;
-      color: #38bdf8;
+      color: #fbbf24;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
@@ -95,32 +95,32 @@
       color: #fff;
     }
 
-    /* Прогресс-бар до финиша */
+    /* Прогресс-бар */
     .climb-progress {
       width: 100%;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 6px 10px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 6px 12px;
       backdrop-filter: blur(10px);
     }
     .climb-track {
       width: 100%;
-      height: 6px;
+      height: 7px;
       background: rgba(255, 255, 255, 0.12);
-      border-radius: 3px;
+      border-radius: 4px;
       overflow: hidden;
       margin-top: 4px;
     }
     .climb-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #38bdf8, #818cf8, #f59e0b);
-      border-radius: 3px;
+      background: linear-gradient(90deg, #38bdf8, #f59e0b, #ef4444);
+      border-radius: 4px;
       transition: width 0.15s ease-out;
     }
 
-    /* Мобильное управление */
+    /* Сенсорные кнопки */
     #touch-panel {
       position: absolute;
       bottom: 24px;
@@ -144,10 +144,10 @@
       width: 66px;
       height: 66px;
       border-radius: 22px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -158,7 +158,7 @@
     }
     .t-btn span.label {
       font-size: 9px;
-      color: #cbd5e1;
+      color: #94a3b8;
       text-transform: uppercase;
       margin-top: 2px;
     }
@@ -171,18 +171,18 @@
       width: 78px;
       height: 78px;
       border-radius: 50%;
-      background: radial-gradient(circle, #3b82f6, #1d4ed8);
-      border: 2px solid #93c5fd;
-      box-shadow: 0 0 16px rgba(59, 130, 246, 0.5);
+      background: radial-gradient(circle, #f59e0b, #d97706);
+      border: 2px solid #fef08a;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
     }
 
-    /* Победное меню (Финал) */
+    /* Победное меню (Убийство Таксы) */
     #victory-modal {
       position: absolute;
       inset: 0;
-      background: rgba(10, 15, 30, 0.92);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(7, 9, 19, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -193,17 +193,17 @@
       padding: 24px;
     }
     #victory-modal h1 {
-      font-size: 34px;
-      color: #facc15;
-      margin-bottom: 8px;
-      text-shadow: 0 0 20px rgba(250, 204, 21, 0.6);
+      font-size: 28px;
+      color: #ef4444;
+      margin-bottom: 6px;
+      text-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
     }
     #victory-modal p {
-      color: #94a3b8;
-      font-size: 15px;
-      max-width: 280px;
+      color: #cbd5e1;
+      font-size: 14px;
+      max-width: 300px;
       line-height: 1.4;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .stats-card {
       background: rgba(255, 255, 255, 0.06);
@@ -226,22 +226,40 @@
     .stat-item .stat-num {
       font-size: 20px;
       font-weight: 800;
-      color: #38bdf8;
+      color: #f59e0b;
+    }
+
+    .btn-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 280px;
     }
 
     .act-btn {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
       color: white;
       font-weight: 800;
-      font-size: 16px;
+      font-size: 15px;
       border: none;
-      padding: 14px 34px;
+      padding: 14px 20px;
       border-radius: 30px;
-      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     .act-btn:active {
       transform: scale(0.96);
+    }
+    .share-btn {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.5);
+    }
+    .endless-btn {
+      background: linear-gradient(135deg, #f59e0b, #b45309);
     }
   </style>
 </head>
@@ -253,13 +271,13 @@
   <div id="hud">
     <div class="top-bar">
       <div class="hud-chip">
-        <span>🍒</span>
-        <span id="berries-txt">0</span>
+        <span>🌭</span>
+        <span id="hotdogs-txt">0</span>
       </div>
 
       <div class="zone-indicator">
         <span class="sub" id="zone-sub">Этаж 1</span>
-        <span class="val" id="zone-title">Гостиная</span>
+        <span class="val" id="zone-title">Пентхаус</span>
       </div>
 
       <div class="hud-chip" style="color: #38bdf8;">
@@ -269,7 +287,7 @@
 
     <div class="climb-progress">
       <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; font-weight: 700;">
-        <span>ПРОГРЕСС ДО КРЫШИ</span>
+        <span>БОСС-ТАКСА НА ВЕРШИНЕ</span>
         <span id="goal-percent">0%</span>
       </div>
       <div class="climb-track">
@@ -290,25 +308,28 @@
   </div>
 
   <div id="victory-modal">
-    <h1>🏆 ВЕРШИНА МИРА!</h1>
-    <p>Шиншилла покорила все этажи и нашла Легендарный Золотой Шиповник!</p>
+    <h1>💥 ТАКСА ПОВЕРЖЕНА!</h1>
+    <p>Шиншилла добралась до крыши и раздавила гигантскую таксу в лепешку!</p>
     
     <div class="stats-card">
       <div class="stat-item">
-        <span class="stat-title">Лакомства</span>
-        <span class="stat-num" id="win-berries">0</span>
+        <span class="stat-title">Хот-доги</span>
+        <span class="stat-num" id="win-hotdogs">0</span>
       </div>
       <div class="stat-item">
-        <span class="stat-title">Время подъема</span>
+        <span class="stat-title">Время</span>
         <span class="stat-num" id="win-time">00:00</span>
       </div>
       <div class="stat-item">
-        <span class="stat-title">Высота</span>
-        <span class="stat-num">100 м</span>
+        <span class="stat-title">Статус</span>
+        <span class="stat-num" style="color:#4ade80;">БОСС УБИТ</span>
       </div>
     </div>
 
-    <button class="act-btn" id="btn-continue">Бесконечный режим 🚀</button>
+    <div class="btn-col">
+      <button class="act-btn share-btn" id="btn-share">Похвастаться другу ✉️</button>
+      <button class="act-btn endless-btn" id="btn-continue">Бесконечный космос 🚀</button>
+    </div>
   </div>
 </div>
 
@@ -318,7 +339,7 @@
     try {
       tg.ready();
       tg.expand();
-      tg.headerColor = '#0d1117';
+      tg.headerColor = '#070913';
     } catch(e) {}
   }
 
@@ -333,7 +354,7 @@
     } catch(e) {}
   }
 
-  // Звуки (Web Audio API)
+  // Web Audio синтезатор
   class SoundFX {
     constructor() { this.ctx = null; }
     init() {
@@ -350,7 +371,7 @@
         const g = this.ctx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        g.gain.setValueAtTime(0.18, this.ctx.currentTime);
+        g.gain.setValueAtTime(0.2, this.ctx.currentTime);
         g.gain.exponentialRampToValueAtTime(stopVol, this.ctx.currentTime + duration);
         osc.connect(g);
         g.connect(this.ctx.destination);
@@ -360,12 +381,11 @@
     }
     jump() { this.tone(420, 'triangle', 0.12); }
     wall() { this.tone(580, 'sine', 0.1); }
-    berry() { this.tone(960, 'sine', 0.16); }
-    win() {
+    eat() { this.tone(880, 'sine', 0.14); }
+    bossHit() {
       if (!this.ctx) return;
-      [440, 554, 659, 880].forEach((f, i) => {
-        setTimeout(() => this.tone(f, 'triangle', 0.3), i * 140);
-      });
+      this.tone(140, 'sawtooth', 0.4);
+      setTimeout(() => this.tone(80, 'square', 0.5), 100);
     }
   }
   const sfx = new SoundFX();
@@ -409,7 +429,7 @@
     tailAngle: 0,
     pawCycle: 0,
 
-    berries: 0,
+    hotdogs: 0,
     reset() {
       this.x = W / 2;
       this.y = H - 150;
@@ -428,76 +448,101 @@
     jumpHeld: false
   };
 
-  // Локации (Уровни)
+  // Красивые зоны с детальными оттенками
   const ZONES = [
-    { maxH: 25, name: 'Гостиная', sub: 'Этаж 1', bg1: '#0f172a', bg2: '#1e1b4b', platColor: '#78350f', platEdge: '#b45309' },
-    { maxH: 55, name: 'Чердак реликвий', sub: 'Этаж 2', bg1: '#18181b', bg2: '#27272a', platColor: '#475569', platEdge: '#94a3b8' },
-    { maxH: 90, name: 'Ночные крыши', sub: 'Этаж 3', bg1: '#030712', bg2: '#0f172a', platColor: '#1e293b', platEdge: '#38bdf8' },
-    { maxH: 9999, name: 'Обсерватория', sub: 'Финал', bg1: '#090514', bg2: '#2e1065', platColor: '#581c87', platEdge: '#facc15' }
+    { maxH: 25, name: 'Пентхаус', sub: 'Этаж 1', bg1: '#111827', bg2: '#311042', platColor: '#78350f', platEdge: '#d97706' },
+    { maxH: 55, name: 'Кирпичный чердак', sub: 'Этаж 2', bg1: '#0f172a', bg2: '#1e293b', platColor: '#64748b', platEdge: '#cbd5e1' },
+    { maxH: 90, name: 'Неоновые крыши', sub: 'Этаж 3', bg1: '#050515', bg2: '#0b192c', platColor: '#1e1b4b', platEdge: '#06b6d4' },
+    { maxH: 9999, name: 'Лунная стратосфера', sub: 'Финал', bg1: '#020617', bg2: '#1e0538', platColor: '#581c87', platEdge: '#f43f5e' }
   ];
 
   let currentZone = ZONES[0];
   let platforms = [];
-  let berries = [];
+  let hotdogs = [];
   let particles = [];
-  let confetti = [];
+  let stars = [];
+  let cityBuildings = [];
   let cameraY = 0;
   let maxHeight = 0;
   let gameStartTime = performance.now();
   let gameWon = false;
   let endlessMode = false;
-  let finalShrine = null;
+
+  // Босс Такса
+  const boss = {
+    x: W / 2,
+    y: -4450,
+    w: 130,
+    h: 46,
+    alive: true,
+    squishAnim: 0,
+    patrolDir: 1,
+    patrolSpeed: 70
+  };
 
   function initWorld() {
     platforms = [];
-    berries = [];
+    hotdogs = [];
     particles = [];
-    confetti = [];
     cameraY = 0;
     maxHeight = 0;
     gameWon = false;
     gameStartTime = performance.now();
+    boss.alive = true;
+    boss.squishAnim = 0;
+    boss.y = -4460;
+    boss.x = W / 2 - boss.w / 2;
 
-    // Стартовая база
+    // Звезды параллакса
+    stars = [];
+    for (let i = 0; i < 60; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: Math.random() * 2 + 0.8,
+        alpha: 0.3 + Math.random() * 0.7
+      });
+    }
+
+    // Силуэты зданий для красивого фона
+    cityBuildings = [];
+    for (let i = 0; i < 10; i++) {
+      cityBuildings.push({
+        x: i * (W / 7) - 20,
+        w: W / 6.5,
+        h: 180 + Math.random() * 220
+      });
+    }
+
+    // Пол
     platforms.push({ x: 0, y: H - 60, w: W, h: 60, type: 'start' });
 
-    // Генерация уровня до 100 метров (высота ~ 4500px вверх)
+    // Генерация подъема до крыши (высота 100 метров, y: ~ -4450)
     let curY = H - 160;
-    while (curY > -4500) {
+    while (curY > -4400) {
       const hMeters = (H - 150 - curY) / 45;
       const zone = getZone(hMeters);
 
       const w = 75 + Math.random() * 75;
       const x = 30 + Math.random() * (W - 60 - w);
-      platforms.push({
-        x,
-        y: curY,
-        w,
-        h: 18,
-        zone
-      });
+      platforms.push({ x, y: curY, w, h: 18, zone });
 
-      // Спавн лакомств
-      if (Math.random() < 0.6) {
-        berries.push({
-          x: x + w / 2,
-          y: curY - 20,
-          collected: false
-        });
+      // Спавн хот-догов
+      if (Math.random() < 0.65) {
+        hotdogs.push({ x: x + w / 2, y: curY - 20, collected: false });
       }
 
       curY -= (75 + Math.random() * 45);
     }
 
-    // Финальная платформа со святилищем на высоте 100 м
-    finalShrine = {
-      x: W / 2 - 80,
-      y: -4500,
-      w: 160,
+    // Арена Босса на вершине
+    platforms.push({
+      x: W / 2 - 120,
+      y: -4400,
+      w: 240,
       h: 24,
-      collected: false
-    };
-    platforms.push(finalShrine);
+      zone: ZONES[3]
+    });
   }
 
   function getZone(hMeters) {
@@ -507,34 +552,34 @@
     return ZONES[ZONES.length - 1];
   }
 
-  // Частицы и конфетти
+  // Частицы
   function emitDust(x, y, count = 6, color = 'rgba(255,255,255,0.7)') {
     for (let i = 0; i < count; i++) {
       particles.push({
         x, y,
-        vx: (Math.random() - 0.5) * 80,
-        vy: -Math.random() * 50,
-        life: 0.35 + Math.random() * 0.2,
+        vx: (Math.random() - 0.5) * 120,
+        vy: -Math.random() * 60,
+        life: 0.35 + Math.random() * 0.25,
         color
       });
     }
   }
 
-  function emitConfetti(x, y) {
-    const colors = ['#facc15', '#38bdf8', '#f43f5e', '#a855f7', '#4ade80'];
+  function emitSausageExplosion(x, y) {
+    const parts = ['#ef4444', '#b91c1c', '#f59e0b', '#fef08a', '#78350f'];
     for (let i = 0; i < 90; i++) {
-      confetti.push({
+      particles.push({
         x, y,
-        vx: (Math.random() - 0.5) * 400,
-        vy: -200 - Math.random() * 350,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        size: 4 + Math.random() * 4,
-        life: 2.5
+        vx: (Math.random() - 0.5) * 450,
+        vy: -150 - Math.random() * 400,
+        life: 1.5 + Math.random() * 1.0,
+        color: parts[Math.floor(Math.random() * parts.length)],
+        size: 4 + Math.random() * 6
       });
     }
   }
 
-  // Ввод (Клавиатура)
+  // Ввод
   window.addEventListener('keydown', (e) => {
     sfx.init();
     if (e.code === 'KeyA' || e.code === 'ArrowLeft') input.left = true;
@@ -553,7 +598,6 @@
     if (e.code === 'Space' || e.code === 'ArrowUp') input.jumpHeld = false;
   });
 
-  // Сенсорные кнопки
   function bindTouch(btn, onDown, onUp) {
     btn.addEventListener('touchstart', (e) => {
       e.preventDefault();
@@ -576,59 +620,74 @@
     input.jumpHeld = false;
   });
 
-  // Логика победы
-  function triggerVictory() {
-    if (gameWon) return;
+  // Победа и отправка в Telegram
+  function killBoss() {
+    if (!boss.alive || gameWon) return;
+    boss.alive = false;
     gameWon = true;
-    sfx.win();
+
+    player.vy = -620; // высокий победный отскок
+    sfx.bossHit();
     haptic('success');
-    emitConfetti(player.x, player.y);
+    emitSausageExplosion(boss.x + boss.w / 2, boss.y + boss.h / 2);
 
     const totalSeconds = Math.floor((performance.now() - gameStartTime) / 1000);
     const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
     const s = (totalSeconds % 60).toString().padStart(2, '0');
+    const timeStr = `${m}:${s}`;
 
-    document.getElementById('win-berries').innerText = player.berries;
-    document.getElementById('win-time').innerText = `${m}:${s}`;
-    document.getElementById('victory-modal').style.display = 'flex';
+    document.getElementById('win-hotdogs').innerText = player.hotdogs;
+    document.getElementById('win-time').innerText = timeStr;
+
+    // Настройка кнопки пересылки в Telegram
+    document.getElementById('btn-share').onclick = () => {
+      const shareText = encodeURIComponent(
+        `🐹 Я прошел паркур на 100 метров за ${timeStr}, съел ${player.hotdogs} хот-догов 🌭 и УБИЛ БОСС-ТАКСУ! Сможешь побить мой рекорд?`
+      );
+      const shareUrl = `https://t.me/share/url?url=&text=${shareText}`;
+      if (tg?.openTelegramLink) {
+        tg.openTelegramLink(shareUrl);
+      } else {
+        window.open(shareUrl, '_blank');
+      }
+    };
+
+    setTimeout(() => {
+      document.getElementById('victory-modal').style.display = 'flex';
+    }, 700);
   }
 
   document.getElementById('btn-continue').onclick = () => {
     document.getElementById('victory-modal').style.display = 'none';
     endlessMode = true;
-    // Разрешаем лезть дальше в космос
-    finalShrine.collected = true;
   };
 
-  // Физический цикл
+  // Главный цикл обновлений
   let lastTime = performance.now();
 
   function update(dt) {
-    // Заминка при неудачном высоком падении
     if (player.stumbleTimer > 0) {
       player.stumbleTimer -= dt;
       player.vx *= 0.7;
       return;
     }
 
-    // Подтягивание на край платформы
     if (player.isLedgeClimbing) {
       player.vy = -200;
       player.vx = player.facing * 110;
       if (player.vy > -10) player.isLedgeClimbing = false;
     }
 
-    // Зарядка прыжка (без ограничения выносливости)
+    // Зарядка прыжка шиншиллы
     if (player.isGrounded && input.jumpHeld) {
-      player.chargeTime = Math.min(player.chargeTime + dt * 3.2, 1.0);
+      player.chargeTime = Math.min(player.chargeTime + dt * 3.4, 1.0);
       player.squash = 1.35;
       player.stretch = 0.7;
       player.vx *= 0.65;
     } else if (player.chargeTime > 0) {
-      // Мощный толчок
-      const jumpPower = 440 + player.chargeTime * 440;
+      const jumpPower = 450 + player.chargeTime * 450;
       player.vy = -jumpPower;
-      player.vx += player.facing * (130 * player.chargeTime);
+      player.vx += player.facing * (140 * player.chargeTime);
       player.isGrounded = false;
       player.squash = 0.65;
       player.stretch = 1.45;
@@ -638,8 +697,8 @@
       emitDust(player.x, player.y + player.r, 8);
     }
 
-    // Горизонтальный разгон
-    const accel = player.isGrounded ? 1200 : 480;
+    // Горизонтальный бег
+    const accel = player.isGrounded ? 1250 : 500;
     if (input.left && !player.isLedgeClimbing) {
       player.vx -= accel * dt;
       player.facing = -1;
@@ -652,12 +711,11 @@
       player.vx *= AIR_RESIST;
     }
 
-    const maxSpeed = 340;
+    const maxSpeed = 350;
     if (Math.abs(player.vx) > maxSpeed) {
       player.vx = Math.sign(player.vx) * maxSpeed;
     }
 
-    // Гравитация
     if (!player.isLedgeClimbing) {
       player.vy += GRAVITY * dt;
     }
@@ -665,7 +723,6 @@
     player.x += player.vx * dt;
     player.y += player.vy * dt;
 
-    // Анимация лапок и хвоста
     if (player.isGrounded && Math.abs(player.vx) > 20) {
       player.pawCycle += dt * 20;
     }
@@ -674,7 +731,7 @@
     player.squash += (1 - player.squash) * 9 * dt;
     player.stretch += (1 - player.stretch) * 9 * dt;
 
-    // Стены экрана (Wall-Jump)
+    // Отскок от стен
     if (player.x - player.r < 10) {
       player.x = 10 + player.r;
       if (!player.isGrounded && input.jumpPressed) {
@@ -704,13 +761,30 @@
     }
     input.jumpPressed = false;
 
+    // Поведение Босса Таксы (патруль арены)
+    if (boss.alive) {
+      boss.x += boss.patrolDir * boss.patrolSpeed * dt;
+      if (boss.x < W / 2 - 100) boss.patrolDir = 1;
+      if (boss.x + boss.w > W / 2 + 100) boss.patrolDir = -1;
+
+      // Проверка прыжка шиншиллы сверху на таксу
+      if (
+        player.vy > 0 &&
+        player.x + player.r > boss.x &&
+        player.x - player.r < boss.x + boss.w &&
+        player.y + player.r >= boss.y &&
+        player.y + player.r <= boss.y + 24
+      ) {
+        killBoss();
+      }
+    }
+
     // Коллизии с платформами
     const wasGrounded = player.isGrounded;
     player.isGrounded = false;
     player.isLedgeClimbing = false;
 
     for (const p of platforms) {
-      // Приземление сверху
       if (
         player.vy >= 0 &&
         player.x + player.r * 0.6 > p.x &&
@@ -725,7 +799,7 @@
 
         if (impact > 800) {
           if (input.crouch) {
-            player.vx = player.facing * 280; // Паркур-ролл
+            player.vx = player.facing * 280;
             player.squash = 1.4;
             haptic('light');
           } else {
@@ -743,7 +817,7 @@
         break;
       }
 
-      // Хват за край (Ledge Grab)
+      // Хват за край
       if (!player.isGrounded && player.vy > -50 && player.vy < 380) {
         const leftEdge = Math.abs((player.x + player.r) - p.x) < 8 && Math.abs(player.y - p.y) < 14;
         const rightEdge = Math.abs((player.x - player.r) - (p.x + p.w)) < 8 && Math.abs(player.y - p.y) < 14;
@@ -756,39 +830,26 @@
       }
     }
 
-    // Сбор ягод
-    for (const b of berries) {
-      if (b.collected) continue;
-      if (Math.hypot(player.x - b.x, player.y - b.y) < player.r + 12) {
-        b.collected = true;
-        player.berries++;
-        sfx.berry();
+    // Сбор хот-догов
+    for (const hd of hotdogs) {
+      if (hd.collected) continue;
+      if (Math.hypot(player.x - hd.x, player.y - hd.y) < player.r + 14) {
+        hd.collected = true;
+        player.hotdogs++;
+        sfx.eat();
         haptic('light');
-        emitDust(b.x, b.y, 8, '#f43f5e');
-        document.getElementById('berries-txt').innerText = player.berries;
+        emitDust(hd.x, hd.y, 8, '#f59e0b');
+        document.getElementById('hotdogs-txt').innerText = player.hotdogs;
       }
     }
 
-    // Достижение святилища (Финал)
-    if (finalShrine && !finalShrine.collected) {
-      if (Math.hypot(player.x - (finalShrine.x + finalShrine.w / 2), player.y - (finalShrine.y - 20)) < 40) {
-        triggerVictory();
-      }
-    }
-
-    // Бесконечный спавн в режиме Endless
+    // Бесконечный спавн в космосе
     if (endlessMode) {
       const topP = platforms[platforms.length - 1];
       if (topP && topP.y > cameraY - 300) {
         const w = 70 + Math.random() * 80;
         const x = 30 + Math.random() * (W - 60 - w);
-        platforms.push({
-          x,
-          y: topP.y - (80 + Math.random() * 50),
-          w,
-          h: 18,
-          zone: ZONES[3]
-        });
+        platforms.push({ x, y: topP.y - (80 + Math.random() * 50), w, h: 18, zone: ZONES[3] });
       }
     }
 
@@ -820,22 +881,114 @@
       const p = particles[i];
       p.x += p.vx * dt;
       p.y += p.vy * dt;
+      if (p.size) p.vy += 350 * dt; // гравитация для сосисок
       p.life -= dt;
       if (p.life <= 0) particles.splice(i, 1);
     }
-
-    // Конфетти
-    for (let i = confetti.length - 1; i >= 0; i--) {
-      const c = confetti[i];
-      c.x += c.vx * dt;
-      c.y += c.vy * dt;
-      c.vy += 300 * dt;
-      c.life -= dt;
-      if (c.life <= 0) confetti.splice(i, 1);
-    }
   }
 
-  // Отрисовка
+  // Отрисовка Хот-Дога
+  function drawHotdog(x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // Булочка
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 14, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Сосиска
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    ctx.ellipse(0, -1, 16, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Горчичная полоска зигзагом
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-10, -2);
+    ctx.lineTo(-5, 0);
+    ctx.lineTo(0, -2);
+    ctx.lineTo(5, 0);
+    ctx.lineTo(10, -2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // Отрисовка Босса Таксы
+  function drawDachshund(x, y, w, h, dir) {
+    ctx.save();
+    ctx.translate(x + w / 2, y + h / 2);
+    ctx.scale(dir, 1);
+
+    // Длинное сосисочное тело
+    ctx.fillStyle = '#854d0e';
+    ctx.beginPath();
+    ctx.roundRect(-w / 2 + 15, -10, w - 30, 20, 10);
+    ctx.fill();
+
+    // Полосатый смешной свитер на теле
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(-w / 2 + 30, -10, 12, 20);
+    ctx.fillRect(-w / 2 + 54, -10, 12, 20);
+    ctx.fillStyle = '#facc15';
+    ctx.fillRect(-w / 2 + 42, -10, 12, 20);
+
+    // Короткие лапки
+    ctx.fillStyle = '#713f12';
+    ctx.fillRect(-w / 2 + 22, 10, 8, 12);
+    ctx.fillRect(-w / 2 + 36, 10, 8, 12);
+    ctx.fillRect(w / 2 - 36, 10, 8, 12);
+    ctx.fillRect(w / 2 - 22, 10, 8, 12);
+
+    // Голова таксы
+    ctx.fillStyle = '#a16207';
+    ctx.beginPath();
+    ctx.ellipse(w / 2 - 6, -8, 18, 14, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Длинная мордочка
+    ctx.beginPath();
+    ctx.ellipse(w / 2 + 10, -4, 14, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Нос
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.arc(w / 2 + 23, -4, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Висячее ухо
+    ctx.fillStyle = '#713f12';
+    ctx.beginPath();
+    ctx.ellipse(w / 2 - 12, -2, 7, 16, 0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Глаз (сердитый)
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(w / 2 + 2, -10, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(w / 2 + 3, -10, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Тонкий хвостик-антенна сзади
+    ctx.strokeStyle = '#713f12';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-w / 2 + 16, -2);
+    ctx.quadraticCurveTo(-w / 2, -16, -w / 2 + 4, -22);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // Отрисовка Шиншиллы
   function drawChinchilla(x, y) {
     ctx.save();
     ctx.translate(x, y);
@@ -870,7 +1023,7 @@
     ctx.fillStyle = '#94a3b8';
     ctx.fill();
 
-    // Светлый животик
+    // Животик
     ctx.beginPath();
     ctx.ellipse(player.r * 0.35, player.r * 0.15, player.r * 0.6, player.r * 0.65, 0.1, 0, Math.PI * 2);
     ctx.fillStyle = '#f8fafc';
@@ -932,12 +1085,32 @@
   function render() {
     ctx.clearRect(0, 0, W, H);
 
-    // Градиент текущего биома/этажа
+    // Плавный градиент биома
     const bg = ctx.createLinearGradient(0, 0, 0, H);
     bg.addColorStop(0, currentZone.bg1);
     bg.addColorStop(1, currentZone.bg2);
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
+
+    // Звезды
+    for (const s of stars) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+      ctx.fillRect(s.x, (s.y - cameraY * 0.15) % H, s.size, s.size);
+    }
+
+    // Силуэты зданий вдалеке (эффект ночного города)
+    if (maxHeight > 20 && maxHeight < 85) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+      for (const b of cityBuildings) {
+        const bY = H - b.h - (cameraY * 0.1);
+        ctx.fillRect(b.x, bY, b.w, b.h + 200);
+        // Неоновые окошки
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.3)';
+        ctx.fillRect(b.x + 8, bY + 20, 6, 8);
+        ctx.fillRect(b.x + 22, bY + 20, 6, 8);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+      }
+    }
 
     ctx.save();
     ctx.translate(0, -cameraY);
@@ -950,59 +1123,39 @@
       ctx.roundRect(p.x, p.y, p.w, p.h, 6);
       ctx.fill();
 
-      // Верхняя светлая фаска
+      // Верхняя кромка
       ctx.fillStyle = z.platEdge || '#94a3b8';
       ctx.beginPath();
       ctx.roundRect(p.x, p.y, p.w, 3, [6, 6, 0, 0]);
       ctx.fill();
     }
 
-    // Финальное святилище с Золотым Шиповником
-    if (finalShrine) {
-      // Пьедестал
-      ctx.fillStyle = '#facc15';
-      ctx.beginPath();
-      ctx.roundRect(finalShrine.x + finalShrine.w / 2 - 16, finalShrine.y - 12, 32, 12, 4);
-      ctx.fill();
-
-      // Золотой Шиповник (Артефакт)
-      ctx.beginPath();
-      ctx.arc(finalShrine.x + finalShrine.w / 2, finalShrine.y - 24, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#f59e0b';
-      ctx.fill();
-
-      // Сияние
-      ctx.beginPath();
-      ctx.arc(finalShrine.x + finalShrine.w / 2, finalShrine.y - 24, 20, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(250, 204, 21, 0.25)';
-      ctx.fill();
+    // Босс Такса
+    if (boss.alive) {
+      drawDachshund(boss.x, boss.y, boss.w, boss.h, boss.patrolDir);
+      // Подсказка над таксой
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚡ ПРЫГНИ НА ГОЛОВУ! ⚡', boss.x + boss.w / 2, boss.y - 14);
     }
 
-    // Лакомства (Сушеный шиповник)
-    for (const b of berries) {
-      if (b.collected) continue;
-      ctx.fillStyle = '#f43f5e';
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#fda4af';
-      ctx.beginPath();
-      ctx.arc(b.x - 2, b.y - 2, 2, 0, Math.PI * 2);
-      ctx.fill();
+    // Хот-доги
+    for (const hd of hotdogs) {
+      if (hd.collected) continue;
+      drawHotdog(hd.x, hd.y);
     }
 
     // Частицы
     for (const pt of particles) {
       ctx.fillStyle = pt.color;
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Конфетти при победе
-    for (const c of confetti) {
-      ctx.fillStyle = c.color;
-      ctx.fillRect(c.x, c.y, c.size, c.size);
+      if (pt.size) {
+        ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+      } else {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     // Шиншилла
