@@ -52,16 +52,23 @@
       color: #fff;
       padding: 8px 14px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       backdrop-filter: blur(8px);
+      pointer-events: auto;
     }
     #clock-badge {
       color: #ff3366;
       font-family: monospace;
-      font-size: 17px;
+      font-size: 16px;
       letter-spacing: 1px;
+    }
+    #shop-btn {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      color: #fff;
+      cursor: pointer;
     }
 
     /* Шкалы прогресса */
@@ -72,7 +79,7 @@
       right: 16px;
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 8px;
       pointer-events: none;
       z-index: 10;
     }
@@ -116,7 +123,7 @@
       box-shadow: 0 0 12px rgba(6,182,212,0.6);
     }
 
-    /* Баннер безумия (Frenzy Mode) */
+    /* Баннер безумия */
     #frenzy-banner {
       display: none;
       position: absolute;
@@ -125,16 +132,17 @@
       transform: translateX(-50%);
       background: linear-gradient(90deg, #ff007f, #7928ca);
       color: #fff;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
-      padding: 6px 20px;
+      padding: 6px 18px;
       border-radius: 20px;
       box-shadow: 0 0 25px #ff007f;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       z-index: 15;
       animation: neonPulse 0.2s infinite alternate;
       pointer-events: none;
+      white-space: nowrap;
     }
     @keyframes neonPulse {
       0% { opacity: 0.8; transform: translateX(-50%) scale(0.98); }
@@ -163,7 +171,6 @@
       z-index: 20;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      transition: transform 0.06s ease, box-shadow 0.06s ease;
     }
     #tap-zone:active {
       transform: scale(0.96);
@@ -177,7 +184,6 @@
       margin-top: 2px;
     }
 
-    /* Баннер паники */
     #panic-alert {
       display: none;
       position: absolute;
@@ -208,7 +214,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(3, 5, 14, 0.88);
+      background: rgba(3, 5, 14, 0.9);
       backdrop-filter: blur(10px);
       display: flex;
       justify-content: center;
@@ -223,38 +229,28 @@
       background: #11162a;
       border: 2px solid #8b5cf6;
       border-radius: 28px;
-      padding: 26px 22px;
+      padding: 24px 20px;
       width: 100%;
       max-width: 350px;
       text-align: center;
       color: #fff;
       box-shadow: 0 12px 45px rgba(139, 92, 246, 0.35);
+      max-height: 90vh;
+      overflow-y: auto;
     }
     .card h1 {
       font-size: 22px;
       margin-bottom: 12px;
       color: #38bdf8;
-      text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
-    }
-    .card ul {
-      text-align: left;
-      font-size: 13px;
-      color: #cbd5e1;
-      margin-bottom: 22px;
-      line-height: 1.6;
-      list-style: none;
-    }
-    .card ul li {
-      margin-bottom: 8px;
     }
     .main-btn {
       width: 100%;
       background: linear-gradient(135deg, #06b6d4, #3b82f6);
       color: #030712;
       border: none;
-      padding: 16px;
+      padding: 15px;
       border-radius: 18px;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
       cursor: pointer;
       box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
@@ -262,6 +258,84 @@
     }
     .main-btn:active {
       transform: scale(0.97);
+    }
+
+    /* Список скинов */
+    .skin-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.06);
+      padding: 12px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .skin-info {
+      text-align: left;
+    }
+    .skin-name {
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .skin-cost {
+      font-size: 12px;
+      color: #f59e0b;
+    }
+    .skin-action-btn {
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .skin-action-btn.active {
+      background: #10b981;
+      color: #fff;
+    }
+    .skin-action-btn.buy {
+      background: #f59e0b;
+      color: #fff;
+    }
+    .skin-action-btn.select {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    /* СКРИМЕР ТАКСЫ */
+    #jumpscare-overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ff0000;
+      z-index: 200;
+      pointer-events: none;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+      animation: screamFlash 0.08s infinite alternate;
+    }
+    @keyframes screamFlash {
+      0% { background: #b30000; }
+      100% { background: #000; }
+    }
+    #scare-face {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform: scale(0.5);
+      animation: scareZoom 0.25s cubic-bezier(0.1, 0.9, 0.2, 1.2) forwards;
+    }
+    @keyframes scareZoom {
+      0% { transform: scale(0.4) rotate(-10deg); }
+      70% { transform: scale(1.4) rotate(5deg); }
+      100% { transform: scale(1.25) rotate(0deg); }
     }
   </style>
 </head>
@@ -272,7 +346,8 @@
 
   <div id="hud">
     <div class="hud-badge" id="clock-badge">🕒 03:00</div>
-    <div class="hud-badge" id="score-badge">🔥 Очки: 0</div>
+    <div class="hud-badge" id="score-badge">🔥 0</div>
+    <button class="hud-badge" id="shop-btn">🛍️ СКИНЫ</button>
   </div>
 
   <div id="bars-container">
@@ -298,27 +373,65 @@
     <span>ЖМИ БЫСТРО, НО СТОП НА КРАСНЫЙ!</span>
   </div>
 
+  <!-- СКРИМЕР ТАКСЫ -->
+  <div id="jumpscare-overlay">
+    <div id="scare-face">
+      <!-- Процедурный зловещий вектор таксы -->
+      <svg viewBox="0 0 300 300" width="340" height="340" style="filter: drop-shadow(0 0 30px #ff0000);">
+        <!-- Голова -->
+        <ellipse cx="150" cy="150" rx="110" ry="85" fill="#8b3208"/>
+        <!-- Глаза навыкате -->
+        <circle cx="105" cy="115" r="32" fill="#fff"/>
+        <circle cx="195" cy="115" r="32" fill="#fff"/>
+        <circle cx="105" cy="115" r="14" fill="#ff0000"/>
+        <circle cx="195" cy="115" r="14" fill="#ff0000"/>
+        <circle cx="105" cy="115" r="6" fill="#000"/>
+        <circle cx="195" cy="115" r="6" fill="#000"/>
+        <!-- Огромная пасть со скример-зубами -->
+        <ellipse cx="150" cy="195" rx="75" ry="48" fill="#110202"/>
+        <path d="M 90 175 L 105 195 L 120 175 L 135 195 L 150 175 L 165 195 L 180 175 L 195 195 L 210 175 Z" fill="#fff"/>
+        <path d="M 95 220 L 110 200 L 125 220 L 140 200 L 155 220 L 170 200 L 185 220 L 200 200 Z" fill="#fff"/>
+        <!-- Нос -->
+        <ellipse cx="150" cy="155" rx="25" ry="16" fill="#000"/>
+        <!-- Уши в разлете -->
+        <ellipse cx="40" cy="100" rx="28" ry="60" fill="#581e03" transform="rotate(-25 40 100)"/>
+        <ellipse cx="260" cy="100" rx="28" ry="60" fill="#581e03" transform="rotate(25 260 100)"/>
+        <text x="150" y="275" font-size="34" font-weight="900" fill="#fff" text-anchor="middle" font-family="system-ui">БАААВФ!!</text>
+      </svg>
+    </div>
+  </div>
+
   <!-- Старт -->
   <div id="start-modal" class="modal">
     <div class="card">
       <h1>🐹 НОЧНОЙ ТЫГЫДЫК 3000</h1>
-      <ul>
-        <li>🌙 <b>Ночь, тишина.</b> Шиншилла жаждет бешеного движения в колесе.</li>
-        <li>⚡ <b>Тапай кнопку</b>, запускай вращение, выбивай комбо и частицы!</li>
-        <li>🔥 <b>Заполни шкалу Хаоса</b>, чтобы включить Овердрайв (x3 очков без риска)!</li>
-        <li>🛑 <b>ЗАМИРАЙ!</b> Когда такса поднимает уши и горит «!», <b>убери палец</b>, иначе получишь оглушительный БАВФ!</li>
+      <ul style="text-align: left; font-size: 13px; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6; list-style: none;">
+        <li>🌙 <b>Тапай кнопку</b>, набивай очки на новые скины шиншиллы!</li>
+        <li>⚡ <b>Шкала Хаоса на 100%</b> включает Овердрайв (безопасный спам тапами).</li>
+        <li>🛑 <b>ЗАМИРАЙ НА КРАСНЫЙ!</b> Не уберешь палец вовремя — получишь скример от таксы!</li>
       </ul>
       <button class="main-btn" id="start-btn">ПОГНАЛИ ТЫГЫДЫКАТЬ! 🚀</button>
-      <p style="margin-top: 14px; font-size: 12px; color: #64748b;" id="best-display">Рекорд хаоса: 0</p>
+      <p style="margin-top: 14px; font-size: 12px; color: #94a3b8;" id="total-wallet">Всего очков: 0</p>
+    </div>
+  </div>
+
+  <!-- Магазин скинов -->
+  <div id="shop-modal" class="modal hidden">
+    <div class="card">
+      <h1 style="color: #f59e0b;">🛍️ ШИНШИЛЛО-ГАРДЕРОБ</h1>
+      <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px;">Баланс: <b id="shop-balance" style="color: #38bdf8;">0</b> очков</p>
+      <div id="skins-list"></div>
+      <button class="main-btn" id="close-shop-btn" style="margin-top: 10px; background: #334155; color: #fff;">НАЗАД В ИГРУ</button>
     </div>
   </div>
 
   <!-- Game Over -->
   <div id="over-modal" class="modal hidden">
     <div class="card" style="border-color: #f43f5e; box-shadow: 0 10px 45px rgba(244, 63, 94, 0.45);">
-      <h1 id="over-title" style="color: #f43f5e;">ТАКСА ПРОСНУЛАСЬ! 🐶💥</h1>
-      <p style="font-size: 15px; margin: 10px 0 16px 0; color: #e2e8f0;" id="over-desc"></p>
-      <p style="font-size: 19px; font-weight: 900; margin-bottom: 22px; color: #38bdf8;" id="over-score"></p>
+      <h1 id="over-title" style="color: #f43f5e;">ТАКСА СХВАТИЛА ТЕБЯ! 🐶💥</h1>
+      <p style="font-size: 14px; margin: 10px 0 16px 0; color: #e2e8f0;" id="over-desc"></p>
+      <p style="font-size: 18px; font-weight: 900; margin-bottom: 12px; color: #38bdf8;" id="over-score"></p>
+      <p style="font-size: 13px; color: #f59e0b; margin-bottom: 20px;" id="earned-wallet"></p>
       <button class="main-btn" id="restart-btn" style="background: linear-gradient(135deg, #f43f5e, #fb7185); color: #fff;">ЕЩЕ ТЫГЫДЫК 🔄</button>
     </div>
   </div>
@@ -326,7 +439,7 @@
 
 <script>
 (() => {
-  // --- АУДИО (Web Audio API без внешних файлов) ---
+  // --- ЗВУК И СКРИМЕР-СИНТЕЗАТОР ---
   let audioCtx = null;
   function initAudio() {
     if (!audioCtx) {
@@ -363,14 +476,28 @@
         gain.gain.linearRampToValueAtTime(0.01, t + 0.22);
         osc.start(t);
         osc.stop(t + 0.22);
-      } else if (type === 'bork') {
+      } else if (type === 'scream') {
+        // Оглушительный сдвоенный скример-аккорд
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(170, t);
-        osc.frequency.exponentialRampToValueAtTime(38, t + 0.4);
-        gain.gain.setValueAtTime(0.9, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.4);
+        osc.frequency.setValueAtTime(140, t);
+        osc.frequency.exponentialRampToValueAtTime(30, t + 0.6);
+        gain.gain.setValueAtTime(1.0, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.6);
         osc.start(t);
-        osc.stop(t + 0.4);
+        osc.stop(t + 0.6);
+
+        // Второй высокочастотный скрежет
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'square';
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.frequency.setValueAtTime(850, t);
+        osc2.frequency.linearRampToValueAtTime(200, t + 0.45);
+        gain2.gain.setValueAtTime(0.5, t);
+        gain2.gain.linearRampToValueAtTime(0.01, t + 0.45);
+        osc2.start(t);
+        osc2.stop(t + 0.45);
       } else if (type === 'frenzy') {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(440, t);
@@ -391,6 +518,26 @@
     } catch (e) {}
   }
 
+  // --- СКИНЫ ШИНШИЛЛЫ ---
+  const SKINS = [
+    { id: 'classic', name: 'Пепельная классика', cost: 0, body: '#cbd5e1', ear: '#f472b6', eye: '#0f172a' },
+    { id: 'white', name: 'Белый Вильсон ❄️', cost: 3000, body: '#ffffff', ear: '#fbcfe8', eye: '#38bdf8' },
+    { id: 'black', name: 'Черный Бархат 🖤', cost: 8000, body: '#1e293b', ear: '#475569', eye: '#a855f7' },
+    { id: 'gold', name: 'Золотой Сапфир ✨', cost: 20000, body: '#fbbf24', ear: '#f59e0b', eye: '#06b6d4' }
+  ];
+
+  let totalScore = parseInt(localStorage.getItem('tygydyk_wallet') || '0', 10);
+  let unlockedSkins = JSON.parse(localStorage.getItem('tygydyk_unlocked_skins') || '["classic"]');
+  let currentSkinId = localStorage.getItem('tygydyk_active_skin') || 'classic';
+
+  function saveWallet() {
+    localStorage.setItem('tygydyk_wallet', totalScore);
+    localStorage.setItem('tygydyk_unlocked_skins', JSON.stringify(unlockedSkins));
+    localStorage.setItem('tygydyk_active_skin', currentSkinId);
+    document.getElementById('total-wallet').textContent = `Всего очков: ${totalScore}`;
+    document.getElementById('shop-balance').textContent = totalScore;
+  }
+
   // --- ХОЛСТ И РЕСАЙЗ ---
   const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
@@ -409,18 +556,14 @@
   let isRunning = false;
   let score = 0;
   let combo = 0;
-  let gameTime = 180; // 3:00 ночи
-  let best = parseInt(localStorage.getItem('tygydyk_best_ultra') || '0', 10);
-  document.getElementById('best-display').textContent = `Рекорд хаоса: ${best}`;
-
+  let gameTime = 180;
   let noise = 0;
   let vibe = 0;
-  let dogAlertState = 0; // 0 - спит, 1 - насторожилась, 2 - ТРЕВОГА
+  let dogAlertState = 0;
   let nextAlertIn = 3.0;
   let alertDuration = 0;
   let frenzyTimer = 0;
 
-  // Визуальные эффекты и плавная интерполяция
   let wheelAngle = 0;
   let wheelSpeed = 0;
   let targetWheelSpeed = 0;
@@ -436,6 +579,7 @@
   const vibeBar = document.getElementById('vibe-bar');
   const clockEl = document.getElementById('clock-badge');
   const scoreEl = document.getElementById('score-badge');
+  const scareOverlay = document.getElementById('jumpscare-overlay');
 
   function resetGame() {
     score = 0;
@@ -453,11 +597,12 @@
     popups = [];
     panicEl.style.display = 'none';
     frenzyEl.style.display = 'none';
+    scareOverlay.style.display = 'none';
     updateHUD();
   }
 
   function updateHUD() {
-    scoreEl.textContent = `🔥 Очки: ${Math.floor(score)}`;
+    scoreEl.textContent = `🔥 ${Math.floor(score)}`;
     rageBar.style.width = `${Math.min(noise, 100)}%`;
     vibeBar.style.width = `${Math.min(vibe, 100)}%`;
 
@@ -470,7 +615,7 @@
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
       window.Telegram.WebApp.HapticFeedback.impactOccurred(type || 'medium');
     } else if (navigator.vibrate) {
-      navigator.vibrate(type === 'heavy' ? 80 : 30);
+      navigator.vibrate(type === 'heavy' ? 120 : 30);
     }
   }
 
@@ -482,12 +627,8 @@
     if (!isRunning) return;
     initAudio();
 
-    // Проигрыш при тревоге (если нет Овердрайва)
     if (dogAlertState === 2 && frenzyTimer <= 0) {
-      screenShake = 30;
-      playSound('bork');
-      vibrate('heavy');
-      gameOver('Шиншилла спалилась! Громыхнула колесом в момент, когда такса навострила уши!');
+      triggerJumpscare('Шиншилла спалилась! Громыхнула колесом прямо перед носом таксы!');
       return;
     }
 
@@ -496,7 +637,6 @@
     const gain = Math.floor(15 * (1 + Math.min(combo * 0.05, 4)) * mult);
     score += gain;
 
-    // Всплывающие очки
     popups.push({
       x: cw * 0.35 + (Math.random() - 0.5) * 60,
       y: ch * 0.32 + (Math.random() - 0.5) * 30,
@@ -505,7 +645,7 @@
       color: frenzyTimer > 0 ? '#ff007f' : '#00f2fe'
     });
 
-    // Разлетающиеся частицы опилок
+    const activeSkin = SKINS.find(s => s.id === currentSkinId);
     for (let i = 0; i < 4; i++) {
       particles.push({
         x: cw * 0.35,
@@ -513,7 +653,7 @@
         vx: (Math.random() - 0.5) * 8,
         vy: -Math.random() * 6 - 2,
         rad: Math.random() * 3 + 2,
-        color: Math.random() < 0.6 ? '#fcd34d' : '#94a3b8',
+        color: currentSkinId === 'gold' ? '#fde047' : (Math.random() < 0.6 ? '#fcd34d' : activeSkin.body),
         life: 1.0
       });
     }
@@ -521,7 +661,7 @@
     vibe += 3.5;
     if (vibe >= 100) {
       vibe = 0;
-      frenzyTimer = 4.0; // Активация 4 сек бешенства
+      frenzyTimer = 4.0;
       frenzyEl.style.display = 'block';
       dogAlertState = 0;
       panicEl.style.display = 'none';
@@ -559,12 +699,35 @@
   window.addEventListener('mouseup', () => isHolding = false);
 
   window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && !e.repeat) {
-      doTygydyk();
-    }
+    if (e.code === 'Space' && !e.repeat) doTygydyk();
   });
 
-  // --- ИГРОВОЙ ЦИКЛ (LERP & DELTATIME) ---
+  // --- СКРИМЕР И КОНЕЦ ИГРЫ ---
+  function triggerJumpscare(reason) {
+    isRunning = false;
+    panicEl.style.display = 'none';
+    frenzyEl.style.display = 'none';
+
+    // Включаем полноэкранный скример
+    scareOverlay.style.display = 'flex';
+    playSound('scream');
+    vibrate('heavy');
+
+    // Начисление заработанных очков на общий баланс
+    const earned = Math.floor(score);
+    totalScore += earned;
+    saveWallet();
+
+    setTimeout(() => {
+      scareOverlay.style.display = 'none';
+      document.getElementById('over-desc').textContent = reason;
+      document.getElementById('over-score').textContent = `Счёт забега: ${earned}`;
+      document.getElementById('earned-wallet').textContent = `Зачислено в банк: +${earned} (Всего: ${totalScore})`;
+      document.getElementById('over-modal').classList.remove('hidden');
+    }, 1100);
+  }
+
+  // --- ИГРОВОЙ ЦИКЛ ---
   let lastTime = performance.now();
 
   function loop(now) {
@@ -583,12 +746,10 @@
     gameTime += dt * 0.7;
     dogBreathe += dt * 2.2;
 
-    // Плавная интерполяция вращения колеса (lerp)
     wheelSpeed += (targetWheelSpeed - wheelSpeed) * 0.15;
     targetWheelSpeed *= 0.94;
     wheelAngle += wheelSpeed;
 
-    // Остывание шума
     if (noise > 0 && frenzyTimer <= 0) {
       noise -= (dogAlertState === 2 ? 8 : 17) * dt;
       if (noise < 0) noise = 0;
@@ -596,7 +757,6 @@
 
     if (screenShake > 0) screenShake *= 0.88;
 
-    // Логика Овердрайва
     if (frenzyTimer > 0) {
       frenzyTimer -= dt;
       if (frenzyTimer <= 0) {
@@ -606,14 +766,12 @@
       }
     }
 
-    // Храп таксы
     snoreTimer += dt;
     if (dogAlertState === 0 && snoreTimer > 2.2) {
       snoreTimer = 0;
       playSound('snore');
     }
 
-    // Поведение таксы (только когда нет Овердрайва)
     if (frenzyTimer <= 0) {
       if (dogAlertState === 0) {
         nextAlertIn -= dt;
@@ -630,9 +788,7 @@
       } else if (dogAlertState === 2) {
         alertDuration -= dt;
         if (isHolding || noise > 42) {
-          screenShake = 25;
-          playSound('bork');
-          gameOver('Такса распахнула глаза и поймала шиншиллу с поличным!');
+          triggerJumpscare('Такса распахнула пасть и поймала шиншиллу на месте!');
           return;
         }
 
@@ -640,29 +796,25 @@
           dogAlertState = 0;
           panicEl.style.display = 'none';
           nextAlertIn = 2.2 + Math.random() * 2.5;
-          score += 200; // Награда за хладнокровие
+          score += 200;
         }
       }
 
       if (noise >= 100) {
-        screenShake = 28;
-        playSound('bork');
-        gameOver('Шум пробил потолок! Такса оглушительно залаяла на всю квартиру!');
+        triggerJumpscare('Шум зашкалил! Такса вскочила и набросилась на витрину!');
         return;
       }
     }
 
-    // Обновление частиц
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 15 * dt; // гравитация
+      p.vy += 15 * dt;
       p.life -= dt * 2;
       if (p.life <= 0) particles.splice(i, 1);
     }
 
-    // Всплывающий текст
     for (let i = popups.length - 1; i >= 0; i--) {
       const pp = popups[i];
       pp.y -= 35 * dt;
@@ -673,20 +825,62 @@
     updateHUD();
   }
 
-  function gameOver(reason) {
-    isRunning = false;
-    panicEl.style.display = 'none';
-    frenzyEl.style.display = 'none';
-    if (score > best) {
-      best = Math.floor(score);
-      localStorage.setItem('tygydyk_best_ultra', best);
-    }
-    document.getElementById('over-desc').textContent = reason;
-    document.getElementById('over-score').textContent = `Счёт: ${Math.floor(score)} | Макс. комбо: x${combo}`;
-    document.getElementById('over-modal').classList.remove('hidden');
+  // --- МАГАЗИН СКИНОВ ---
+  const shopModal = document.getElementById('shop-modal');
+  const skinsListEl = document.getElementById('skins-list');
+
+  function renderShop() {
+    skinsListEl.innerHTML = '';
+    SKINS.forEach(skin => {
+      const isUnlocked = unlockedSkins.includes(skin.id);
+      const isActive = currentSkinId === skin.id;
+
+      const item = document.createElement('div');
+      item.className = 'skin-item';
+      item.innerHTML = `
+        <div class="skin-info">
+          <div class="skin-name" style="color:${skin.body}">${skin.name}</div>
+          <div class="skin-cost">${isUnlocked ? 'Куплено' : `Цена: ${skin.cost} очков`}</div>
+        </div>
+      `;
+
+      const btn = document.createElement('button');
+      btn.className = `skin-action-btn ${isActive ? 'active' : (isUnlocked ? 'select' : 'buy')}`;
+      btn.textContent = isActive ? 'ВЫБРАНО' : (isUnlocked ? 'НАДЕТЬ' : 'КУПИТЬ');
+
+      btn.onclick = () => {
+        if (isActive) return;
+        if (isUnlocked) {
+          currentSkinId = skin.id;
+          saveWallet();
+          renderShop();
+        } else {
+          if (totalScore >= skin.cost) {
+            totalScore -= skin.cost;
+            unlockedSkins.push(skin.id);
+            currentSkinId = skin.id;
+            saveWallet();
+            renderShop();
+          } else {
+            alert('Не хватает очков! Тыгыдыкай больше ночью!');
+          }
+        }
+      };
+
+      item.appendChild(btn);
+      skinsListEl.appendChild(item);
+    });
   }
 
-  // Модальные окна
+  document.getElementById('shop-btn').onclick = () => {
+    renderShop();
+    shopModal.classList.remove('hidden');
+  };
+  document.getElementById('close-shop-btn').onclick = () => {
+    shopModal.classList.add('hidden');
+  };
+
+  // Старт / Рестарт
   const startModal = document.getElementById('start-modal');
   const overModal = document.getElementById('over-modal');
   const startBtn = document.getElementById('start-btn');
@@ -705,6 +899,8 @@
     restartBtn.addEventListener(ev, (e) => { e.preventDefault(); start(); }, { passive: false });
   });
 
+  saveWallet();
+
   // --- ОТРИСОВКА (CANVAS) ---
   function render() {
     ctx.save();
@@ -715,18 +911,15 @@
       ctx.translate(rx, ry);
     }
 
-    // 1. Уютная ночная комната
     ctx.fillStyle = '#060914';
     ctx.fillRect(0, 0, cw, ch);
 
-    // Мягкий лунный свет
     const moonGlow = ctx.createRadialGradient(cw * 0.2, ch * 0.15, 20, cw * 0.2, ch * 0.15, cw * 0.7);
     moonGlow.addColorStop(0, 'rgba(56, 189, 248, 0.14)');
     moonGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = moonGlow;
     ctx.fillRect(0, 0, cw, ch);
 
-    // Текстурный деревянный пол
     ctx.strokeStyle = 'rgba(255,255,255,0.035)';
     ctx.lineWidth = 2;
     for (let y = ch * 0.38; y < ch; y += 46) {
@@ -736,13 +929,9 @@
       ctx.stroke();
     }
 
-    // 2. ВИТРИНА ШИНШИЛЛЫ
     drawCage(cw / 2, ch * 0.32);
-
-    // 3. СПЯЩАЯ ТАКСА
     drawDoge(cw / 2, ch * 0.68);
 
-    // 4. ЧАСТИЦЫ И ПОПАПЫ
     for (const p of particles) {
       ctx.fillStyle = p.color;
       ctx.globalAlpha = Math.max(0, p.life);
@@ -768,15 +957,12 @@
     const x = cx - w / 2;
     const y = cy - h / 2;
 
-    // Внутреннее свечение витрины
     ctx.fillStyle = '#0f1629';
     ctx.fillRect(x, y, w, h);
 
-    // Подстилка (сено / опилки)
     ctx.fillStyle = '#b4975a';
     ctx.fillRect(x, y + h - 20, w, 20);
 
-    // Колесо
     const wx = x + w * 0.34;
     const wy = y + h * 0.52;
     const wr = 52;
@@ -785,14 +971,12 @@
     ctx.translate(wx, wy);
     ctx.rotate(wheelAngle);
 
-    // Обод с неоновым свечением при овердрайве
     ctx.strokeStyle = frenzyTimer > 0 ? '#ff007f' : '#06b6d4';
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(0, 0, wr, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Спицы
     ctx.strokeStyle = frenzyTimer > 0 ? 'rgba(255,0,127,0.45)' : 'rgba(6,182,212,0.35)';
     ctx.lineWidth = 2;
     for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
@@ -803,39 +987,40 @@
     }
     ctx.restore();
 
-    // Шиншилла (живая физика лапок и шерсти)
+    // Шиншилла с выбранным скином
+    const skin = SKINS.find(s => s.id === currentSkinId) || SKINS[0];
     ctx.save();
     const runJig = Math.sin(Date.now() * 0.035) * (wheelSpeed * 8 + 1.5);
     ctx.translate(wx, wy + 16 + runJig);
 
-    // Пушистый колобок тела
-    ctx.fillStyle = '#cbd5e1';
+    // Тело
+    ctx.fillStyle = skin.body;
     ctx.beginPath();
     ctx.arc(0, 0, 20, 0, Math.PI * 2);
     ctx.fill();
 
-    // Ушки с розовой серединкой
-    ctx.fillStyle = '#94a3b8';
+    // Ушки
+    ctx.fillStyle = skin.body;
     ctx.beginPath();
     ctx.arc(-13, -15, 8, 0, Math.PI * 2);
     ctx.arc(13, -15, 8, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#f472b6';
+    ctx.fillStyle = skin.ear;
     ctx.beginPath();
     ctx.arc(-13, -15, 4.5, 0, Math.PI * 2);
     ctx.arc(13, -15, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Лапки, бегущие в колесе
+    // Лапки
     const pawPhase = Date.now() * 0.04;
-    ctx.fillStyle = '#f472b6';
+    ctx.fillStyle = skin.ear;
     ctx.beginPath();
     ctx.arc(-7 + Math.sin(pawPhase) * 6, 18, 4, 0, Math.PI * 2);
     ctx.arc(7 - Math.sin(pawPhase) * 6, 18, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Глазки-бусинки
-    ctx.fillStyle = '#0f172a';
+    // Глазки
+    ctx.fillStyle = skin.eye;
     ctx.beginPath();
     ctx.arc(6, -3, 3.5, 0, Math.PI * 2);
     ctx.fill();
@@ -850,8 +1035,8 @@
     ctx.arc(14, 1, 2.8, 0, Math.PI * 2);
     ctx.fill();
 
-    // Пушистый хвост
-    ctx.strokeStyle = '#94a3b8';
+    // Хвостик
+    ctx.strokeStyle = skin.body;
     ctx.lineWidth = 7;
     ctx.lineCap = 'round';
     ctx.beginPath();
@@ -861,7 +1046,6 @@
 
     ctx.restore();
 
-    // Прутья клетки
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.lineWidth = 2;
     for (let bx = x + 16; bx < x + w; bx += 24) {
@@ -871,7 +1055,6 @@
       ctx.stroke();
     }
 
-    // Рамка витрины
     ctx.strokeStyle = '#334155';
     ctx.lineWidth = 4;
     ctx.strokeRect(x, y, w, h);
@@ -880,7 +1063,6 @@
   function drawDoge(cx, cy) {
     const breath = Math.sin(dogBreathe) * 2.5;
 
-    // Круглая плюшевая лежанка
     ctx.fillStyle = '#1e112a';
     ctx.beginPath();
     ctx.ellipse(cx, cy + 12, 115, 52, 0, 0, Math.PI * 2);
@@ -892,26 +1074,22 @@
     ctx.save();
     ctx.translate(cx, cy);
 
-    // Тело таксы с анимацией дыхания
     ctx.fillStyle = '#9a3412';
     ctx.beginPath();
     ctx.ellipse(0, 0, 68 + breath, 27 + breath * 0.6, -0.04, 0, Math.PI * 2);
     ctx.fill();
 
-    // Поджатые лапки
     ctx.fillStyle = '#7c2d12';
     ctx.beginPath();
     ctx.arc(-36, 17, 9, 0, Math.PI * 2);
     ctx.arc(22, 19, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Мордочка таксы
     ctx.fillStyle = '#c2410c';
     ctx.beginPath();
     ctx.ellipse(48, -6, 23, 16, 0.18, 0, Math.PI * 2);
     ctx.fill();
 
-    // Носик-сосиска
     ctx.beginPath();
     ctx.ellipse(68, -2, 13, 9, 0.1, 0, Math.PI * 2);
     ctx.fill();
@@ -920,7 +1098,6 @@
     ctx.arc(79, -2, 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Ухо таксы (навостряется при тревоге)
     const earAngle = dogAlertState === 2 ? -0.2 : 0.35 + breath * 0.03;
     ctx.save();
     ctx.translate(38, -4);
@@ -931,25 +1108,20 @@
     ctx.fill();
     ctx.restore();
 
-    // Глаза и реакция
     if (dogAlertState === 0) {
-      // Спит: закрытые веки
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.arc(56, -8, 5, 0.1, Math.PI - 0.1);
       ctx.stroke();
 
-      // Летающие Zzz
       ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
       ctx.font = 'bold 15px monospace';
       const zOff = (Date.now() * 0.03) % 45;
       ctx.fillText('z', 58 + zOff * 0.4, -22 - zOff);
       ctx.font = 'bold 20px monospace';
       ctx.fillText('Z', 68 + zOff * 0.4, -38 - zOff);
-
     } else if (dogAlertState === 1) {
-      // Приоткрытый подозрительный глаз
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(56, -9, 5.5, 0, Math.PI * 2);
@@ -962,9 +1134,7 @@
       ctx.fillStyle = '#f59e0b';
       ctx.font = '900 24px system-ui';
       ctx.fillText('?', 55, -26);
-
     } else {
-      // ОГРОМНЫЙ КРАСНЫЙ ГЛАЗ ТРЕВОГИ
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(54, -10, 8.5, 0, Math.PI * 2);
@@ -974,7 +1144,6 @@
       ctx.arc(55, -10, 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Мигающий знак восклицания
       ctx.fillStyle = '#ff0055';
       ctx.font = '900 38px system-ui';
       ctx.fillText('!', 52, -32);
