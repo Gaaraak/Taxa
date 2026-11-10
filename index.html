@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Long Doge & Round Boy</title>
+  <title>Ночной Тыгыдык 3000</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,7 +16,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #111;
+      background: #070913;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     #game-container {
@@ -29,212 +29,277 @@
     }
     canvas {
       display: block;
-      background: #2b1b17;
-      touch-action: none;
-    }
-    /* Плавающий интерфейс */
-    #ui-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      touch-action: none;
     }
-    .hud {
-      padding: 16px;
+
+    /* Верхняя панель HUD */
+    #hud {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .hud-badge {
+      background: rgba(13, 17, 33, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: #fff;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      padding: 8px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    #clock-badge {
+      color: #ff3366;
+      letter-spacing: 1px;
+      font-family: monospace;
       font-size: 16px;
     }
-    .hud span {
-      background: rgba(0,0,0,0.5);
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.2);
+
+    /* Шкалы: Хаос и Сон */
+    #bars-container {
+      position: absolute;
+      top: 60px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      z-index: 10;
     }
-    /* Оверлеи меню */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(8, 10, 20, 0.7);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .bar-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: #ddd;
+      width: 75px;
+    }
+    .progress-track {
+      flex: 1;
+      height: 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    #rage-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #4cd964, #ffcc00, #ff3b30);
+      transition: width 0.08s ease;
+      box-shadow: 0 0 10px rgba(255,59,48,0.5);
+    }
+    #vibe-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #a259ff, #00f2fe);
+      transition: width 0.05s ease;
+      box-shadow: 0 0 10px rgba(0,242,254,0.5);
+    }
+
+    /* Нижняя зона тапа */
+    #tap-zone {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      height: 80px;
+      background: linear-gradient(135deg, #ff007f, #7928ca);
+      border: 3px solid #ff79c6;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 20px;
+      box-shadow: 0 8px 30px rgba(255, 0, 127, 0.45);
+      cursor: pointer;
+      z-index: 20;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    #tap-zone:active {
+      transform: scale(0.97);
+      box-shadow: 0 4px 15px rgba(255, 0, 127, 0.8);
+    }
+    #tap-zone span {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.8;
+      letter-spacing: 0.5px;
+    }
+
+    /* Модальные окна */
     .modal {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(4px);
+      background: rgba(3, 5, 12, 0.88);
+      backdrop-filter: blur(8px);
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      pointer-events: auto;
       z-index: 100;
     }
     .modal.hidden {
       display: none !important;
     }
     .card {
-      background: #1c1c1e;
-      border: 2px solid #ff9500;
-      border-radius: 24px;
+      background: #141829;
+      border: 2px solid #a259ff;
+      border-radius: 26px;
       padding: 24px 20px;
       width: 100%;
-      max-width: 360px;
+      max-width: 350px;
       text-align: center;
       color: #fff;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      box-shadow: 0 10px 40px rgba(162, 89, 255, 0.35);
     }
     .card h1 {
-      font-size: 20px;
-      margin-bottom: 14px;
-      color: #ff9500;
+      font-size: 22px;
+      margin-bottom: 12px;
+      color: #00f2fe;
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
     }
     .card ul {
       text-align: left;
       font-size: 13px;
-      color: #ccc;
-      margin-bottom: 18px;
-      line-height: 1.5;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      line-height: 1.6;
       list-style: none;
     }
     .card ul li {
       margin-bottom: 8px;
     }
-    .btn {
+    .main-btn {
       width: 100%;
-      background: linear-gradient(135deg, #ff9500, #ff3b30);
-      color: #fff;
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      color: #050b1a;
       border: none;
       padding: 15px;
       border-radius: 16px;
       font-size: 18px;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255,149,0,0.4);
+      box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
       outline: none;
-      -webkit-tap-highlight-color: transparent;
     }
-    .btn:active {
+    .main-btn:active {
       transform: scale(0.97);
     }
-    /* Мобильные элементы управления */
-    #touch-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding: 20px;
-      pointer-events: auto;
-      gap: 12px;
-    }
-    .ctrl-btn {
-      background: rgba(255,255,255,0.18);
-      border: 2px solid rgba(255,255,255,0.3);
-      color: #fff;
-      border-radius: 20px;
-      height: 65px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: bold;
-      backdrop-filter: blur(5px);
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-    .ctrl-btn:active {
-      background: rgba(255,149,0,0.5);
-    }
-    .steer-btn {
-      flex: 1;
-    }
-    .hop-btn {
-      flex: 1.4;
-      background: rgba(255,149,0,0.3);
-      border-color: #ff9500;
-      font-size: 15px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    /* Индикатор тревоги */
-    #warning-badge {
+
+    /* Алерты */
+    #panic-alert {
       display: none;
       position: absolute;
-      top: 70px;
+      top: 36%;
       left: 50%;
-      transform: translateX(-50%);
-      background: #ff3b30;
+      transform: translate(-50%, -50%);
+      background: #ff0055;
       color: #fff;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 4px 12px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #ff3b30;
-      animation: blink 0.3s infinite alternate;
+      font-size: 20px;
+      font-weight: 900;
+      padding: 10px 22px;
+      border-radius: 16px;
+      box-shadow: 0 0 35px #ff0055;
+      animation: alertPulse 0.15s infinite alternate;
+      z-index: 50;
+      pointer-events: none;
+      white-space: nowrap;
     }
-    @keyframes blink {
-      0% { opacity: 0.4; }
-      100% { opacity: 1; }
+    @keyframes alertPulse {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      100% { transform: translate(-50%, -50%) scale(1.1); }
     }
   </style>
 </head>
 <body>
 
 <div id="game-container">
-  <canvas id="game"></canvas>
+  <canvas id="stage"></canvas>
 
-  <div id="ui-layer">
-    <div class="hud">
-      <span id="score-val">🌭 0 сосисок</span>
-      <span id="dist-val">0 м</span>
+  <div id="hud">
+    <div class="hud-badge" id="clock-badge">🕒 03:00</div>
+    <div class="hud-badge" id="score-badge">🔥 Очки: 0</div>
+  </div>
+
+  <div id="bars-container">
+    <div class="bar-row">
+      <span class="bar-label">ХАОС (VIBE)</span>
+      <div class="progress-track">
+        <div id="vibe-bar"></div>
+      </div>
     </div>
-    <div id="warning-badge">⚠️ КОГТИ! ЖМИ ПОДБРОС!</div>
-    
-    <div id="touch-controls">
-      <button class="ctrl-btn steer-btn" id="left-btn">◀</button>
-      <button class="ctrl-btn hop-btn" id="hop-btn">ПОДБРОС 🦘</button>
-      <button class="ctrl-btn steer-btn" id="right-btn">▶</button>
+    <div class="bar-row">
+      <span class="bar-label">ШУМ (ТАКСА)</span>
+      <div class="progress-track">
+        <div id="rage-bar"></div>
+      </div>
     </div>
+  </div>
+
+  <div id="panic-alert">⚠️ ЗАМРИ! ТАКСА СЛЫШИТ! ⚠️</div>
+
+  <div id="tap-zone">
+    ТЫГЫДЫКАТЬ! 🌪️
+    <span>ЖМИ БЫСТРО, НО СТОП НА КРАСНЫЙ!</span>
   </div>
 
   <!-- Старт -->
   <div id="start-modal" class="modal">
     <div class="card">
-      <h1>🌭 LONG DOGE & ROUND BOY</h1>
+      <h1>🐹 НОЧНОЙ ТЫГЫДЫК 3000</h1>
       <ul>
-        <li>🌭 <b>Ешь сосиски</b>, чтобы такса росла длиннее!</li>
-        <li>🐭 <b>Балансируй шиншиллу:</b> она соскальзывает на резких поворотах.</li>
-        <li>🦘 <b>ПОДБРОС:</b> если сползает — жми кнопку по центру, чтобы поймать её!</li>
+        <li>🌙 <b>На часах 3:00 ночи.</b> Шиншилла жаждет крутить колесо, жрать сено и устраивать дестрой.</li>
+        <li>⚡ <b>Тапай кнопку «ТЫГЫДЫКАТЬ»</b>, чтобы набивать комбо и заполнять шкалу Хаоса.</li>
+        <li>🛑 <b>ЗАМИРАЙ!</b> Когда у спящей таксы загорается «!», <b>немедленно убери палец</b>, иначе проснется и устроит БАВФ!</li>
       </ul>
-      <button class="btn" id="start-btn">ПОГНАААЛИ! 🚀</button>
-      <p style="margin-top: 12px; font-size: 12px; color: #888;" id="best-score">Рекорд: 0</p>
+      <button class="main-btn" id="start-btn">ПОГНАЛИ ТЫГЫДЫКАТЬ! 🚀</button>
+      <p style="margin-top: 14px; font-size: 12px; color: #718096;" id="best-display">Рекорд хаоса: 0</p>
     </div>
   </div>
 
   <!-- Game Over -->
   <div id="over-modal" class="modal hidden">
-    <div class="card">
-      <h1 id="over-title">ШИНШИЛЛА УЛЕТЕЛА!</h1>
-      <p style="font-size: 15px; margin: 10px 0 20px 0;" id="over-reason"></p>
-      <p style="font-size: 18px; margin-bottom: 20px;" id="final-stats"></p>
-      <button class="btn" id="restart-btn">ЕЩЁ РАЗОК 🔄</button>
+    <div class="card" style="border-color: #ff3366; box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);">
+      <h1 id="over-title" style="color: #ff3366;">ТАКСА ПРОСНУЛАСЬ! 🐶💥</h1>
+      <p style="font-size: 15px; margin: 10px 0 16px 0; color: #e2e8f0;" id="over-desc"></p>
+      <p style="font-size: 18px; font-weight: 800; margin-bottom: 22px; color: #00f2fe;" id="over-score"></p>
+      <button class="main-btn" id="restart-btn" style="background: linear-gradient(135deg, #ff007f, #ff3b30); color: #fff;">ЕЩЕ ТЫГЫДЫК 🔄</button>
     </div>
   </div>
 </div>
 
 <script>
 (() => {
-  // --- АУДИО (Web Audio API со снятием блокировки мобилок) ---
+  // --- АУДИО (Web Audio API без внешних файлов) ---
   let audioCtx = null;
   function initAudio() {
     if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) audioCtx = new AudioContext();
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
     }
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
@@ -244,40 +309,51 @@
   function playSound(type) {
     if (!audioCtx || audioCtx.state !== 'running') return;
     try {
+      const t = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-      const t = audioCtx.currentTime;
 
-      if (type === 'eat') {
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(800, t + 0.1);
-        gain.gain.setValueAtTime(0.3, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.1);
+      if (type === 'tap') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300 + Math.random() * 250, t);
+        osc.frequency.exponentialRampToValueAtTime(100, t + 0.08);
+        gain.gain.setValueAtTime(0.25, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.08);
         osc.start(t);
-        osc.stop(t + 0.1);
-      } else if (type === 'hop') {
-        osc.frequency.setValueAtTime(250, t);
-        osc.frequency.exponentialRampToValueAtTime(600, t + 0.18);
-        gain.gain.setValueAtTime(0.4, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.18);
-        osc.start(t);
-        osc.stop(t + 0.18);
-      } else if (type === 'crash') {
+        osc.stop(t + 0.08);
+      } else if (type === 'warn') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
-        gain.gain.setValueAtTime(0.5, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.3);
+        osc.frequency.setValueAtTime(600, t);
+        osc.frequency.setValueAtTime(800, t + 0.08);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.2);
         osc.start(t);
-        osc.stop(t + 0.3);
+        osc.stop(t + 0.2);
+      } else if (type === 'bork') {
+        // Мемный басовый "БАВФ"
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, t);
+        osc.frequency.exponentialRampToValueAtTime(45, t + 0.35);
+        gain.gain.setValueAtTime(0.8, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
+        osc.start(t);
+        osc.stop(t + 0.35);
+      } else if (type === 'snore') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(70, t);
+        osc.frequency.linearRampToValueAtTime(95, t + 0.4);
+        gain.gain.setValueAtTime(0.05, t);
+        gain.gain.linearRampToValueAtTime(0.001, t + 0.5);
+        osc.start(t);
+        osc.stop(t + 0.5);
       }
-    } catch(e) {}
+    } catch (e) {}
   }
 
-  // --- ХОЛСТ И РЕСАЙЗ ---
-  const canvas = document.getElementById('game');
+  // --- ХОЛСТ И ГРАФИКА ---
+  const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
   let cw = 0, ch = 0;
 
@@ -293,147 +369,123 @@
   // --- СОСТОЯНИЕ ИГРЫ ---
   let isRunning = false;
   let score = 0;
-  let distance = 0;
-  let best = parseInt(localStorage.getItem('long_doge_best') || '0', 10);
-  document.getElementById('best-score').textContent = `Рекорд: ${best} сосисок`;
+  let combo = 0;
+  let gameTime = 180; // 3:00 (180 секунд условного ночного таймера)
+  let best = parseInt(localStorage.getItem('tygydyk_best') || '0', 10);
+  document.getElementById('best-display').textContent = `Рекорд хаоса: ${best}`;
 
-  const road = { width: 0, left: 0, speed: 6 };
+  let noise = 0;         // Уровень шума в комнате (0..100)
+  let vibe = 0;          // Заполнение хаоса раунда (0..100)
+  let dogAlertState = 0; // 0: глубокий сон, 1: чуткий (Zzz реже), 2: ТРЕВОГА (!)
+  let alertTimer = 0;
+  let nextAlertIn = 3.0; // секунды до следующей тревоги
+  let alertDuration = 0;
 
-  // ТАКСА
-  const SEG_DIST = 18;
-  let segments = [];
-  let baseLength = 16;
-  let dogX = 0;
-  let steerDir = 0; // -1, 0, 1
+  // Визуальные параметры
+  let wheelAngle = 0;
+  let wheelSpeed = 0;
+  let screenShake = 0;
+  let chinJiggle = 0;
+  let snoreTimer = 0;
 
-  // ШИНШИЛЛА
-  let chin = {
-    segIdx: 6,
-    offset: 0,       // смещение от центра позвоночника (-1 .. 1)
-    vel: 0,          // боковая скорость
-    isHopping: false,
-    hopY: 0,
-    hopVy: 0
-  };
-
-  // ПРЕДМЕТЫ
-  let items = [];
-  let itemSpawnTimer = 0;
+  const panicEl = document.getElementById('panic-alert');
+  const rageBar = document.getElementById('rage-bar');
+  const vibeBar = document.getElementById('vibe-bar');
+  const clockEl = document.getElementById('clock-badge');
+  const scoreEl = document.getElementById('score-badge');
 
   function resetGame() {
-    road.width = Math.min(cw * 0.82, 380);
-    road.left = (cw - road.width) / 2;
-    dogX = road.left + road.width / 2;
-
     score = 0;
-    distance = 0;
-    road.speed = 6;
-    steerDir = 0;
+    combo = 0;
+    noise = 0;
+    vibe = 0;
+    dogAlertState = 0;
+    nextAlertIn = 2.5 + Math.random() * 2.0;
+    alertDuration = 0;
+    wheelSpeed = 0;
+    screenShake = 0;
+    panicEl.style.display = 'none';
+    updateHUD();
+  }
 
-    // Сборка таксы
-    segments = [];
-    const headY = ch * 0.65;
-    for (let i = 0; i < baseLength; i++) {
-      segments.push({ x: dogX, y: headY + i * SEG_DIST });
+  function updateHUD() {
+    scoreEl.textContent = `🔥 Очки: ${Math.floor(score)}`;
+    rageBar.style.width = `${Math.min(noise, 100)}%`;
+    vibeBar.style.width = `${Math.min(vibe, 100)}%`;
+
+    const mins = Math.floor(gameTime / 60);
+    const secs = Math.floor(gameTime % 60);
+    clockEl.textContent = `🕒 0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  // --- ЛОГИКА ТАПА (ТЫГЫДЫК) ---
+  const tapBtn = document.getElementById('tap-zone');
+  let isHolding = false;
+
+  function doTygydyk() {
+    if (!isRunning) return;
+    initAudio();
+
+    if (dogAlertState === 2) {
+      // Игрок нажал во время тревоги -> МОМЕНТАЛЬНЫЙ БАВФ!
+      screenShake = 25;
+      playSound('bork');
+      vibrate(200);
+      gameOver('Ты спалился! Шиншилла громыхнула колесом, когда такса навострила уши!');
+      return;
     }
 
-    chin.segIdx = Math.floor(segments.length / 2);
-    chin.offset = 0;
-    chin.vel = 0;
-    chin.isHopping = false;
-    chin.hopY = 0;
-    chin.hopVy = 0;
-
-    items = [];
-    itemSpawnTimer = 0;
-    updateUI();
-  }
-
-  function updateUI() {
-    document.getElementById('score-val').textContent = `🌭 ${score} сосисок`;
-    document.getElementById('dist-val').textContent = `${Math.floor(distance)} м`;
-  }
-
-  // --- УПРАВЛЕНИЕ ---
-  let keyLeft = false, keyRight = false;
-  window.addEventListener('keydown', e => {
-    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keyLeft = true;
-    if (e.code === 'ArrowRight' || e.code === 'KeyD') keyRight = true;
-    if (e.code === 'Space') rescueHop();
-  });
-  window.addEventListener('keyup', e => {
-    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keyLeft = false;
-    if (e.code === 'ArrowRight' || e.code === 'KeyD') keyRight = false;
-  });
-
-  // Кнопки на экране
-  const lBtn = document.getElementById('left-btn');
-  const rBtn = document.getElementById('right-btn');
-  const hBtn = document.getElementById('hop-btn');
-
-  function bindTouch(btn, onDown, onUp) {
-    btn.addEventListener('touchstart', e => { e.preventDefault(); onDown(); }, { passive: false });
-    btn.addEventListener('touchend', e => { e.preventDefault(); onUp(); }, { passive: false });
-    btn.addEventListener('mousedown', onDown);
-    btn.addEventListener('mouseup', onUp);
-    btn.addEventListener('mouseleave', onUp);
-  }
-
-  bindTouch(lBtn, () => keyLeft = true, () => keyLeft = false);
-  bindTouch(rBtn, () => keyRight = true, () => keyRight = false);
-  bindTouch(hBtn, () => rescueHop(), () => {});
-
-  function rescueHop() {
-    if (!isRunning || chin.isHopping) return;
-    initAudio();
-    chin.isHopping = true;
-    chin.hopVy = -7;
-    chin.vel = 0; // Сброс бокового скольжения при подбросе!
-    playSound('hop');
-  }
-
-  // --- СТАРТ И ФИНИШ ---
-  const startModal = document.getElementById('start-modal');
-  const overModal = document.getElementById('over-modal');
-  const startBtn = document.getElementById('start-btn');
-  const restartBtn = document.getElementById('restart-btn');
-
-  function startGame() {
-    initAudio();
-    startModal.classList.add('hidden');
-    overModal.classList.add('hidden');
-    resetGame();
-    isRunning = true;
-  }
-
-  function gameOver(reason) {
-    isRunning = false;
-    playSound('crash');
-    if (score > best) {
-      best = score;
-      localStorage.setItem('long_doge_best', best);
+    // Успешный тыгыдык
+    combo++;
+    const gain = 10 * (1 + Math.min(combo * 0.05, 3));
+    score += gain;
+    vibe += 2.5;
+    if (vibe >= 100) {
+      vibe = 0;
+      score += 500; // Бонус за полное колесо хаоса
     }
-    document.getElementById('over-reason').textContent = reason;
-    document.getElementById('final-stats').textContent = `Счёт: ${score} сосисок | Пробег: ${Math.floor(distance)}м`;
-    overModal.classList.remove('hidden');
+
+    noise += 4.5;
+    wheelSpeed += 0.45;
+    chinJiggle = 1.0;
+    screenShake = 3;
+
+    playSound('tap');
+    vibrate(25);
+    updateHUD();
   }
 
-  ['click', 'touchstart'].forEach(ev => {
-    startBtn.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
-    restartBtn.addEventListener(ev, (e) => { e.preventDefault(); startGame(); }, { passive: false });
+  function vibrate(ms) {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+      window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    } else if (navigator.vibrate) {
+      navigator.vibrate(ms);
+    }
+  }
+
+  tapBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isHolding = true;
+    doTygydyk();
+  }, { passive: false });
+
+  tapBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    isHolding = false;
+  }, { passive: false });
+
+  tapBtn.addEventListener('mousedown', () => {
+    isHolding = true;
+    doTygydyk();
   });
+  window.addEventListener('mouseup', () => isHolding = false);
 
-  // --- СПАВН ПРЕПЯТСТВИЙ И СОСИСОК ---
-  function spawnItem() {
-    const isSausage = Math.random() < 0.45;
-    const itemX = road.left + 35 + Math.random() * (road.width - 70);
-    items.push({
-      x: itemX,
-      y: -50,
-      radius: isSausage ? 16 : 22,
-      type: isSausage ? 'sausage' : (Math.random() < 0.5 ? 'slipper' : 'vacuum')
-    });
-  }
+  // Клавиатурный тыгыдык на ПРОБЕЛ
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !e.repeat) {
+      doTygydyk();
+    }
+  });
 
   // --- ИГРОВОЙ ЦИКЛ ---
   let lastTime = performance.now();
@@ -451,261 +503,350 @@
   requestAnimationFrame(loop);
 
   function update(dt) {
-    distance += road.speed * dt;
-    road.speed = 6 + Math.min(distance * 0.005, 5);
+    // Время суток идет медленно к утру
+    gameTime += dt * 0.8;
 
-    // 1. Управление головой и сдвиг всей таксы
-    let moveDir = 0;
-    if (keyLeft) moveDir -= 1;
-    if (keyRight) moveDir += 1;
-
-    const targetX = dogX + moveDir * 280 * dt;
-    const minX = road.left + 25;
-    const maxX = road.left + road.width - 25;
-    dogX = Math.max(minX, Math.min(maxX, targetX));
-
-    // Обновление сегментов (цепочка инверсной кинематики)
-    segments[0].x += (dogX - segments[0].x) * 0.35;
-    for (let i = 1; i < segments.length; i++) {
-      const prev = segments[i - 1];
-      const cur = segments[i];
-      const dx = cur.x - prev.x;
-      const dy = cur.y - prev.y;
-      const angle = Math.atan2(dy, dx);
-      cur.x = prev.x + Math.cos(angle) * SEG_DIST;
-      cur.y = prev.y + Math.sin(angle) * SEG_DIST;
+    // Остывание шума, когда игрок НЕ шумит
+    if (noise > 0) {
+      noise -= (dogAlertState === 2 ? 8 : 18) * dt;
+      if (noise < 0) noise = 0;
     }
 
-    // 2. Спавн и движение объектов
-    itemSpawnTimer += dt;
-    if (itemSpawnTimer > Math.max(0.7, 1.4 - distance * 0.003)) {
-      itemSpawnTimer = 0;
-      spawnItem();
+    // Затухание вращения колеса
+    wheelSpeed *= 0.95;
+    wheelAngle += wheelSpeed;
+
+    // Тряска экрана
+    if (screenShake > 0) screenShake *= 0.88;
+
+    // Храп таксы в глубоком сне
+    snoreTimer += dt;
+    if (dogAlertState === 0 && snoreTimer > 2.2) {
+      snoreTimer = 0;
+      playSound('snore');
     }
 
-    for (let i = items.length - 1; i >= 0; i--) {
-      const it = items[i];
-      it.y += road.speed * 60 * dt;
-
-      // Столкновения с телом таксы
-      for (let s = 0; s < segments.length; s++) {
-        const seg = segments[s];
-        const dist = Math.hypot(it.x - seg.x, it.y - seg.y);
-        if (dist < it.radius + 18) {
-          if (it.type === 'sausage') {
-            score++;
-            playSound('eat');
-            // Удлиняем таксу
-            const last = segments[segments.length - 1];
-            segments.push({ x: last.x, y: last.y + SEG_DIST });
-            chin.segIdx = Math.floor(segments.length / 2);
-            items.splice(i, 1);
-            updateUI();
-          } else {
-            gameOver(it.type === 'slipper' ? 'Такса споткнулась о тапок!' : 'Робот-пылесос засосал таксу!');
-            return;
-          }
-          break;
-        }
+    // Состояния тревоги таксы
+    if (dogAlertState === 0) {
+      nextAlertIn -= dt;
+      if (nextAlertIn <= 0.8) {
+        dogAlertState = 1; // Насторожилась (чуткий сон)
+      }
+    } else if (dogAlertState === 1) {
+      nextAlertIn -= dt;
+      if (nextAlertIn <= 0) {
+        // Врубаем ТРЕВОГУ
+        dogAlertState = 2;
+        alertDuration = 1.0 + Math.random() * 1.4; // длительность замирания
+        panicEl.style.display = 'block';
+        playSound('warn');
+        vibrate(60);
+      }
+    } else if (dogAlertState === 2) {
+      alertDuration -= dt;
+      // Если игрок во время тревоги продолжает держать палец или шуметь
+      if (isHolding || noise > 40) {
+        screenShake = 22;
+        playSound('bork');
+        gameOver('Такса открыла глаза и увидела ночной беспредел!');
+        return;
       }
 
-      if (it && it.y > ch + 60) {
-        items.splice(i, 1);
+      if (alertDuration <= 0) {
+        // Успокоилась
+        dogAlertState = 0;
+        panicEl.style.display = 'none';
+        nextAlertIn = 2.0 + Math.random() * 2.5;
+        score += 150; // Награда за выдержку
       }
     }
 
-    // 3. Физика шиншиллы
-    const chinSeg = segments[Math.min(chin.segIdx, segments.length - 1)];
-    const prevSeg = segments[Math.max(0, chin.segIdx - 1)];
-    const tilt = (chinSeg.x - prevSeg.x) * 0.04; // наклон хребта
-
-    if (chin.isHopping) {
-      chin.hopY += chin.hopVy;
-      chin.hopVy += 25 * dt; // гравитация
-      chin.offset *= 0.92;   // подтягивание к центру в полете
-      if (chin.hopY >= 0) {
-        chin.hopY = 0;
-        chin.isHopping = false;
-        chin.hopVy = 0;
-      }
-    } else {
-      // Скатывание по наклону
-      chin.vel += tilt * 3.5 * dt;
-      chin.vel *= 0.94; // трение шерсти
-      chin.offset += chin.vel;
-
-      // Магнитная стабилизация возле центра
-      if (Math.abs(chin.offset) < 0.3) {
-        chin.offset *= 0.95;
-      }
-
-      // Индикатор тревоги
-      const warn = document.getElementById('warning-badge');
-      if (Math.abs(chin.offset) > 0.65) {
-        warn.style.display = 'block';
-      } else {
-        warn.style.display = 'none';
-      }
-
-      // Падение со спины
-      if (Math.abs(chin.offset) > 1.3) {
-        gameOver('Шиншилла не удержалась и покатилась кубарем!');
-      }
+    // Переполнение общего шума
+    if (noise >= 100) {
+      screenShake = 25;
+      playSound('bork');
+      gameOver('Слишком много грохота! Шум пробил потолок, такса взвыла!');
+      return;
     }
+
+    updateHUD();
   }
 
-  // --- ОТРИСОВКА ---
-  function render() {
-    ctx.clearRect(0, 0, cw, ch);
+  function gameOver(reason) {
+    isRunning = false;
+    panicEl.style.display = 'none';
+    if (score > best) {
+      best = Math.floor(score);
+      localStorage.setItem('tygydyk_best', best);
+    }
+    document.getElementById('over-desc').textContent = reason;
+    document.getElementById('over-score').textContent = `Счёт хаоса: ${Math.floor(score)} | Комбо: x${combo}`;
+    document.getElementById('over-modal').classList.remove('hidden');
+  }
 
-    // Пол (доски ламината)
-    ctx.fillStyle = '#3a2318';
+  // Кнопки модалок
+  const startModal = document.getElementById('start-modal');
+  const overModal = document.getElementById('over-modal');
+  const startBtn = document.getElementById('start-btn');
+  const restartBtn = document.getElementById('restart-btn');
+
+  function start() {
+    initAudio();
+    startModal.classList.add('hidden');
+    overModal.classList.add('hidden');
+    resetGame();
+    isRunning = true;
+  }
+
+  ['click', 'touchstart'].forEach(ev => {
+    startBtn.addEventListener(ev, (e) => { e.preventDefault(); start(); }, { passive: false });
+    restartBtn.addEventListener(ev, (e) => { e.preventDefault(); start(); }, { passive: false });
+  });
+
+  // --- ОТРИСОВКА (CANVAS) ---
+  function render() {
+    ctx.save();
+
+    // Скриншейк
+    if (screenShake > 0.5) {
+      const rx = (Math.random() - 0.5) * screenShake;
+      const ry = (Math.random() - 0.5) * screenShake;
+      ctx.translate(rx, ry);
+    }
+
+    // 1. Фон (ночная темная комната)
+    ctx.fillStyle = '#080c1a';
     ctx.fillRect(0, 0, cw, ch);
-    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-    ctx.lineWidth = 3;
-    const boardW = 60;
-    for (let x = 0; x < cw; x += boardW) {
+
+    // Лунный свет из окна
+    const moonGrad = ctx.createLinearGradient(cw * 0.1, 0, cw * 0.8, ch);
+    moonGrad.addColorStop(0, 'rgba(80, 140, 255, 0.12)');
+    moonGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = moonGrad;
+    ctx.fillRect(0, 0, cw, ch);
+
+    // Доски пола
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 2;
+    for (let y = ch * 0.35; y < ch; y += 45) {
       ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, ch);
+      ctx.moveTo(0, y);
+      ctx.lineTo(cw, y);
       ctx.stroke();
     }
 
-    // Ковер (дорожка)
-    ctx.fillStyle = '#611a24';
-    ctx.fillRect(road.left, 0, road.width, ch);
-    // Бахрома и кант ковра
-    ctx.fillStyle = '#d4a359';
-    ctx.fillRect(road.left, 0, 8, ch);
-    ctx.fillRect(road.left + road.width - 8, 0, 8, ch);
+    // 2. ВЕРХНЯЯ ЗОНА: Витрина / Клетка шиншиллы
+    drawChinchillaCage(cw / 2, ch * 0.32);
 
-    // Препятствия и еда
-    for (const it of items) {
-      ctx.save();
-      ctx.translate(it.x, it.y);
-      if (it.type === 'sausage') {
-        ctx.fillStyle = '#ff4d4d';
-        ctx.beginPath();
-        ctx.roundRect(-16, -8, 32, 16, 8);
-        ctx.fill();
-        ctx.fillStyle = '#ffd152';
-        ctx.fillRect(-6, -4, 12, 8);
-      } else if (it.type === 'slipper') {
-        ctx.fillStyle = '#3a86ff';
-        ctx.beginPath();
-        ctx.ellipse(0, 0, 14, 22, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(-10, -5, 20, 6);
-      } else {
-        // Робот-пылесос
-        ctx.fillStyle = '#222';
-        ctx.beginPath();
-        ctx.arc(0, 0, 22, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#00f2fe';
-        ctx.beginPath();
-        ctx.arc(0, -6, 4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
+    // 3. НИЖНЯЯ ЗОНА: Спящая такса на коврике
+    drawSleepingDoge(cw / 2, ch * 0.68);
+
+    ctx.restore();
+  }
+
+  // Отрисовка клетки и бешеной шиншиллы
+  function drawChinchillaCage(cx, cy) {
+    const cageW = Math.min(cw * 0.88, 340);
+    const cageH = 170;
+    const left = cx - cageW / 2;
+    const top = cy - cageH / 2;
+
+    // Задник клетки
+    ctx.fillStyle = '#111728';
+    ctx.fillRect(left, top, cageW, cageH);
+
+    // Сено и опилки на дне
+    ctx.fillStyle = '#9e8548';
+    ctx.fillRect(left, top + cageH - 18, cageW, 18);
+
+    // Беговое колесо
+    const wheelX = left + cageW * 0.32;
+    const wheelY = top + cageH * 0.52;
+    const wheelR = 48;
+
+    ctx.save();
+    ctx.translate(wheelX, wheelY);
+    ctx.rotate(wheelAngle);
+
+    // Обод колеса
+    ctx.strokeStyle = '#00f2fe';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(0, 0, wheelR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Спицы колеса
+    ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
+    ctx.lineWidth = 2;
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(a) * wheelR, Math.sin(a) * wheelR);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Шиншилла в колесе
+    ctx.save();
+    const jigX = (Math.random() - 0.5) * chinJiggle * 6;
+    const jigY = Math.sin(Date.now() * 0.02) * 3;
+    ctx.translate(wheelX + jigX, wheelY + 12 + jigY);
+
+    // Пушистый круглый бок
+    ctx.fillStyle = '#a6b1be';
+    ctx.beginPath();
+    ctx.arc(0, 0, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ушки
+    ctx.fillStyle = '#ffafcc';
+    ctx.beginPath();
+    ctx.arc(-11, -14, 7, 0, Math.PI * 2);
+    ctx.arc(11, -14, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Глаз-бусинка (горящий озорством)
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(5, -3, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(6, -4, 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Носик
+    ctx.fillStyle = '#ff758f';
+    ctx.beginPath();
+    ctx.arc(12, 1, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Пушистый хвост
+    ctx.strokeStyle = '#8f9ba8';
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-14, 6);
+    ctx.quadraticCurveTo(-26, -5, -22, -18);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Прутья клетки (поверх шиншиллы)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 2;
+    for (let bx = left + 15; bx < left + cageW; bx += 22) {
+      ctx.beginPath();
+      ctx.moveTo(bx, top);
+      ctx.lineTo(bx, top + cageH);
+      ctx.stroke();
     }
 
-    // Такса (прорисовка от хвоста к голове)
-    if (segments.length > 0) {
-      // Лапки
-      ctx.fillStyle = '#8a4213';
-      for (let i = 2; i < segments.length - 1; i += 3) {
-        const s = segments[i];
-        ctx.beginPath();
-        ctx.arc(s.x - 22, s.y, 6, 0, Math.PI * 2);
-        ctx.arc(s.x + 22, s.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-      }
+    // Рамка клетки
+    ctx.strokeStyle = '#4a5568';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(left, top, cageW, cageH);
+  }
 
-      // Тело-сосиска
-      for (let i = segments.length - 1; i >= 0; i--) {
-        const s = segments[i];
-        ctx.fillStyle = '#b3541e';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, 18, 0, Math.PI * 2);
-        ctx.fill();
-      }
+  // Отрисовка лежанки и таксы
+  function drawSleepingDoge(cx, cy) {
+    // Коврик-лежанка
+    ctx.fillStyle = '#2d1b36';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 10, 110, 50, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#4a285a';
+    ctx.lineWidth = 4;
+    ctx.stroke();
 
-      // Мордочка таксы
-      const head = segments[0];
-      ctx.save();
-      ctx.translate(head.x, head.y);
-      
-      // Уши
-      ctx.fillStyle = '#7a330a';
+    // Длинное тело сосиски, свернутое полукругом
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.fillStyle = '#9c4a1a';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 65, 26, -0.05, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Лапки поджаты
+    ctx.fillStyle = '#7a330a';
+    ctx.beginPath();
+    ctx.arc(-35, 16, 9, 0, Math.PI * 2);
+    ctx.arc(20, 18, 9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Голова таксы
+    ctx.fillStyle = '#b3541e';
+    ctx.beginPath();
+    ctx.ellipse(45, -6, 22, 16, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Длинный нос
+    ctx.beginPath();
+    ctx.ellipse(64, -2, 12, 9, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(74, -2, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Висячее ухо
+    ctx.fillStyle = '#682a06';
+    ctx.beginPath();
+    ctx.ellipse(36, -2, 10, 18, 0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Глаза таксы в зависимости от тревоги
+    if (dogAlertState === 0) {
+      // Спит: закрытые веки (полоски)
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.ellipse(-16, 4, 7, 14, 0.3, 0, Math.PI * 2);
-      ctx.ellipse(16, 4, 7, 14, -0.3, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.arc(52, -8, 5, 0.1, Math.PI - 0.1);
+      ctx.stroke();
 
-      // Глаза
+      // Летающие "Zzz"
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.font = 'bold 16px monospace';
+      const zOffset = (Date.now() * 0.03) % 40;
+      ctx.fillText('z', 55 + zOffset * 0.5, -20 - zOffset);
+      ctx.font = 'bold 20px monospace';
+      ctx.fillText('Z', 65 + zOffset * 0.5, -35 - zOffset);
+
+    } else if (dogAlertState === 1) {
+      // Приоткрыл один глаз (подозрение)
       ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.arc(-7, -4, 5, 0, Math.PI * 2);
-      ctx.arc(7, -4, 5, 0, Math.PI * 2);
+      ctx.arc(52, -9, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#000';
       ctx.beginPath();
-      ctx.arc(-7, -5, 2.5, 0, Math.PI * 2);
-      ctx.arc(7, -5, 2.5, 0, Math.PI * 2);
+      ctx.arc(53, -9, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Нос
-      ctx.fillStyle = '#111';
+      // Маленький знак вопроса
+      ctx.fillStyle = '#ffcc00';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText('?', 52, -26);
+
+    } else {
+      // ТРЕВОГА! Огромные круглые глаза
+      ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.arc(0, -14, 5, 0, Math.PI * 2);
+      ctx.arc(50, -10, 8, 0, Math.PI * 2);
       ctx.fill();
-
-      ctx.restore();
-
-      // Шиншилла на спине
-      const cSeg = segments[Math.min(chin.segIdx, segments.length - 1)];
-      const chinX = cSeg.x + chin.offset * 26;
-      const chinY = cSeg.y + chin.hopY;
-
-      ctx.save();
-      ctx.translate(chinX, chinY);
-
-      // Тень при прыжке
-      if (chin.isHopping) {
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.beginPath();
-        ctx.ellipse(0, -chin.hopY, 14, 8, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Круглое пушистое тело шиншиллы
-      ctx.fillStyle = '#a8b0b8';
+      ctx.fillStyle = '#ff0033';
       ctx.beginPath();
-      ctx.arc(0, 0, 16, 0, Math.PI * 2);
+      ctx.arc(51, -10, 4.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Розовые круглые ушки
-      ctx.fillStyle = '#ffafcc';
-      ctx.beginPath();
-      ctx.arc(-11, -12, 6, 0, Math.PI * 2);
-      ctx.arc(11, -12, 6, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Бусинки глаз и носик
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(-5, -2, 2.5, 0, Math.PI * 2);
-      ctx.arc(5, -2, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#ff758f';
-      ctx.beginPath();
-      ctx.arc(0, 2, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
+      // Огромный мигающий восклицательный знак над головой
+      ctx.fillStyle = '#ff0055';
+      ctx.font = '900 36px sans-serif';
+      ctx.fillText('!', 48, -32);
     }
+
+    ctx.restore();
   }
 })();
 </script>
