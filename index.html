@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ночной Тыгыдык 3000 HD</title>
+  <title>Ночной Тыгыдык 3D</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,7 +16,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #04060d;
+      background: #1e1e2d;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     #game-container {
@@ -26,6 +26,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      background: radial-gradient(circle at 50% 30%, #2b2b42 0%, #171724 100%);
     }
     canvas {
       display: block;
@@ -34,154 +35,161 @@
       touch-action: none;
     }
 
-    /* Верхний HUD */
+    /* Верхний HUD (Clay / 3D pill стиль) */
     #hud {
       position: absolute;
-      top: 14px;
-      left: 14px;
-      right: 14px;
+      top: 18px;
+      left: 18px;
+      right: 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       pointer-events: none;
       z-index: 10;
     }
-    .hud-badge {
-      background: rgba(10, 14, 28, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+    .hud-pill {
+      background: #252538;
+      border: 1.5px solid #383852;
+      border-radius: 22px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       color: #fff;
-      padding: 9px 15px;
-      border-radius: 20px;
-      font-size: 13px;
       font-weight: 800;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.65);
-      backdrop-filter: blur(10px);
+      font-size: 17px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.15);
       pointer-events: auto;
     }
-    #clock-badge {
+    #clock-pill {
       color: #ff3366;
       font-family: monospace;
-      font-size: 16px;
-      letter-spacing: 1.2px;
-      border-color: rgba(255, 51, 102, 0.3);
+      font-size: 19px;
+      letter-spacing: 0.5px;
+    }
+    .clock-icon {
+      width: 22px;
+      height: 22px;
+      background: #7388a9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #171724;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    #score-pill {
+      color: #fff;
     }
     #shop-btn {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      border: none;
+      background: linear-gradient(180deg, #ff9f43 0%, #ee5253 100%);
+      border: 1.5px solid #ffbe76;
+      border-radius: 20px;
       color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 6px 16px rgba(238, 82, 83, 0.45), inset 0 2px 2px rgba(255,255,255,0.4);
+    }
+    #shop-btn:active {
+      transform: scale(0.96);
     }
 
-    /* Шкалы */
+    /* Шкалы прогресса с объёмными углублениями */
     #bars-container {
       position: absolute;
-      top: 68px;
-      left: 16px;
-      right: 16px;
+      top: 76px;
+      left: 18px;
+      right: 18px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       pointer-events: none;
       z-index: 10;
     }
     .bar-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(8, 11, 24, 0.8);
-      padding: 6px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(8px);
+      gap: 12px;
+      background: #252538;
+      padding: 6px 14px;
+      border-radius: 18px;
+      border: 1.5px solid #383852;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.1);
     }
     .bar-label {
-      font-size: 11px;
-      font-weight: 900;
-      color: #94a3b8;
-      width: 84px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #8f9cae;
+      width: 100px;
       letter-spacing: 0.5px;
     }
     .progress-track {
       flex: 1;
-      height: 14px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 7px;
+      height: 18px;
+      background: #171724;
+      border-radius: 9px;
       overflow: hidden;
       position: relative;
-    }
-    #rage-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
-      transition: width 0.05s linear;
-      box-shadow: 0 0 14px rgba(239,68,68,0.7);
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.6);
+      border: 1px solid #2d2d42;
     }
     #vibe-bar {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #ec4899, #8b5cf6, #06b6d4);
+      background: linear-gradient(90deg, #ff416c, #8a2387, #00d2ff);
+      border-radius: 9px;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
       transition: width 0.05s linear;
-      box-shadow: 0 0 14px rgba(6,182,212,0.7);
+    }
+    #rage-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #1dd1a1, #feca57, #ff4757);
+      border-radius: 9px;
+      box-shadow: 0 0 10px rgba(255, 71, 87, 0.6);
+      transition: width 0.05s linear;
     }
 
-    #frenzy-banner {
-      display: none;
-      position: absolute;
-      top: 130px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg, #ff007f, #7928ca);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 900;
-      padding: 6px 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px #ff007f;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      z-index: 15;
-      animation: neonPulse 0.2s infinite alternate;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    @keyframes neonPulse {
-      0% { opacity: 0.85; transform: translateX(-50%) scale(0.98); }
-      100% { opacity: 1; transform: translateX(-50%) scale(1.04); }
-    }
-
+    /* Нижняя пухлая 3D кнопка «ТЫГЫДЫКАТЬ!» */
     #tap-zone {
       position: absolute;
-      bottom: 22px;
+      bottom: 24px;
       left: 18px;
       right: 18px;
-      height: 84px;
-      background: linear-gradient(135deg, #f43f5e, #8b5cf6);
-      border: 3px solid #f472b6;
-      border-radius: 26px;
+      height: 90px;
+      background: linear-gradient(180deg, #ff5e7e 0%, #e0245e 40%, #a01540 100%);
+      border: 3px solid #ff85a1;
+      border-radius: 36px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       color: #fff;
       font-weight: 900;
-      font-size: 21px;
-      box-shadow: 0 10px 35px rgba(244, 63, 94, 0.45);
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 30px rgba(255, 94, 126, 0.4), inset 0 4px 6px rgba(255,255,255,0.45);
       cursor: pointer;
       z-index: 20;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+      transition: transform 0.06s ease, box-shadow 0.06s ease;
     }
     #tap-zone:active {
-      transform: scale(0.96);
-      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.8);
+      transform: translateY(4px) scale(0.97);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.6), inset 0 2px 4px rgba(0,0,0,0.3);
     }
     #tap-zone span {
       font-size: 11px;
       font-weight: 700;
-      opacity: 0.85;
-      letter-spacing: 0.6px;
-      margin-top: 3px;
+      opacity: 0.9;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+      text-transform: uppercase;
     }
 
     #panic-alert {
@@ -190,21 +198,22 @@
       top: 36%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: #ff0055;
+      background: #ff1e56;
       color: #fff;
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 900;
-      padding: 12px 24px;
-      border-radius: 20px;
-      box-shadow: 0 0 45px #ff0055;
+      padding: 14px 26px;
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(255, 30, 86, 0.7);
       animation: alertAnim 0.12s infinite alternate;
       z-index: 50;
       pointer-events: none;
       white-space: nowrap;
+      border: 2px solid #ff7597;
     }
     @keyframes alertAnim {
-      0% { transform: translate(-50%, -50%) scale(0.96); }
-      100% { transform: translate(-50%, -50%) scale(1.08); }
+      0% { transform: translate(-50%, -50%) scale(0.95); }
+      100% { transform: translate(-50%, -50%) scale(1.06); }
     }
 
     /* Модалки */
@@ -214,7 +223,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(3, 5, 14, 0.92);
+      background: rgba(15, 15, 26, 0.88);
       backdrop-filter: blur(12px);
       display: flex;
       justify-content: center;
@@ -222,57 +231,49 @@
       padding: 20px;
       z-index: 100;
     }
-    .modal.hidden {
-      display: none !important;
-    }
+    .modal.hidden { display: none !important; }
     .card {
-      background: #101528;
-      border: 2px solid #8b5cf6;
-      border-radius: 28px;
-      padding: 24px 20px;
+      background: #232338;
+      border: 2px solid #484869;
+      border-radius: 30px;
+      padding: 26px 22px;
       width: 100%;
       max-width: 350px;
       text-align: center;
       color: #fff;
-      box-shadow: 0 12px 45px rgba(139, 92, 246, 0.4);
+      box-shadow: 0 16px 45px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.1);
       max-height: 90vh;
       overflow-y: auto;
     }
-    .card h1 {
-      font-size: 22px;
-      margin-bottom: 12px;
-      color: #38bdf8;
-    }
+    .card h1 { font-size: 22px; margin-bottom: 12px; color: #ffbe76; }
     .main-btn {
       width: 100%;
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      color: #030712;
+      background: linear-gradient(180deg, #ff5e7e 0%, #e0245e 100%);
+      color: #fff;
       border: none;
-      padding: 15px;
-      border-radius: 18px;
-      font-size: 17px;
+      padding: 16px;
+      border-radius: 20px;
+      font-size: 18px;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
+      box-shadow: 0 8px 20px rgba(224, 36, 94, 0.45), inset 0 2px 2px rgba(255,255,255,0.4);
       outline: none;
     }
-    .main-btn:active {
-      transform: scale(0.97);
-    }
+    .main-btn:active { transform: scale(0.97); }
 
     .skin-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255,255,255,0.05);
+      background: #191929;
       padding: 12px;
       border-radius: 16px;
       margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid #33334d;
     }
     .skin-info { text-align: left; }
     .skin-name { font-weight: 800; font-size: 14px; }
-    .skin-cost { font-size: 12px; color: #f59e0b; margin-top: 2px; }
+    .skin-cost { font-size: 12px; color: #ffbe76; margin-top: 2px; }
     .skin-action-btn {
       padding: 8px 14px;
       border-radius: 12px;
@@ -281,11 +282,11 @@
       font-size: 12px;
       cursor: pointer;
     }
-    .skin-action-btn.active { background: #10b981; color: #fff; }
-    .skin-action-btn.buy { background: #f59e0b; color: #fff; }
-    .skin-action-btn.select { background: #3b82f6; color: #fff; }
+    .skin-action-btn.active { background: #1dd1a1; color: #fff; }
+    .skin-action-btn.buy { background: #ffbe76; color: #171724; }
+    .skin-action-btn.select { background: #54a0ff; color: #fff; }
 
-    /* КИНЕМАТОГРАФИЧНЫЙ СКРИМЕР */
+    /* Полноэкранный скример */
     #jumpscare-overlay {
       display: none;
       position: absolute;
@@ -293,7 +294,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #ff0000;
+      background: #ff0033;
       z-index: 200;
       pointer-events: none;
       overflow: hidden;
@@ -303,7 +304,7 @@
     }
     @keyframes screamFlash {
       0% { background: #d00000; }
-      100% { background: #000; }
+      100% { background: #110000; }
     }
     #scare-face {
       width: 100%;
@@ -311,13 +312,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transform: scale(0.5);
       animation: scareZoom 0.22s cubic-bezier(0.1, 0.9, 0.2, 1.25) forwards;
     }
     @keyframes scareZoom {
-      0% { transform: scale(0.4) rotate(-8deg); }
-      70% { transform: scale(1.45) rotate(4deg); }
-      100% { transform: scale(1.3) rotate(0deg); }
+      0% { transform: scale(0.3) rotate(-8deg); }
+      70% { transform: scale(1.4) rotate(4deg); }
+      100% { transform: scale(1.25) rotate(0deg); }
     }
   </style>
 </head>
@@ -327,9 +327,16 @@
   <canvas id="stage"></canvas>
 
   <div id="hud">
-    <div class="hud-badge" id="clock-badge">🕒 03:00</div>
-    <div class="hud-badge" id="score-badge">🔥 0</div>
-    <button class="hud-badge" id="shop-btn">🛍️ СКИНЫ</button>
+    <div class="hud-pill" id="clock-pill">
+      <div class="clock-icon">L</div>
+      <span id="clock-val">03:00</span>
+    </div>
+    <div class="hud-pill" id="score-pill">
+      🔥 <span id="score-val">0</span>
+    </div>
+    <button class="hud-pill" id="shop-btn">
+      🎁 СКИНИ
+    </button>
   </div>
 
   <div id="bars-container">
@@ -347,7 +354,6 @@
     </div>
   </div>
 
-  <div id="frenzy-banner">⚡ ОВЕРДРАЙВ! ТАКСА В ТРАНСЕ! ⚡</div>
   <div id="panic-alert">⚠️ ЗАМРИ! ТАКСА СЛЫШИТ! ⚠️</div>
 
   <div id="tap-zone">
@@ -355,79 +361,25 @@
     <span>ЖМИ БЫСТРО, НО СТОП НА КРАСНЫЙ!</span>
   </div>
 
-  <!-- СКРИМЕР ТАКСЫ С ДЕТАЛИЗАЦИЕЙ -->
+  <!-- СКРИМЕР ТАКСЫ -->
   <div id="jumpscare-overlay">
     <div id="scare-face">
       <svg viewBox="0 0 400 400" width="380" height="380" style="filter: drop-shadow(0 0 40px #ff0000);">
-        <defs>
-          <radialGradient id="dogBorkGrad" cx="50%" cy="45%" r="55%">
-            <stop offset="0%" stop-color="#b84514"/>
-            <stop offset="70%" stop-color="#732506"/>
-            <stop offset="100%" stop-color="#3b1101"/>
-          </radialGradient>
-          <radialGradient id="borkMouth" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#2b0002"/>
-            <stop offset="85%" stop-color="#100001"/>
-            <stop offset="100%" stop-color="#000000"/>
-          </radialGradient>
-          <radialGradient id="redEyeGrad" cx="40%" cy="40%" r="50%">
-            <stop offset="0%" stop-color="#ff3333"/>
-            <stop offset="60%" stop-color="#cc0000"/>
-            <stop offset="100%" stop-color="#550000"/>
-          </radialGradient>
-        </defs>
-
-        <!-- Распахнутые уши -->
-        <path d="M 100 130 C 20 60 10 170 30 250 C 45 230 75 200 110 180 Z" fill="#541b05" stroke="#2a0c02" stroke-width="3"/>
-        <path d="M 300 130 C 380 60 390 170 370 250 C 355 230 325 200 290 180 Z" fill="#541b05" stroke="#2a0c02" stroke-width="3"/>
-
-        <!-- Череп и морда таксы -->
-        <ellipse cx="200" cy="180" rx="130" ry="115" fill="url(#dogBorkGrad)"/>
-        
-        <!-- Глаза с прожилками и яростью -->
-        <ellipse cx="140" cy="140" rx="36" ry="36" fill="#fff" stroke="#ff0000" stroke-width="3"/>
-        <ellipse cx="260" cy="140" rx="36" ry="36" fill="#fff" stroke="#ff0000" stroke-width="3"/>
-        <!-- Капилляры -->
-        <path d="M 115 130 Q 130 138 125 150" stroke="#ff0000" stroke-width="1.8" fill="none"/>
-        <path d="M 285 130 Q 270 138 275 150" stroke="#ff0000" stroke-width="1.8" fill="none"/>
-        <ellipse cx="140" cy="140" rx="16" ry="16" fill="url(#redEyeGrad)"/>
-        <ellipse cx="260" cy="140" rx="16" ry="16" fill="url(#redEyeGrad)"/>
-        <circle cx="140" cy="140" r="7" fill="#000"/>
-        <circle cx="260" cy="140" r="7" fill="#000"/>
-        <circle cx="135" cy="135" r="3" fill="#fff"/>
-        <circle cx="255" cy="135" r="3" fill="#fff"/>
-
-        <!-- Носовая кость и складки гнева -->
-        <path d="M 175 160 Q 200 152 225 160" stroke="#3b1101" stroke-width="4" fill="none"/>
-        <path d="M 170 170 Q 200 162 230 170" stroke="#3b1101" stroke-width="4" fill="none"/>
-
-        <!-- Огромная распахнутая пасть -->
-        <path d="M 110 210 Q 200 170 290 210 Q 310 320 200 340 Q 90 320 110 210 Z" fill="url(#borkMouth)" stroke="#4a1505" stroke-width="5"/>
-
-        <!-- Язык -->
-        <path d="M 155 290 Q 200 240 245 290 Q 200 335 155 290 Z" fill="#e11d48"/>
-
-        <!-- Острые собачьи клыки (верх и низ) -->
-        <!-- Верхние -->
-        <polygon points="120,212 135,248 145,214" fill="#fffff0"/>
-        <polygon points="145,214 158,238 168,214" fill="#fffff0"/>
-        <polygon points="168,214 180,234 190,214" fill="#fffff0"/>
-        <polygon points="190,214 200,234 210,214" fill="#fffff0"/>
-        <polygon points="210,214 222,234 232,214" fill="#fffff0"/>
-        <polygon points="232,214 242,238 255,214" fill="#fffff0"/>
-        <polygon points="255,214 265,248 280,212" fill="#fffff0"/>
-
-        <!-- Нижние клыки -->
-        <polygon points="135,302 148,272 160,305" fill="#fffff0"/>
-        <polygon points="240,305 252,272 265,302" fill="#fffff0"/>
-
-        <!-- Нос собаки -->
-        <ellipse cx="200" cy="188" rx="28" ry="18" fill="#18181b"/>
-        <ellipse cx="190" cy="190" rx="5" ry="4" fill="#000"/>
-        <ellipse cx="210" cy="190" rx="5" ry="4" fill="#000"/>
-        <ellipse cx="196" cy="182" rx="7" ry="3" fill="#3f3f46"/>
-
-        <text x="200" y="375" font-size="42" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui" letter-spacing="2">БАААВФ!!</text>
+        <ellipse cx="200" cy="180" rx="130" ry="115" fill="#a04015"/>
+        <ellipse cx="140" cy="140" rx="36" ry="36" fill="#fff" stroke="#ff0000" stroke-width="4"/>
+        <ellipse cx="260" cy="140" rx="36" ry="36" fill="#fff" stroke="#ff0000" stroke-width="4"/>
+        <circle cx="140" cy="140" r="14" fill="#ff0000"/>
+        <circle cx="260" cy="140" r="14" fill="#ff0000"/>
+        <circle cx="140" cy="140" r="6" fill="#000"/>
+        <circle cx="260" cy="140" r="6" fill="#000"/>
+        <path d="M 110 210 Q 200 170 290 210 Q 310 320 200 340 Q 90 320 110 210 Z" fill="#110000"/>
+        <polygon points="120,212 135,248 145,214" fill="#fff"/>
+        <polygon points="145,214 158,238 168,214" fill="#fff"/>
+        <polygon points="168,214 180,234 190,214" fill="#fff"/>
+        <polygon points="210,214 222,234 232,214" fill="#fff"/>
+        <polygon points="255,214 265,248 280,212" fill="#fff"/>
+        <ellipse cx="200" cy="188" rx="28" ry="18" fill="#111"/>
+        <text x="200" y="375" font-size="44" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui">БАААВФ!!</text>
       </svg>
     </div>
   </div>
@@ -435,35 +387,35 @@
   <!-- Старт -->
   <div id="start-modal" class="modal">
     <div class="card">
-      <h1>🐹 НОЧНОЙ ТЫГЫДЫК 3000</h1>
-      <ul style="text-align: left; font-size: 13px; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6; list-style: none;">
-        <li>🌙 <b>Тапай кнопку</b>, запускай шиншиллу в колесе и набивай очки на реалистичные скины!</li>
-        <li>⚡ <b>Шкала Хаоса на 100%</b> врубает режим Овердрайва (без риска).</li>
-        <li>🛑 <b>ЗАМИРАЙ НА КРАСНЫЙ!</b> Не успеешь убрать палец — поймаешь HD-скример от таксы!</li>
+      <h1>🐹 НОЧНОЙ ТЫГЫДЫК 3D</h1>
+      <ul style="text-align: left; font-size: 13px; color: #a4b0be; margin-bottom: 20px; line-height: 1.6; list-style: none;">
+        <li>🌙 <b>Тапай кнопку внизу</b>, запускай пушистую шиншиллу в колесе!</li>
+        <li>⚡ <b>Шкала Хаоса на 100%</b> включает Овердрайв (безопасный спам тапами).</li>
+        <li>🛑 <b>ЗАМИРАЙ НА КРАСНЫЙ!</b> Если такса проснется — тебя ждет скример!</li>
       </ul>
       <button class="main-btn" id="start-btn">ПОГНАЛИ ТЫГЫДЫКАТЬ! 🚀</button>
-      <p style="margin-top: 14px; font-size: 12px; color: #94a3b8;" id="total-wallet">Всего очков: 0</p>
+      <p style="margin-top: 14px; font-size: 12px; color: #747d8c;" id="total-wallet">Всего очков: 0</p>
     </div>
   </div>
 
-  <!-- Магазин скинов -->
+  <!-- Магазин -->
   <div id="shop-modal" class="modal hidden">
     <div class="card">
-      <h1 style="color: #f59e0b;">🛍️ ШИНШИЛЛО-ГАРДЕРОБ</h1>
-      <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px;">Баланс: <b id="shop-balance" style="color: #38bdf8;">0</b> очков</p>
+      <h1 style="color: #ffbe76;">🎁 ШИНШИЛЛО-ГАРДЕРОБ</h1>
+      <p style="font-size: 13px; color: #a4b0be; margin-bottom: 16px;">Баланс: <b id="shop-balance" style="color: #54a0ff;">0</b> очков</p>
       <div id="skins-list"></div>
-      <button class="main-btn" id="close-shop-btn" style="margin-top: 10px; background: #334155; color: #fff;">НАЗАД В ИГРУ</button>
+      <button class="main-btn" id="close-shop-btn" style="margin-top: 10px; background: #33334d;">НАЗАД В ИГРУ</button>
     </div>
   </div>
 
   <!-- Game Over -->
   <div id="over-modal" class="modal hidden">
-    <div class="card" style="border-color: #f43f5e; box-shadow: 0 10px 45px rgba(244, 63, 94, 0.45);">
-      <h1 id="over-title" style="color: #f43f5e;">ТАКСА СХВАТИЛА ТЕБЯ! 🐶💥</h1>
-      <p style="font-size: 14px; margin: 10px 0 16px 0; color: #e2e8f0;" id="over-desc"></p>
-      <p style="font-size: 18px; font-weight: 900; margin-bottom: 12px; color: #38bdf8;" id="over-score"></p>
-      <p style="font-size: 13px; color: #f59e0b; margin-bottom: 20px;" id="earned-wallet"></p>
-      <button class="main-btn" id="restart-btn" style="background: linear-gradient(135deg, #f43f5e, #fb7185); color: #fff;">ЕЩЕ ТЫГЫДЫК 🔄</button>
+    <div class="card" style="border-color: #ff4757;">
+      <h1 style="color: #ff4757;">ТАКСА СХВАТИЛА ТЕБЯ! 🐶💥</h1>
+      <p style="font-size: 14px; margin: 10px 0 16px 0; color: #f1f2f6;" id="over-desc"></p>
+      <p style="font-size: 18px; font-weight: 900; margin-bottom: 12px; color: #ffbe76;" id="over-score"></p>
+      <p style="font-size: 13px; color: #2ed573; margin-bottom: 20px;" id="earned-wallet"></p>
+      <button class="main-btn" id="restart-btn">ЕЩЕ ТЫГЫДЫК 🔄</button>
     </div>
   </div>
 </div>
@@ -493,7 +445,7 @@
 
       if (type === 'tap') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(260 + Math.random() * 220, t);
+        osc.frequency.setValueAtTime(280 + Math.random() * 200, t);
         osc.frequency.exponentialRampToValueAtTime(80, t + 0.08);
         gain.gain.setValueAtTime(0.25, t);
         gain.gain.linearRampToValueAtTime(0.01, t + 0.08);
@@ -501,12 +453,11 @@
         osc.stop(t + 0.08);
       } else if (type === 'warn') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(580, t);
-        osc.frequency.setValueAtTime(820, t + 0.08);
-        gain.gain.setValueAtTime(0.22, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.22);
+        osc.frequency.setValueAtTime(600, t);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.2);
         osc.start(t);
-        osc.stop(t + 0.22);
+        osc.stop(t + 0.2);
       } else if (type === 'scream') {
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(140, t);
@@ -515,95 +466,39 @@
         gain.gain.linearRampToValueAtTime(0.01, t + 0.6);
         osc.start(t);
         osc.stop(t + 0.6);
-
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'square';
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.frequency.setValueAtTime(850, t);
-        osc2.frequency.linearRampToValueAtTime(200, t + 0.45);
-        gain2.gain.setValueAtTime(0.5, t);
-        gain2.gain.linearRampToValueAtTime(0.01, t + 0.45);
-        osc2.start(t);
-        osc2.stop(t + 0.45);
-      } else if (type === 'frenzy') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, t);
-        osc.frequency.exponentialRampToValueAtTime(880, t + 0.3);
-        gain.gain.setValueAtTime(0.3, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.3);
-        osc.start(t);
-        osc.stop(t + 0.3);
       } else if (type === 'snore') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(65, t);
-        osc.frequency.linearRampToValueAtTime(90, t + 0.4);
-        gain.gain.setValueAtTime(0.04, t);
+        osc.frequency.setValueAtTime(70, t);
+        osc.frequency.linearRampToValueAtTime(95, t + 0.4);
+        gain.gain.setValueAtTime(0.03, t);
         gain.gain.linearRampToValueAtTime(0.001, t + 0.5);
         osc.start(t);
         osc.stop(t + 0.5);
       }
-    } catch (e) {}
+    } catch(e) {}
   }
 
-  // --- СКИНЫ ШИНШИЛЛЫ (HD Палитры с градиентами) ---
+  // --- СКИНЫ ---
   const SKINS = [
-    { 
-      id: 'classic', 
-      name: 'Пепельный Стандарт', 
-      cost: 0, 
-      main: '#94a3b8', 
-      shadow: '#64748b', 
-      highlight: '#cbd5e1', 
-      earInner: '#f472b6', 
-      eye: '#18181b' 
-    },
-    { 
-      id: 'white', 
-      name: 'Белый Вильсон ❄️', 
-      cost: 3000, 
-      main: '#f8fafc', 
-      shadow: '#cbd5e1', 
-      highlight: '#ffffff', 
-      earInner: '#fbcfe8', 
-      eye: '#0284c7' 
-    },
-    { 
-      id: 'black', 
-      name: 'Черный Бархат 🖤', 
-      cost: 8000, 
-      main: '#27272a', 
-      shadow: '#18181b', 
-      highlight: '#3f3f46', 
-      earInner: '#52525b', 
-      eye: '#9333ea' 
-    },
-    { 
-      id: 'gold', 
-      name: 'Золотой Сапфир ✨', 
-      cost: 20000, 
-      main: '#f59e0b', 
-      shadow: '#b45309', 
-      highlight: '#fde047', 
-      earInner: '#fbbf24', 
-      eye: '#06b6d4' 
-    }
+    { id: 'white', name: 'Белый пушистик 3D ❄️', cost: 0, body: '#ffffff', ear: '#ffb8b8', eye: '#00d2ff' },
+    { id: 'classic', name: 'Пепельный колобок', cost: 3000, body: '#dfe4ea', ear: '#ffa8a8', eye: '#2f3542' },
+    { id: 'pink', name: 'Зефирка 🌸', cost: 8000, body: '#ffccd5', ear: '#ff758f', eye: '#590d22' },
+    { id: 'gold', name: 'Золотой колобок ✨', cost: 20000, body: '#ffeaa7', ear: '#fdcb6e', eye: '#0984e3' }
   ];
 
-  let totalScore = parseInt(localStorage.getItem('tygydyk_wallet') || '0', 10);
-  let unlockedSkins = JSON.parse(localStorage.getItem('tygydyk_unlocked_skins') || '["classic"]');
-  let currentSkinId = localStorage.getItem('tygydyk_active_skin') || 'classic';
+  let totalScore = parseInt(localStorage.getItem('tygy_wallet_3d') || '0', 10);
+  let unlockedSkins = JSON.parse(localStorage.getItem('tygy_skins_3d') || '["white"]');
+  let currentSkinId = localStorage.getItem('tygy_skin_3d') || 'white';
 
   function saveWallet() {
-    localStorage.setItem('tygydyk_wallet', totalScore);
-    localStorage.setItem('tygydyk_unlocked_skins', JSON.stringify(unlockedSkins));
-    localStorage.setItem('tygydyk_active_skin', currentSkinId);
+    localStorage.setItem('tygy_wallet_3d', totalScore);
+    localStorage.setItem('tygy_skins_3d', JSON.stringify(unlockedSkins));
+    localStorage.setItem('tygy_skin_3d', currentSkinId);
     document.getElementById('total-wallet').textContent = `Всего очков: ${totalScore}`;
     document.getElementById('shop-balance').textContent = totalScore;
   }
 
-  // --- ХОЛСТ И РЕСАЙЗ ---
+  // --- CANVAS & RESIZE ---
   const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
   let cw = 0, ch = 0;
@@ -617,7 +512,7 @@
   window.addEventListener('resize', resize);
   resize();
 
-  // --- СОСТОЯНИЕ ИГРЫ ---
+  // --- GAME STATE ---
   let isRunning = false;
   let score = 0;
   let combo = 0;
@@ -635,15 +530,12 @@
   let screenShake = 0;
   let dogBreathe = 0;
   let snoreTimer = 0;
-  let particles = [];
-  let popups = [];
 
   const panicEl = document.getElementById('panic-alert');
-  const frenzyEl = document.getElementById('frenzy-banner');
   const rageBar = document.getElementById('rage-bar');
   const vibeBar = document.getElementById('vibe-bar');
-  const clockEl = document.getElementById('clock-badge');
-  const scoreEl = document.getElementById('score-badge');
+  const clockEl = document.getElementById('clock-val');
+  const scoreEl = document.getElementById('score-val');
   const scareOverlay = document.getElementById('jumpscare-overlay');
 
   function resetGame() {
@@ -658,22 +550,19 @@
     wheelSpeed = 0;
     targetWheelSpeed = 0;
     screenShake = 0;
-    particles = [];
-    popups = [];
     panicEl.style.display = 'none';
-    frenzyEl.style.display = 'none';
     scareOverlay.style.display = 'none';
     updateHUD();
   }
 
   function updateHUD() {
-    scoreEl.textContent = `🔥 ${Math.floor(score)}`;
+    scoreEl.textContent = Math.floor(score);
     rageBar.style.width = `${Math.min(noise, 100)}%`;
     vibeBar.style.width = `${Math.min(vibe, 100)}%`;
 
     const mins = Math.floor(gameTime / 60);
     const secs = Math.floor(gameTime % 60);
-    clockEl.textContent = `🕒 0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    clockEl.textContent = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
   function vibrate(type) {
@@ -684,7 +573,7 @@
     }
   }
 
-  // --- ЛОГИКА ТАПА ---
+  // --- ТАП ЛОГИКА ---
   const tapBtn = document.getElementById('tap-zone');
   let isHolding = false;
 
@@ -693,7 +582,7 @@
     initAudio();
 
     if (dogAlertState === 2 && frenzyTimer <= 0) {
-      triggerJumpscare('Шиншилла спалилась! Громыхнула колесом прямо перед носом таксы!');
+      triggerJumpscare('Такса поймала тебя с поличным!');
       return;
     }
 
@@ -702,44 +591,18 @@
     const gain = Math.floor(15 * (1 + Math.min(combo * 0.05, 4)) * mult);
     score += gain;
 
-    popups.push({
-      x: cw * 0.35 + (Math.random() - 0.5) * 60,
-      y: ch * 0.32 + (Math.random() - 0.5) * 30,
-      text: `+${gain}`,
-      alpha: 1.0,
-      color: frenzyTimer > 0 ? '#ff007f' : '#00f2fe'
-    });
-
-    const activeSkin = SKINS.find(s => s.id === currentSkinId);
-    for (let i = 0; i < 5; i++) {
-      particles.push({
-        x: cw * 0.35,
-        y: ch * 0.39,
-        vx: (Math.random() - 0.5) * 9,
-        vy: -Math.random() * 7 - 2,
-        rad: Math.random() * 3 + 2,
-        color: currentSkinId === 'gold' ? '#fde047' : (Math.random() < 0.6 ? '#fcd34d' : activeSkin.main),
-        life: 1.0
-      });
-    }
-
     vibe += 3.5;
     if (vibe >= 100) {
       vibe = 0;
       frenzyTimer = 4.0;
-      frenzyEl.style.display = 'block';
       dogAlertState = 0;
       panicEl.style.display = 'none';
-      playSound('frenzy');
       vibrate('heavy');
     }
 
-    if (frenzyTimer <= 0) {
-      noise += 4.2;
-    }
-
+    if (frenzyTimer <= 0) noise += 4.5;
     targetWheelSpeed += 0.55;
-    screenShake = frenzyTimer > 0 ? 5 : 2.5;
+    screenShake = 2.5;
 
     playSound('tap');
     vibrate('light');
@@ -767,11 +630,9 @@
     if (e.code === 'Space' && !e.repeat) doTygydyk();
   });
 
-  // --- СКРИМЕР И КОНЕЦ ИГРЫ ---
   function triggerJumpscare(reason) {
     isRunning = false;
     panicEl.style.display = 'none';
-    frenzyEl.style.display = 'none';
 
     scareOverlay.style.display = 'flex';
     playSound('scream');
@@ -784,22 +645,20 @@
     setTimeout(() => {
       scareOverlay.style.display = 'none';
       document.getElementById('over-desc').textContent = reason;
-      document.getElementById('over-score').textContent = `Счёт забега: ${earned}`;
+      document.getElementById('over-score').textContent = `Счёт: ${earned}`;
       document.getElementById('earned-wallet').textContent = `Зачислено в банк: +${earned} (Всего: ${totalScore})`;
       document.getElementById('over-modal').classList.remove('hidden');
     }, 1100);
   }
 
-  // --- ИГРОВОЙ ЦИКЛ ---
+  // --- GAME LOOP ---
   let lastTime = performance.now();
 
   function loop(now) {
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
 
-    if (isRunning) {
-      update(dt);
-    }
+    if (isRunning) update(dt);
     render();
     requestAnimationFrame(loop);
   }
@@ -824,7 +683,6 @@
       frenzyTimer -= dt;
       if (frenzyTimer <= 0) {
         frenzyTimer = 0;
-        frenzyEl.style.display = 'none';
         nextAlertIn = 2.0;
       }
     }
@@ -851,10 +709,9 @@
       } else if (dogAlertState === 2) {
         alertDuration -= dt;
         if (isHolding || noise > 42) {
-          triggerJumpscare('Такса распахнула пасть и поймала шиншиллу на месте!');
+          triggerJumpscare('Такса проснулась и набросилась на витрину!');
           return;
         }
-
         if (alertDuration <= 0) {
           dogAlertState = 0;
           panicEl.style.display = 'none';
@@ -864,31 +721,15 @@
       }
 
       if (noise >= 100) {
-        triggerJumpscare('Шум зашкалил! Такса вскочила и набросилась на витрину!');
+        triggerJumpscare('Шум зашкалил! Такса вскочила!');
         return;
       }
-    }
-
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 15 * dt;
-      p.life -= dt * 2;
-      if (p.life <= 0) particles.splice(i, 1);
-    }
-
-    for (let i = popups.length - 1; i >= 0; i--) {
-      const pp = popups[i];
-      pp.y -= 35 * dt;
-      pp.alpha -= dt * 1.5;
-      if (pp.alpha <= 0) popups.splice(i, 1);
     }
 
     updateHUD();
   }
 
-  // --- МАГАЗИН СКИНОВ ---
+  // --- МАГАЗИН ---
   const shopModal = document.getElementById('shop-modal');
   const skinsListEl = document.getElementById('skins-list');
 
@@ -902,7 +743,7 @@
       item.className = 'skin-item';
       item.innerHTML = `
         <div class="skin-info">
-          <div class="skin-name" style="color:${skin.highlight}">${skin.name}</div>
+          <div class="skin-name" style="color:#fff">${skin.name}</div>
           <div class="skin-cost">${isUnlocked ? 'В гардеробе' : `Цена: ${skin.cost} очков`}</div>
         </div>
       `;
@@ -925,7 +766,7 @@
             saveWallet();
             renderShop();
           } else {
-            alert('Не хватает очков! Тыгыдыкай больше ночью!');
+            alert('Не хватает очков!');
           }
         }
       };
@@ -964,7 +805,7 @@
   saveWallet();
 
   // ==========================================
-  // --- РЕАЛИСТИЧНЫЙ HD РЕНДЕР (CANVAS 2D) ---
+  // --- ПОЛНОСТЬЮ ОБНОВЛЕННЫЙ 3D РЕНДЕР (РЕФЕРЕНС) ---
   // ==========================================
   function render() {
     ctx.save();
@@ -975,120 +816,92 @@
       ctx.translate(rx, ry);
     }
 
-    // Тёмный фон ночной комнаты
-    ctx.fillStyle = '#050814';
+    // Тёмный фиолетово-серый градиент комнаты с референса
+    const bgGrad = ctx.createRadialGradient(cw / 2, ch * 0.4, 40, cw / 2, ch * 0.4, ch * 0.85);
+    bgGrad.addColorStop(0, '#2e2c45');
+    bgGrad.addColorStop(1, '#151522');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, cw, ch);
 
-    // Мягкий рассеянный луч луны
-    const moonGlow = ctx.createRadialGradient(cw * 0.15, ch * 0.12, 10, cw * 0.25, ch * 0.2, cw * 0.85);
-    moonGlow.addColorStop(0, 'rgba(56, 189, 248, 0.18)');
-    moonGlow.addColorStop(0.5, 'rgba(14, 165, 233, 0.05)');
-    moonGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = moonGlow;
-    ctx.fillRect(0, 0, cw, ch);
+    // 1. ВЕРХНЯЯ 3D КЛЕТКА С КОЛЕСОМ И ПУШИСТОЙ ШИНШИЛЛОЙ
+    draw3DCage(cw / 2, ch * 0.38);
 
-    // Дорогой деревянный паркет со стыками
-    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-    ctx.lineWidth = 2;
-    for (let y = ch * 0.38; y < ch; y += 46) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(cw, y);
-      ctx.stroke();
-    }
-
-    // 1. ДЕТАЛЬНАЯ ВИТРИНА ШИНШИЛЛЫ
-    drawDetailedCage(cw / 2, ch * 0.32);
-
-    // 2. ДЕТАЛЬНАЯ МОДЕЛЬ ТАКСЫ
-    drawDetailedDoge(cw / 2, ch * 0.68);
-
-    // Частицы
-    for (const p of particles) {
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = Math.max(0, p.life);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.rad, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Попапы
-    for (const pp of popups) {
-      ctx.fillStyle = pp.color;
-      ctx.globalAlpha = Math.max(0, pp.alpha);
-      ctx.font = '900 18px system-ui';
-      ctx.fillText(pp.text, pp.x, pp.y);
-    }
-    ctx.globalAlpha = 1.0;
+    // 2. НИЖНЯЯ ПУХЛАЯ 3D ЛЕЖАНКА С ТАКСОЙ
+    draw3DDashund(cw / 2, ch * 0.72);
 
     ctx.restore();
   }
 
-  // --- РЕАЛИСТИЧНАЯ ВИТРИНА И ШИНШИЛЛА ---
-  function drawDetailedCage(cx, cy) {
-    const w = Math.min(cw * 0.88, 340);
-    const h = 185;
-    const x = cx - w / 2;
-    const y = cy - h / 2;
+  // --- 3D КЛЕТКА, КОЛЕСО И ШИНШИЛЛА ---
+  function draw3DCage(cx, cy) {
+    const cageW = Math.min(cw * 0.88, 350);
+    const cageH = 175;
+    const x = cx - cageW / 2;
+    const y = cy - cageH / 2;
 
-    // Стенка витрины (тёмный текстурный дуб)
-    const woodGrad = ctx.createLinearGradient(x, y, x + w, y + h);
-    woodGrad.addColorStop(0, '#131b2e');
-    woodGrad.addColorStop(1, '#0a0f1d');
-    ctx.fillStyle = woodGrad;
-    ctx.fillRect(x, y, w, h);
+    // Мягкая объёмная тень под клеткой на полу
+    ctx.fillStyle = 'rgba(10, 10, 20, 0.45)';
+    ctx.beginPath();
+    ctx.ellipse(cx, y + cageH + 12, cageW * 0.52, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
 
-    // Стеклянный блик витрины
-    const glassReflect = ctx.createLinearGradient(x, y, x + w * 0.6, y + h);
-    glassReflect.addColorStop(0, 'rgba(255,255,255,0.05)');
-    glassReflect.addColorStop(0.3, 'rgba(255,255,255,0.01)');
-    glassReflect.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glassReflect;
-    ctx.fillRect(x, y, w, h);
+    // 1. Деревянный реечный поддон (3D брусочки желто-охристого цвета)
+    const trayH = 26;
+    const trayY = y + cageH - trayH;
+    
+    // Основа поддона
+    ctx.fillStyle = '#caa357';
+    ctx.fillRect(x, trayY, cageW, trayH);
 
-    // Слой сена на дне (многослойный объём)
-    ctx.fillStyle = '#856832';
-    ctx.fillRect(x, y + h - 22, w, 22);
-    ctx.fillStyle = '#bfa157';
-    for (let i = 0; i < w; i += 12) {
-      ctx.fillRect(x + i, y + h - 18 - (i % 6), 7, 18);
+    // Вертикальные зубцы / брусочки по бортику с объемными фасками
+    const barCount = 20;
+    const barW = cageW / barCount;
+    for (let i = 0; i < barCount; i++) {
+      const bx = x + i * barW;
+      // Светлая сторона
+      ctx.fillStyle = '#e8c271';
+      ctx.fillRect(bx + 1, trayY, barW - 2, trayH);
+      // Тень бруска
+      ctx.fillStyle = '#a68239';
+      ctx.fillRect(bx + barW - 3, trayY, 2, trayH);
     }
 
-    // КОЛЕСО (Металлический обод с подшипником)
-    const wx = x + w * 0.34;
-    const wy = y + h * 0.52;
-    const wr = 52;
+    // 2. Задний ряд прутьев клетки (в тени)
+    ctx.strokeStyle = '#5a627a';
+    ctx.lineWidth = 3;
+    for (let px = x + 12; px < x + cageW; px += 16) {
+      ctx.beginPath();
+      ctx.moveTo(px, y + 8);
+      ctx.lineTo(px, trayY);
+      ctx.stroke();
+    }
+
+    // 3. Белое 3D беговое колесо
+    const wx = x + cageW * 0.32;
+    const wy = y + cageH * 0.44;
+    const wr = 54;
 
     ctx.save();
     ctx.translate(wx, wy);
     ctx.rotate(wheelAngle);
 
-    // Тень обода
-    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.arc(2, 2, wr, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Основной хромированный обод
-    const rimGrad = ctx.createLinearGradient(-wr, -wr, wr, wr);
-    if (frenzyTimer > 0) {
-      rimGrad.addColorStop(0, '#ff007f');
-      rimGrad.addColorStop(1, '#00f2fe');
-    } else {
-      rimGrad.addColorStop(0, '#64748b');
-      rimGrad.addColorStop(0.5, '#cbd5e1');
-      rimGrad.addColorStop(1, '#334155');
-    }
-    ctx.strokeStyle = rimGrad;
-    ctx.lineWidth = 5;
+    // Толстый белый 3D обод
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 7;
     ctx.beginPath();
     ctx.arc(0, 0, wr, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Спицы с металлическим отблеском
-    ctx.strokeStyle = frenzyTimer > 0 ? 'rgba(255,0,127,0.5)' : 'rgba(203, 213, 225, 0.4)';
+    // Внутренняя фаска обода (объем)
+    ctx.strokeStyle = '#94a3b8';
     ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, wr - 3, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Спицы колеса
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 3;
     for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
       ctx.beginPath();
       ctx.moveTo(0, 0);
@@ -1096,295 +909,265 @@
       ctx.stroke();
     }
 
-    // Центральный подшипник
-    ctx.fillStyle = '#1e293b';
+    // Центральная 3D втулка
+    ctx.fillStyle = '#f8fafc';
     ctx.beginPath();
     ctx.arc(0, 0, 9, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#94a3b8';
     ctx.beginPath();
-    ctx.arc(0, 0, 5, 0, Math.PI * 2);
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // ==========================================
-    // --- ВЫСОКОДЕТАЛИЗИРОВАННАЯ ШИНШИЛЛА ---
-    // ==========================================
+    // 4. Пушистая белая 3D Шиншилла (как на картинке)
     const skin = SKINS.find(s => s.id === currentSkinId) || SKINS[0];
     ctx.save();
-    const runJig = Math.sin(Date.now() * 0.038) * (wheelSpeed * 7 + 1.2);
-    ctx.translate(wx, wy + 16 + runJig);
+    const jig = Math.sin(Date.now() * 0.04) * (wheelSpeed * 8 + 1.2);
+    ctx.translate(wx, wy + 14 + jig);
 
-    // 1. Пышный изогнутый хвост с шерстяной текстурой
-    ctx.save();
-    const pawPhase = Date.now() * 0.045;
-    ctx.strokeStyle = skin.shadow;
-    ctx.lineWidth = 9;
-    ctx.lineCap = 'round';
+    // Пышный закругленный хвост
+    ctx.fillStyle = skin.body;
     ctx.beginPath();
-    ctx.moveTo(-16, 6);
-    ctx.quadraticCurveTo(-34, -10 + Math.cos(pawPhase) * 5, -28, -26);
+    ctx.ellipse(-20, -10, 10, 16, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+    // Обводка хвоста для мягкости
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 2;
     ctx.stroke();
-    ctx.strokeStyle = skin.highlight;
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    ctx.restore();
 
-    // 2. Объёмное градиентное тело шиншиллы (светотень)
-    const bodyGrad = ctx.createRadialGradient(-4, -6, 4, 0, 0, 24);
-    bodyGrad.addColorStop(0, skin.highlight);
-    bodyGrad.addColorStop(0.6, skin.main);
-    bodyGrad.addColorStop(1, skin.shadow);
-    ctx.fillStyle = bodyGrad;
+    // Белый пушистый шарообразный корпус (Clay 3D)
+    const bodyG = ctx.createRadialGradient(-5, -6, 4, 0, 0, 24);
+    bodyG.addColorStop(0, '#ffffff');
+    bodyG.addColorStop(0.75, skin.body);
+    bodyG.addColorStop(1, '#cbd5e1');
+    ctx.fillStyle = bodyG;
     ctx.beginPath();
-    ctx.ellipse(0, 0, 22, 20, 0, 0, Math.PI * 2);
+    ctx.arc(0, 0, 22, 0, Math.PI * 2);
     ctx.fill();
 
-    // Пушистые щечки
-    ctx.fillStyle = skin.highlight;
+    // Розовые круглые 3D ушки
+    // Заднее ушко
+    ctx.fillStyle = skin.body;
     ctx.beginPath();
-    ctx.arc(10, 5, 9, 0, Math.PI * 2);
-    ctx.arc(-2, 7, 10, 0, Math.PI * 2);
+    ctx.arc(-11, -19, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = skin.ear;
+    ctx.beginPath();
+    ctx.arc(-11, -19, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // 3. Анатомичные ушки шиншиллы
-    // Заднее ухо
-    ctx.fillStyle = skin.shadow;
+    // Переднее ушко
+    ctx.fillStyle = skin.body;
     ctx.beginPath();
-    ctx.ellipse(-14, -16, 7, 11, -0.2, 0, Math.PI * 2);
+    ctx.arc(11, -19, 8, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = skin.earInner;
+    ctx.fillStyle = skin.ear;
     ctx.beginPath();
-    ctx.ellipse(-14, -16, 4, 7, -0.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Переднее ухо
-    ctx.fillStyle = skin.main;
-    ctx.beginPath();
-    ctx.ellipse(12, -17, 8, 12, 0.25, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = skin.earInner;
-    ctx.beginPath();
-    ctx.ellipse(12, -17, 5, 8, 0.25, 0, Math.PI * 2);
+    ctx.arc(11, -19, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // 4. Бегущие лапки с розовыми пальчиками
-    ctx.fillStyle = '#fbcfe8';
-    ctx.beginPath();
-    ctx.arc(-8 + Math.sin(pawPhase) * 7, 18, 4.5, 0, Math.PI * 2);
-    ctx.arc(8 - Math.sin(pawPhase) * 7, 18, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 5. Глаз-бусинка (глубокий стеклянный блеск)
+    // Голубые аниме-глаза с референса
     ctx.fillStyle = skin.eye;
     ctx.beginPath();
-    ctx.arc(8, -3, 4.5, 0, Math.PI * 2);
+    ctx.arc(7, -3, 4.2, 0, Math.PI * 2);
     ctx.fill();
-    // Двойной блик
+    // Белые блики глаз
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(9.5, -4.5, 1.8, 0, Math.PI * 2);
-    ctx.arc(7.2, -1.8, 0.8, 0, Math.PI * 2);
+    ctx.arc(8.5, -4.5, 1.8, 0, Math.PI * 2);
+    ctx.arc(6.5, -1.5, 0.8, 0, Math.PI * 2);
     ctx.fill();
 
-    // 6. Розовый носик и тонкие усы
-    ctx.fillStyle = '#fb7185';
+    // Розовый румянец на щечках
+    ctx.fillStyle = 'rgba(255, 154, 162, 0.6)';
     ctx.beginPath();
-    ctx.ellipse(17, 2, 3, 2.2, 0, 0, Math.PI * 2);
+    ctx.arc(13, 3, 4, 0, Math.PI * 2);
+    ctx.arc(-2, 4, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Усики (вибриссы)
-    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-    ctx.lineWidth = 1;
+    // Маленькие розовые лапки внизу
+    ctx.fillStyle = '#ffb8b8';
     ctx.beginPath();
-    ctx.moveTo(16, 1); ctx.lineTo(28, -2);
-    ctx.moveTo(16, 3); ctx.lineTo(29, 3);
-    ctx.moveTo(16, 5); ctx.lineTo(27, 8);
-    ctx.stroke();
-
+    ctx.arc(-6, 19, 4, 0, Math.PI * 2);
+    ctx.arc(6, 19, 4, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
 
-    // Прутья клетки с металлическим отблеском
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 2.5;
-    for (let bx = x + 16; bx < x + w; bx += 24) {
+    // 5. Передний ряд металлических прутьев клетки с освещением
+    for (let px = x + 12; px < x + cageW; px += 16) {
+      const rodGrad = ctx.createLinearGradient(px - 2, 0, px + 2, 0);
+      rodGrad.addColorStop(0, '#64748b');
+      rodGrad.addColorStop(0.5, '#e2e8f0');
+      rodGrad.addColorStop(1, '#475569');
+      ctx.strokeStyle = rodGrad;
+      ctx.lineWidth = 3.5;
       ctx.beginPath();
-      ctx.moveTo(bx, y);
-      ctx.lineTo(bx, y + h);
+      ctx.moveTo(px, y + 4);
+      ctx.lineTo(px, trayY);
       ctx.stroke();
     }
 
-    // Рама витрины
-    ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(x, y, w, h);
+    // Верхняя рамка клетки
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(x, y + 4, cageW, 4);
   }
 
-  // --- РЕАЛИСТИЧНАЯ МОДЕЛЬ ТАКСЫ ---
-  function drawDetailedDoge(cx, cy) {
-    const breath = Math.sin(dogBreathe) * 2.8;
+  // --- ПУХЛАЯ 3D ЛЕЖАНКА И ГЛИНЯНАЯ ТАКСА ---
+  function draw3DDashund(cx, cy) {
+    const breath = Math.sin(dogBreathe) * 2.5;
 
-    // 1. Премиальная велюровая лежанка с мягким бортиком
+    // 1. Круглая объемная фиолетовая лежанка (Clay 3D подушка с референса)
     ctx.save();
-    ctx.translate(cx, cy + 14);
+    ctx.translate(cx, cy + 12);
 
-    // Тень лежанки на полу
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    // Глубокая тень лежанки на полу
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
     ctx.beginPath();
-    ctx.ellipse(0, 6, 125, 56, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 16, 130, 48, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Дно лежанки
-    ctx.fillStyle = '#241433';
+    // Внутреннее углубление лежанки
+    const insideGrad = ctx.createRadialGradient(0, 4, 10, 0, 4, 90);
+    insideGrad.addColorStop(0, '#3a1c59');
+    insideGrad.addColorStop(1, '#231038');
+    ctx.fillStyle = insideGrad;
     ctx.beginPath();
-    ctx.ellipse(0, 0, 118, 52, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 4, 110, 42, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Мягкий объёмный бортик со швами
-    const rimGrad = ctx.createLinearGradient(-118, 0, 118, 0);
-    rimGrad.addColorStop(0, '#3b1d54');
-    rimGrad.addColorStop(0.5, '#5b2b82');
-    rimGrad.addColorStop(1, '#3b1d54');
-    ctx.strokeStyle = rimGrad;
-    ctx.lineWidth = 10;
+    // Пухлый круглый валик-бортик фиолетового цвета
+    const donutGrad = ctx.createLinearGradient(-125, 0, 125, 0);
+    donutGrad.addColorStop(0, '#69389e');
+    donutGrad.addColorStop(0.4, '#9053cf');
+    donutGrad.addColorStop(1, '#69389e');
+    ctx.strokeStyle = donutGrad;
+    ctx.lineWidth = 18;
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 114, 42, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Верхний светлый блик бортика (создает ощущение мягкой резины/глины)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.ellipse(0, -6, 110, 36, 0, Math.PI, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
 
-    // 2. ТАКСА (Шерсть, складки, анатомичный нос и глаза)
+    // 2. 3D Пластилиновая спящая такса
     ctx.save();
-    ctx.translate(cx, cy);
+    ctx.translate(cx - 8, cy);
 
-    // Свернутое длинное тело сосисочной таксы
-    const bodyGrad = ctx.createRadialGradient(0, -10, 10, 0, 0, 75);
-    bodyGrad.addColorStop(0, '#c2410c');
-    bodyGrad.addColorStop(0.5, '#9a3412');
-    bodyGrad.addColorStop(1, '#5a1d08');
+    // Объемное каплевидное тело таксы
+    const bodyGrad = ctx.createRadialGradient(-8, -8, 8, 0, 0, 70);
+    bodyGrad.addColorStop(0, '#e56a38');
+    bodyGrad.addColorStop(0.6, '#b84e20');
+    bodyGrad.addColorStop(1, '#6e2b0e');
     ctx.fillStyle = bodyGrad;
     ctx.beginPath();
-    ctx.ellipse(0, 0, 72 + breath, 28 + breath * 0.5, -0.04, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, 68 + breath, 26 + breath * 0.5, -0.05, 0, Math.PI * 2);
     ctx.fill();
 
-    // Шёлковый блеск на хребте (лоснящаяся собачья шерсть)
-    const spineSheen = ctx.createLinearGradient(-50, -14, 30, -6);
-    spineSheen.addColorStop(0, 'rgba(255,255,255,0)');
-    spineSheen.addColorStop(0.5, 'rgba(255,255,255,0.18)');
-    spineSheen.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = spineSheen;
+    // Гладкий глиняный блик на спине
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
     ctx.beginPath();
-    ctx.ellipse(0, -8, 55, 10, -0.04, 0, Math.PI * 2);
+    ctx.ellipse(0, -8, 48, 10, -0.05, 0, Math.PI * 2);
     ctx.fill();
 
-    // Поджатые короткие лапки с коготками
-    ctx.fillStyle = '#7c2d12';
+    // Задняя округлая лапка (окорочок)
+    ctx.fillStyle = '#b84e20';
     ctx.beginPath();
-    ctx.ellipse(-38, 18, 10, 7, 0.2, 0, Math.PI * 2);
-    ctx.ellipse(24, 20, 10, 7, -0.2, 0, Math.PI * 2);
-    ctx.fill();
-    // Коготки
-    ctx.fillStyle = '#18181b';
-    ctx.beginPath();
-    ctx.arc(-42, 23, 1.8, 0, Math.PI * 2);
-    ctx.arc(-38, 24, 1.8, 0, Math.PI * 2);
-    ctx.arc(22, 25, 1.8, 0, Math.PI * 2);
-    ctx.arc(26, 24, 1.8, 0, Math.PI * 2);
+    ctx.ellipse(-42, 8, 16, 12, 0.4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Голова таксы с объёмной светотенью
-    const headGrad = ctx.createRadialGradient(50, -8, 5, 52, -6, 26);
-    headGrad.addColorStop(0, '#ea580c');
-    headGrad.addColorStop(0.7, '#9a3412');
-    headGrad.addColorStop(1, '#652309');
+    // Передние подогнутые лапки
+    ctx.fillStyle = '#a04218';
+    ctx.beginPath();
+    ctx.ellipse(24, 16, 10, 6, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Округлая голова таксы с длинной мордочкой
+    const headGrad = ctx.createRadialGradient(48, -6, 6, 52, -4, 28);
+    headGrad.addColorStop(0, '#e56a38');
+    headGrad.addColorStop(0.7, '#b84e20');
+    headGrad.addColorStop(1, '#6e2b0e');
     ctx.fillStyle = headGrad;
     ctx.beginPath();
-    ctx.ellipse(50, -6, 24, 17, 0.18, 0, Math.PI * 2);
+    ctx.ellipse(48, -6, 22, 15, 0.15, 0, Math.PI * 2);
     ctx.fill();
 
-    // Вытянутая мордочка с носовыми складками
+    // Вытянутый нос
     ctx.beginPath();
-    ctx.ellipse(72, -2, 15, 10, 0.1, 0, Math.PI * 2);
+    ctx.ellipse(70, -2, 13, 8, 0.1, 0, Math.PI * 2);
     ctx.fill();
 
-    // Мокрый кожаный нос с ноздрями
-    ctx.fillStyle = '#18181b';
+    // Черный шарик-носик
+    ctx.fillStyle = '#1e272e';
     ctx.beginPath();
-    ctx.ellipse(84, -2, 6, 5, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Блик влажного носа
-    ctx.fillStyle = '#a1a1aa';
-    ctx.beginPath();
-    ctx.ellipse(83, -4, 2.5, 1.2, 0, 0, Math.PI * 2);
+    ctx.arc(81, -2, 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Длинное шелковистое ухо таксы
-    const earAngle = dogAlertState === 2 ? -0.25 : 0.35 + breath * 0.03;
-    ctx.save();
-    ctx.translate(40, -4);
-    ctx.rotate(earAngle);
-
-    const earGrad = ctx.createLinearGradient(0, 0, 0, 24);
-    earGrad.addColorStop(0, '#541c07');
-    earGrad.addColorStop(1, '#2c0e04');
+    // Висячее ухо (темнее тела, из пластилина)
+    const earGrad = ctx.createLinearGradient(36, -6, 36, 18);
+    earGrad.addColorStop(0, '#753013');
+    earGrad.addColorStop(1, '#4d1e0a');
     ctx.fillStyle = earGrad;
     ctx.beginPath();
-    ctx.ellipse(0, 12, 11, 22, 0, 0, Math.PI * 2);
+    ctx.ellipse(36, 5, 9, 18, 0.35, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
 
-    // Глаза таксы в трёх состояниях сна
+    // Состояния глаз
     if (dogAlertState === 0) {
-      // Сладкий глубокий сон: закрытые веки с ресничками
-      ctx.strokeStyle = '#271005';
+      // Закрытые спящие глазки-полумесяцы
+      ctx.strokeStyle = '#2d140a';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.arc(58, -8, 6, 0.1, Math.PI - 0.1);
+      ctx.arc(54, -7, 5.5, 0.15, Math.PI - 0.15);
       ctx.stroke();
 
-      // Летающие стильные Zzz
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-      ctx.font = 'bold 15px monospace';
-      const zOff = (Date.now() * 0.03) % 45;
-      ctx.fillText('z', 60 + zOff * 0.4, -22 - zOff);
-      ctx.font = 'bold 20px monospace';
-      ctx.fillText('Z', 70 + zOff * 0.4, -38 - zOff);
+      // 3D летающие белые "Zzz..." как на референсе
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0, 210, 255, 0.6)';
+      ctx.shadowBlur = 8;
+      ctx.font = '900 18px system-ui';
+      ctx.fillText('z', 72, -26);
+      ctx.font = '900 24px system-ui';
+      ctx.fillText('Z', 85, -42);
+      ctx.font = '900 32px system-ui';
+      ctx.fillText('Z...', 104, -60);
+      ctx.shadowBlur = 0;
 
     } else if (dogAlertState === 1) {
-      // Приоткрытый хитрый янтарный глаз
+      // Подозрительный приоткрытый глаз
       ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.arc(58, -9, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#b45309';
-      ctx.beginPath();
-      ctx.arc(59, -9, 3.5, 0, Math.PI * 2);
+      ctx.arc(54, -8, 6, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#000';
       ctx.beginPath();
-      ctx.arc(59, -9, 2, 0, Math.PI * 2);
+      ctx.arc(55, -8, 2.8, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#f59e0b';
-      ctx.font = '900 24px system-ui';
-      ctx.fillText('?', 57, -26);
+      ctx.fillStyle = '#ffbe76';
+      ctx.font = '900 28px system-ui';
+      ctx.fillText('?', 52, -26);
 
     } else {
-      // ОГРОМНЫЙ КРАСНЫЙ НАЛИТЫЙ КРОВЬЮ ГЛАЗ ТРЕВОГИ
+      // Большие красные глаза тревоги
       ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.arc(56, -10, 9.5, 0, Math.PI * 2);
+      ctx.arc(52, -9, 8.5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#ef4444';
+      ctx.fillStyle = '#ff4757';
       ctx.beginPath();
-      ctx.arc(57, -10, 5.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(57, -10, 2.5, 0, Math.PI * 2);
+      ctx.arc(53, -9, 4.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Знак тревоги над мордой
-      ctx.fillStyle = '#ff0055';
+      ctx.fillStyle = '#ff1e56';
       ctx.font = '900 38px system-ui';
-      ctx.fillText('!', 54, -32);
+      ctx.fillText('!', 50, -32);
     }
 
     ctx.restore();
