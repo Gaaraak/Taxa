@@ -1,9 +1,9 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Silly Sausage: All Levels</title>
+  <title>Silly Sausage</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,8 +16,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #120814;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #150918;
+      font-family: system-ui, -apple-system, sans-serif;
     }
     #game-container {
       position: relative;
@@ -25,92 +25,99 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      background: radial-gradient(circle at 50% 40%, #291229 0%, #0d040e 100%);
-    }
-    canvas {
-      display: block;
-      touch-action: none;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
-      border-radius: 14px;
+      padding: 12px 14px 20px 14px;
     }
 
-    /* HUD */
+    /* Верхний HUD */
     #hud {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      right: 14px;
+      width: 100%;
+      max-width: 360px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      pointer-events: none;
       z-index: 10;
     }
     .hud-pill {
-      background: rgba(36, 14, 38, 0.9);
+      background: #2b112f;
       border: 2px solid #ff79c6;
       color: #fff;
       padding: 6px 14px;
-      border-radius: 18px;
-      font-size: 14px;
+      border-radius: 20px;
+      font-size: 15px;
       font-weight: 900;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    #lvl-box {
+    #lvl-badge {
       color: #50fa7b;
       border-color: #50fa7b;
     }
 
-    /* D-Pad */
+    /* Холст с игрой */
+    #canvas-wrap {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 0;
+      margin: 8px 0;
+    }
+    canvas {
+      display: block;
+      background: #201024;
+      border: 2px solid #4a1e3f;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      touch-action: none;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* Виртуальный D-Pad */
     #dpad {
-      position: absolute;
-      bottom: 16px;
-      width: 175px;
-      height: 175px;
-      z-index: 20;
+      width: 180px;
+      height: 140px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 6px;
-      touch-action: none;
+      grid-template-rows: repeat(2, 1fr);
+      gap: 8px;
+      z-index: 20;
     }
     .d-btn {
-      background: rgba(255, 121, 198, 0.2);
+      background: #2b112f;
       border: 2px solid #ff79c6;
       border-radius: 16px;
       color: #fff;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      transition: background 0.05s ease, transform 0.05s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
     .d-btn:active {
       background: #ff79c6;
-      color: #120814;
+      color: #150918;
       transform: scale(0.92);
     }
     #btn-up { grid-column: 2; grid-row: 1; }
     #btn-left { grid-column: 1; grid-row: 2; }
+    #btn-down { grid-column: 2; grid-row: 2; }
     #btn-right { grid-column: 3; grid-row: 2; }
-    #btn-down { grid-column: 2; grid-row: 3; }
 
-    /* Модалки */
+    /* Окно сообщений */
     .modal {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(18, 8, 20, 0.9);
-      backdrop-filter: blur(10px);
+      background: rgba(18, 8, 20, 0.92);
+      backdrop-filter: blur(8px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -121,93 +128,62 @@
     .card {
       background: #2b122e;
       border: 3px solid #ff79c6;
-      border-radius: 26px;
+      border-radius: 24px;
       padding: 24px 20px;
       width: 100%;
-      max-width: 340px;
+      max-width: 320px;
       text-align: center;
       color: #fff;
-      box-shadow: 0 15px 45px rgba(0,0,0,0.8);
     }
-    .card h1 { font-size: 21px; color: #50fa7b; margin-bottom: 12px; }
-    .card ul {
-      text-align: left;
-      font-size: 13px;
-      color: #f8f8f2;
-      margin-bottom: 20px;
-      line-height: 1.6;
-      list-style: none;
-    }
+    .card h1 { font-size: 22px; margin-bottom: 12px; }
     .main-btn {
       width: 100%;
       background: linear-gradient(135deg, #50fa7b, #8be9fd);
       color: #120814;
       border: none;
-      padding: 15px;
-      border-radius: 18px;
+      padding: 14px;
+      border-radius: 16px;
       font-size: 17px;
       font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(80, 250, 123, 0.45);
+      margin-top: 10px;
     }
-    .main-btn:active { transform: scale(0.96); }
   </style>
 </head>
 <body>
 
 <div id="game-container">
-  <canvas id="stage"></canvas>
-
   <div id="hud">
-    <div class="hud-pill" id="lvl-box">УРОВЕНЬ 1</div>
-    <div class="hud-pill" id="score-box">🌭 0 / 0</div>
+    <div class="hud-pill" id="score-box">🌭 0 / 8</div>
+    <div class="hud-pill" id="lvl-badge">УРОВЕНЬ 1</div>
+  </div>
+
+  <div id="canvas-wrap">
+    <canvas id="stage"></canvas>
   </div>
 
   <div id="dpad">
     <button class="d-btn" id="btn-up">▲</button>
     <button class="d-btn" id="btn-left">◀</button>
-    <button class="d-btn" id="btn-right">▶</button>
     <button class="d-btn" id="btn-down">▼</button>
+    <button class="d-btn" id="btn-right">▶</button>
   </div>
 
-  <!-- Старт -->
-  <div id="start-modal" class="modal">
-    <div class="card">
-      <h1>🌭 SILLY SAUSAGE & CHIN</h1>
-      <ul>
-        <li>↕️ <b>Тяни сосисочную таксу</b> кнопками или свайпами.</li>
-        <li>🧱 <b>Прижимайся к стенам</b>, чтобы подтянуть хвост с шиншиллой!</li>
-        <li>🌭 <b>Собери все сосиски</b>, чтобы открыть золотой портал (★) на следующий уровень!</li>
-        <li>⚙️ <b>Берегись пил:</b> растянутое тело разрезается мгновенно!</li>
-      </ul>
-      <button class="main-btn" id="start-btn">ПОГНАЛИ! 🚀</button>
-    </div>
-  </div>
-
-  <!-- Смерть -->
+  <!-- Модалка смерти -->
   <div id="end-modal" class="modal hidden">
     <div class="card">
-      <h1 id="end-title" style="color:#ff5555;">ТЕБЯ РАСПИЛИЛО! ⚙️💥</h1>
-      <p style="font-size: 14px; margin: 10px 0 20px 0;" id="end-desc"></p>
-      <button class="main-btn" id="restart-btn">С ЧЕКПОИНТА 🔄</button>
+      <h1 id="end-title" style="color:#ff5555;">ТЕБЯ РАСПИЛИЛО! ⚙️</h1>
+      <p style="font-size: 14px; margin: 10px 0 16px 0;" id="end-desc"></p>
+      <button class="main-btn" id="restart-btn">ПОВТОРИТЬ 🔄</button>
     </div>
   </div>
 
-  <!-- Уровень пройден -->
+  <!-- Модалка победы -->
   <div id="win-modal" class="modal hidden">
     <div class="card" style="border-color:#50fa7b;">
       <h1 style="color:#50fa7b;">УРОВЕНЬ ПРОЙДЕН! 🎉</h1>
-      <p style="font-size: 15px; margin: 10px 0 20px 0;">Все сосиски съедены, шиншилла довольна!</p>
-      <button class="main-btn" id="next-lvl-btn">СЛЕДУЮЩИЙ УРОВЕНЬ ⏩</button>
-    </div>
-  </div>
-
-  <!-- Финал игры -->
-  <div id="victory-modal" class="modal hidden">
-    <div class="card" style="border-color:#f1fa8c;">
-      <h1 style="color:#f1fa8c;">ПОБЕДА! ВЫ СБЕЖАЛИ! 🏆</h1>
-      <p style="font-size: 15px; margin: 10px 0 20px 0;">Такса и шиншилла преодолели все мясные цеха и наелись от пуза!</p>
-      <button class="main-btn" id="all-restart-btn">ИГРАТЬ СНАЧАЛА 🔄</button>
+      <p style="font-size: 14px; margin: 10px 0 16px 0;">Все сосиски собраны, портал пройден!</p>
+      <button class="main-btn" id="next-btn">ДАЛЬШЕ ⏩</button>
     </div>
   </div>
 </div>
@@ -224,342 +200,182 @@
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  function playSound(type) {
+  function playTone(freq, duration, type='sine') {
     if (!audioCtx || audioCtx.state !== 'running') return;
     try {
       const t = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
+      osc.type = type;
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-
-      if (type === 'stretch') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(200, t);
-        osc.frequency.exponentialRampToValueAtTime(360, t + 0.07);
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.07);
-        osc.start(t);
-        osc.stop(t + 0.07);
-      } else if (type === 'pull') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(380, t);
-        osc.frequency.exponentialRampToValueAtTime(140, t + 0.12);
-        gain.gain.setValueAtTime(0.3, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.12);
-        osc.start(t);
-        osc.stop(t + 0.12);
-      } else if (type === 'eat') {
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(420, t);
-        osc.frequency.setValueAtTime(740, t + 0.05);
-        gain.gain.setValueAtTime(0.25, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.1);
-        osc.start(t);
-        osc.stop(t + 0.1);
-      } else if (type === 'portal') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, t);
-        osc.frequency.exponentialRampToValueAtTime(850, t + 0.25);
-        gain.gain.setValueAtTime(0.4, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.25);
-        osc.start(t);
-        osc.stop(t + 0.25);
-      } else if (type === 'cut') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, t);
-        osc.frequency.exponentialRampToValueAtTime(35, t + 0.35);
-        gain.gain.setValueAtTime(0.7, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
-        osc.start(t);
-        osc.stop(t + 0.35);
-      }
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.2, t);
+      gain.gain.linearRampToValueAtTime(0.01, t + duration);
+      osc.start(t);
+      osc.stop(t + duration);
     } catch(e) {}
   }
 
-  // --- ХОЛСТ И ГЕОМЕТРИЯ ---
+  // --- ХОЛСТ И СЕТКА ---
   const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
-  const TILE = 32;
+  const TILE = 28;
   const COLS = 11;
-  const ROWS = 16;
-  const baseW = COLS * TILE;
-  const baseH = ROWS * TILE;
+  const ROWS = 15;
+  canvas.width = COLS * TILE;
+  canvas.height = ROWS * TILE;
 
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = baseW * dpr;
-  canvas.height = baseH * dpr;
-  canvas.style.width = `${baseW}px`;
-  canvas.style.height = `${baseH}px`;
-  ctx.scale(dpr, dpr);
-
-  // ==========================================
-  // --- БАЗА УРОВНЕЙ (4 УРОВНЯ) ---
-  // 1: Стена, 0: Пусто, 2: Сосиска, 3: Пила, 4: Чекпоинт, 5: Портал выхода
-  // ==========================================
+  // 1: стена, 0: коридор, 2: сосиска, 3: пила, 5: выход
   const LEVELS = [
-    // УРОВЕНЬ 1: Разминка
     {
       name: "УРОВЕНЬ 1",
-      start: { x: 5, y: 14 },
-      exit: { x: 5, y: 1 },
+      start: { x: 5, y: 13 },
       map: [
         [1,1,1,1,1,5,1,1,1,1,1],
         [1,0,0,0,1,0,1,0,0,0,1],
-        [1,0,1,0,1,0,1,0,1,0,1],
         [1,2,1,0,0,2,0,0,1,2,1],
         [1,0,1,1,1,0,1,1,1,0,1],
         [1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,0,1,1,1,0,1,1,1],
-        [1,2,0,0,0,4,0,0,0,2,1],
-        [1,0,1,1,0,0,0,1,1,0,1],
-        [1,0,0,1,0,2,0,1,0,0,1],
+        [1,1,1,0,1,0,1,0,1,1,1],
+        [1,2,0,0,1,2,1,0,0,2,1],
+        [1,0,1,1,1,0,1,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,1],
         [1,1,0,1,1,0,1,1,0,1,1],
-        [1,2,0,0,0,0,0,0,0,2,1],
-        [1,0,1,1,0,1,0,1,1,0,1],
-        [1,0,0,0,0,2,0,0,0,0,1],
-        [1,1,1,0,1,1,1,0,1,1,1],
+        [1,2,0,0,0,2,0,0,0,2,1],
+        [1,0,1,1,0,0,0,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,1],
+        [1,1,1,0,1,0,1,0,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1]
       ]
     },
-    // УРОВЕНЬ 2: Зубастый лабиринт
     {
       name: "УРОВЕНЬ 2",
-      start: { x: 1, y: 14 },
-      exit: { x: 9, y: 1 },
+      start: { x: 1, y: 13 },
       map: [
         [1,1,1,1,1,1,1,1,1,5,1],
         [1,2,0,0,0,3,0,0,0,0,1],
         [1,1,1,1,0,1,1,1,1,0,1],
         [1,0,0,0,0,0,2,0,1,0,1],
         [1,0,1,1,1,1,1,0,1,0,1],
-        [1,0,1,2,0,3,1,0,0,0,1],
+        [1,0,1,2,0,3,1,0,0,2,1],
         [1,0,1,0,1,0,1,1,1,0,1],
         [1,0,0,0,1,0,0,2,1,0,1],
         [1,1,1,0,1,1,1,0,1,0,1],
-        [1,2,0,0,0,4,1,0,0,0,1],
+        [1,2,0,0,0,0,1,0,0,0,1],
         [1,0,1,1,3,0,1,1,1,0,1],
         [1,0,1,2,0,0,0,2,1,0,1],
         [1,0,1,1,1,0,1,1,1,0,1],
         [1,0,0,0,0,0,0,3,0,2,1],
-        [1,0,1,1,1,1,1,1,1,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1]
-      ]
-    },
-    // УРОВЕНЬ 3: Завод сосисок
-    {
-      name: "УРОВЕНЬ 3",
-      start: { x: 5, y: 14 },
-      exit: { x: 5, y: 1 },
-      map: [
-        [1,1,1,1,1,5,1,1,1,1,1],
-        [1,2,0,1,0,0,0,1,0,2,1],
-        [1,0,3,1,0,3,0,1,3,0,1],
-        [1,0,0,0,0,2,0,0,0,0,1],
-        [1,1,1,0,1,1,1,0,1,1,1],
-        [1,2,0,0,0,4,0,0,0,2,1],
-        [1,0,1,1,3,0,3,1,1,0,1],
-        [1,0,0,1,0,2,0,1,0,0,1],
-        [1,1,0,1,1,0,1,1,0,1,1],
-        [1,2,0,0,0,0,0,0,0,2,1],
-        [1,0,1,3,1,0,1,3,1,0,1],
-        [1,0,1,0,1,2,1,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,0,1,3,1,0,1,1,1],
-        [1,2,0,0,0,0,0,0,0,2,1],
-        [1,1,1,1,1,1,1,1,1,1,1]
-      ]
-    },
-    // УРОВЕНЬ 4: Великий Побег (Хардкор финал)
-    {
-      name: "ФИНАЛ: ПОБЕГ",
-      start: { x: 1, y: 14 },
-      exit: { x: 9, y: 1 },
-      map: [
-        [1,1,1,1,1,1,1,1,1,5,1],
-        [1,2,0,3,0,2,0,3,0,0,1],
-        [1,1,0,1,1,0,1,1,0,1,1],
-        [1,0,0,0,3,0,0,0,0,2,1],
-        [1,0,1,1,1,1,1,0,1,1,1],
-        [1,0,0,2,0,4,0,0,0,0,1],
-        [1,1,1,0,1,3,1,0,1,0,1],
-        [1,2,0,0,1,2,1,0,1,0,1],
-        [1,0,1,3,1,0,1,0,1,0,1],
-        [1,0,1,0,0,0,0,0,0,2,1],
-        [1,0,1,1,1,0,1,1,1,0,1],
-        [1,2,0,3,0,0,0,3,0,0,1],
-        [1,1,0,1,1,1,1,0,1,1,1],
-        [1,2,0,0,0,2,0,0,0,2,1],
-        [1,0,1,1,1,1,1,1,1,0,1],
         [1,1,1,1,1,1,1,1,1,1,1]
       ]
     }
   ];
 
-  let currentLvlIdx = 0;
-  let currentMap = [];
-  let totalSausages = 0;
-  let eatenSausages = 0;
-  let portalOpen = false;
-
-  let bodyNodes = [];
+  let curLvl = 0;
+  let curMap = [];
+  let body = [];
   let headDir = { x: 0, y: -1 };
-  let sawRotation = 0;
-  let activeCp = { x: 5, y: 14 };
-  let isRunning = false;
-  let particles = [];
+  let totalFood = 0;
+  let eatenFood = 0;
+  let portalOpen = false;
+  let isAlive = true;
+  let sawAngle = 0;
 
   function loadLevel(idx) {
-    currentLvlIdx = idx;
-    const lvl = LEVELS[currentLvlIdx];
-    currentMap = JSON.parse(JSON.stringify(lvl.map));
-    activeCp = { x: lvl.start.x, y: lvl.start.y };
-
-    totalSausages = 0;
-    eatenSausages = 0;
+    curLvl = idx % LEVELS.length;
+    const lvl = LEVELS[curLvl];
+    curMap = JSON.parse(JSON.stringify(lvl.map));
+    totalFood = 0;
+    eatenFood = 0;
     portalOpen = false;
+    isAlive = true;
 
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        if (currentMap[r][c] === 2) totalSausages++;
+        if (curMap[r][c] === 2) totalFood++;
       }
     }
 
-    document.getElementById('lvl-box').textContent = lvl.name;
-    respawn();
-  }
-
-  function respawn() {
-    const px = activeCp.x * TILE + TILE / 2;
-    const py = activeCp.y * TILE + TILE / 2;
-    bodyNodes = [{ x: activeCp.x, y: activeCp.y, renderX: px, renderY: py }];
+    body = [{ x: lvl.start.x, y: lvl.start.y }];
+    document.getElementById('lvl-badge').textContent = lvl.name;
     updateHUD();
   }
 
   function updateHUD() {
-    document.getElementById('score-box').textContent = `🌭 ${eatenSausages} / ${totalSausages}`;
-  }
-
-  function canMoveTo(tx, ty) {
-    if (tx < 0 || tx >= COLS || ty < 0 || ty >= ROWS) return false;
-    if (currentMap[ty][tx] === 1) return false;
-    // В портал можно только если собран весь провиант
-    if (currentMap[ty][tx] === 5 && !portalOpen) return false;
-
-    for (let i = 1; i < bodyNodes.length - 1; i++) {
-      if (bodyNodes[i].x === tx && bodyNodes[i].y === ty) return false;
-    }
-    return true;
+    document.getElementById('score-box').textContent = `🌭 ${eatenFood} / ${totalFood}`;
   }
 
   function isAdjacentSolid(gx, gy) {
-    const checks = [
+    const n = [
       { x: gx, y: gy - 1 },
       { x: gx, y: gy + 1 },
       { x: gx - 1, y: gy },
       { x: gx + 1, y: gy }
     ];
-    for (const n of checks) {
-      if (n.x < 0 || n.x >= COLS || n.y < 0 || n.y >= ROWS) return true;
-      if (currentMap[n.y][n.x] === 1) return true;
+    for (const p of n) {
+      if (p.x < 0 || p.x >= COLS || p.y < 0 || p.y >= ROWS) return true;
+      if (curMap[p.y][p.x] === 1) return true;
     }
     return false;
   }
 
   function tryMove(dx, dy) {
-    if (!isRunning) return;
+    if (!isAlive) return;
     initAudio();
 
-    const head = bodyNodes[0];
+    const head = body[0];
     const nx = head.x + dx;
     const ny = head.y + dy;
 
-    if (!canMoveTo(nx, ny)) return;
+    if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) return;
+    if (curMap[ny][nx] === 1) return; // стена
+    if (curMap[ny][nx] === 5 && !portalOpen) return; // закрытый портал
 
     headDir = { x: dx, y: dy };
-    bodyNodes.unshift({
-      x: nx,
-      y: ny,
-      renderX: head.renderX,
-      renderY: head.renderY
-    });
-    playSound('stretch');
+    body.unshift({ x: nx, y: ny });
+    playTone(280, 0.08, 'sine');
 
-    // Сбор сосиски
-    if (currentMap[ny][nx] === 2) {
-      currentMap[ny][nx] = 0;
-      eatenSausages++;
-      playSound('eat');
-      spawnSparks(nx * TILE + 16, ny * TILE + 16, '#f1fa8c');
-      if (eatenSausages >= totalSausages) {
+    // Сбор еды
+    if (curMap[ny][nx] === 2) {
+      curMap[ny][nx] = 0;
+      eatenFood++;
+      playTone(550, 0.1, 'square');
+      if (eatenFood >= totalFood) {
         portalOpen = true;
-        playSound('portal');
+        playTone(700, 0.25, 'triangle');
       }
       updateHUD();
     }
 
-    // Чекпоинт
-    if (currentMap[ny][nx] === 4) {
-      activeCp = { x: nx, y: ny };
-      spawnSparks(nx * TILE + 16, ny * TILE + 16, '#50fa7b');
-    }
-
-    // ВХОД В ПОРТАЛ (Победа на уровне)
-    if (currentMap[ny][nx] === 5 && portalOpen) {
-      winLevel();
+    // Пила
+    if (curMap[ny][nx] === 3) {
+      die('Такса врезалась носом в циркулярную пилу!');
       return;
     }
 
-    // Столкновение с пилой носом
-    if (currentMap[ny][nx] === 3) {
-      killDoge('Такса наткнулась носом на циркулярную пилу!');
+    // Выход
+    if (curMap[ny][nx] === 5 && portalOpen) {
+      isAlive = false;
+      document.getElementById('win-modal').classList.remove('hidden');
       return;
     }
 
-    // Закрепление на стене: сжимаем тело
-    if (isAdjacentSolid(nx, ny) && bodyNodes.length > 1) {
-      bodyNodes = [{
-        x: nx,
-        y: ny,
-        renderX: bodyNodes[0].renderX,
-        renderY: bodyNodes[0].renderY
-      }];
-      playSound('pull');
-      spawnSparks(nx * TILE + 16, ny * TILE + 16, '#ff79c6');
+    // Закрепление на стене: сжатие хвоста
+    if (isAdjacentSolid(nx, ny) && body.length > 1) {
+      body = [{ x: nx, y: ny }];
+      playTone(200, 0.1, 'triangle');
     }
   }
 
-  function killDoge(reason) {
-    playSound('cut');
-    isRunning = false;
-    document.getElementById('end-desc').textContent = reason;
+  function die(msg) {
+    isAlive = false;
+    playTone(120, 0.35, 'sawtooth');
+    document.getElementById('end-desc').textContent = msg;
     document.getElementById('end-modal').classList.remove('hidden');
   }
 
-  function winLevel() {
-    playSound('portal');
-    isRunning = false;
-    if (currentLvlIdx < LEVELS.length - 1) {
-      document.getElementById('win-modal').classList.remove('hidden');
-    } else {
-      document.getElementById('victory-modal').classList.remove('hidden');
-    }
-  }
-
-  function spawnSparks(x, y, color) {
-    for (let i = 0; i < 8; i++) {
-      particles.push({
-        x: x,
-        y: y,
-        vx: (Math.random() - 0.5) * 6,
-        vy: (Math.random() - 0.5) * 6,
-        color: color,
-        life: 1.0
-      });
-    }
-  }
-
-  // --- ВВОД (POINTERDOWN / KEYBOARD) ---
+  // --- ВВОД ---
   window.addEventListener('keydown', e => {
     if (e.key === 'ArrowUp' || e.key === 'KeyW') tryMove(0, -1);
     if (e.key === 'ArrowDown' || e.key === 'KeyS') tryMove(0, 1);
@@ -567,68 +383,30 @@
     if (e.key === 'ArrowRight' || e.key === 'KeyD') tryMove(1, 0);
   });
 
-  const bindPad = (id, dx, dy) => {
+  const bind = (id, dx, dy) => {
     const el = document.getElementById(id);
-    el.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      tryMove(dx, dy);
-    });
+    const fn = (e) => { e.preventDefault(); tryMove(dx, dy); };
+    el.addEventListener('touchstart', fn, { passive: false });
+    el.addEventListener('mousedown', fn);
   };
-  bindPad('btn-up', 0, -1);
-  bindPad('btn-down', 0, 1);
-  bindPad('btn-left', -1, 0);
-  bindPad('btn-right', 1, 0);
+  bind('btn-up', 0, -1);
+  bind('btn-down', 0, 1);
+  bind('btn-left', -1, 0);
+  bind('btn-right', 1, 0);
 
-  let touchX = 0, touchY = 0;
-  canvas.addEventListener('pointerdown', e => {
-    touchX = e.clientX;
-    touchY = e.clientY;
-  });
-  canvas.addEventListener('pointerup', e => {
-    const dx = e.clientX - touchX;
-    const dy = e.clientY - touchY;
-    if (Math.abs(dx) > Math.abs(dy)) {
-      if (Math.abs(dx) > 18) tryMove(dx > 0 ? 1 : -1, 0);
-    } else {
-      if (Math.abs(dy) > 18) tryMove(0, dy > 0 ? 1 : -1);
-    }
-  });
+  // --- ЦИКЛ ОТРИСОВКИ ---
+  function loop() {
+    sawAngle += 0.08;
 
-  // --- ИГРОВОЙ ЦИКЛ ---
-  let lastTime = performance.now();
-
-  function loop(now) {
-    const dt = Math.min((now - lastTime) / 1000, 0.1);
-    lastTime = now;
-
-    update(dt);
-    render();
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
-
-  function update(dt) {
-    sawRotation += 4.5 * dt;
-
-    for (let i = 0; i < bodyNodes.length; i++) {
-      const seg = bodyNodes[i];
-      const targetX = seg.x * TILE + TILE / 2;
-      const targetY = seg.y * TILE + TILE / 2;
-      seg.renderX += (targetX - seg.renderX) * 0.35;
-      seg.renderY += (targetY - seg.renderY) * 0.35;
-    }
-
-    if (isRunning && bodyNodes.length > 1) {
+    // Проверка столкновения тела с пилами
+    if (isAlive && body.length > 1) {
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
-          if (currentMap[r][c] === 3) {
-            const sawX = c * TILE + TILE / 2;
-            const sawY = r * TILE + TILE / 2;
-            for (let i = 0; i < bodyNodes.length; i++) {
-              const seg = bodyNodes[i];
-              if (Math.hypot(sawX - seg.renderX, sawY - seg.renderY) < 16) {
-                killDoge('Растянутую сосиску разрезало циркулярной пилой!');
-                return;
+          if (curMap[r][c] === 3) {
+            for (let i = 0; i < body.length; i++) {
+              if (body[i].x === c && body[i].y === r) {
+                die('Тело таксы разрезало циркулярной пилой!');
+                break;
               }
             }
           }
@@ -636,222 +414,134 @@
       }
     }
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= dt * 2.5;
-      if (p.life <= 0) particles.splice(i, 1);
-    }
+    render();
+    requestAnimationFrame(loop);
   }
 
-  // --- ОТРИСОВКА ---
   function render() {
-    ctx.clearRect(0, 0, baseW, baseH);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // 1. Карта
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
-        const type = currentMap[r][c];
+        const t = curMap[r][c];
         const px = c * TILE;
         const py = r * TILE;
 
-        if (type === 1) {
+        if (t === 1) {
           ctx.fillStyle = '#4c1e40';
           ctx.fillRect(px, py, TILE, TILE);
-          ctx.strokeStyle = '#321029';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(px + 0.5, py + 0.5, TILE - 1, TILE - 1);
           ctx.fillStyle = '#6e2b5d';
-          ctx.fillRect(px + 4, py + 4, 8, 4);
+          ctx.fillRect(px + 3, py + 3, 6, 4);
         } else {
-          ctx.fillStyle = '#1e0c21';
+          ctx.fillStyle = '#201024';
           ctx.fillRect(px, py, TILE, TILE);
         }
 
-        // Сосиска
-        if (type === 2) {
+        if (t === 2) {
           ctx.fillStyle = '#ff5555';
           ctx.beginPath();
-          ctx.roundRect(px + 7, py + 10, 18, 12, 6);
+          ctx.roundRect(px + 6, py + 8, 16, 11, 5);
           ctx.fill();
           ctx.fillStyle = '#f1fa8c';
-          ctx.fillRect(px + 12, py + 12, 8, 8);
+          ctx.fillRect(px + 11, py + 10, 6, 7);
         }
 
-        // Пила
-        if (type === 3) {
+        if (t === 3) {
           ctx.save();
           ctx.translate(px + TILE / 2, py + TILE / 2);
-          ctx.rotate(sawRotation);
+          ctx.rotate(sawAngle);
           ctx.fillStyle = '#bd93f9';
           ctx.beginPath();
-          ctx.arc(0, 0, 13, 0, Math.PI * 2);
+          ctx.arc(0, 0, 11, 0, Math.PI * 2);
           ctx.fill();
-          ctx.strokeStyle = '#f8f8f2';
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.5;
           ctx.stroke();
-          for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
-            ctx.fillStyle = '#ff79c6';
-            ctx.fillRect(Math.cos(a) * 12 - 2, Math.sin(a) * 12 - 2, 4, 4);
-          }
           ctx.restore();
         }
 
-        // Чекпоинт
-        if (type === 4) {
-          ctx.fillStyle = '#50fa7b';
+        if (t === 5) {
+          ctx.fillStyle = portalOpen ? '#50fa7b' : '#44475a';
           ctx.beginPath();
-          ctx.ellipse(px + 16, py + 22, 12, 6, 0, 0, Math.PI * 2);
+          ctx.arc(px + TILE / 2, py + TILE / 2, 11, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = '#120814';
-          ctx.font = 'bold 12px sans-serif';
-          ctx.fillText('★', px + 11, py + 24);
-        }
-
-        // Портал выхода (5)
-        if (type === 5) {
-          ctx.save();
-          ctx.translate(px + 16, py + 16);
-          if (portalOpen) {
-            ctx.rotate(sawRotation * 0.7);
-            ctx.fillStyle = '#50fa7b';
-            ctx.shadowColor = '#50fa7b';
-            ctx.shadowBlur = 12;
-            ctx.beginPath();
-            ctx.arc(0, 0, 13, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(0, 0, 6, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            // Закрытый портал
-            ctx.fillStyle = '#44475a';
-            ctx.beginPath();
-            ctx.arc(0, 0, 11, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#6272a4';
-            ctx.font = 'bold 10px sans-serif';
-            ctx.fillText('🔒', -6, 4);
-          }
-          ctx.restore();
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText(portalOpen ? '★' : '🔒', px + 8, py + 18);
         }
       }
     }
 
-    // Такса и шиншилла
-    if (bodyNodes.length > 0) {
-      if (bodyNodes.length > 1) {
+    // 2. Такса и шиншилла
+    if (body.length > 0) {
+      // Соединительная сосиска
+      if (body.length > 1) {
         ctx.strokeStyle = '#ff79c6';
-        ctx.lineWidth = 20;
+        ctx.lineWidth = 16;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.beginPath();
-        ctx.moveTo(bodyNodes[0].renderX, bodyNodes[0].renderY);
-        for (let i = 1; i < bodyNodes.length; i++) {
-          ctx.lineTo(bodyNodes[i].renderX, bodyNodes[i].renderY);
-        }
-        ctx.stroke();
-
-        ctx.strokeStyle = '#ff92d0';
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(bodyNodes[0].renderX, bodyNodes[0].renderY);
-        for (let i = 1; i < bodyNodes.length; i++) {
-          ctx.lineTo(bodyNodes[i].renderX, bodyNodes[i].renderY);
+        ctx.moveTo(body[0].x * TILE + TILE / 2, body[0].y * TILE + TILE / 2);
+        for (let i = 1; i < body.length; i++) {
+          ctx.lineTo(body[i].x * TILE + TILE / 2, body[i].y * TILE + TILE / 2);
         }
         ctx.stroke();
       }
 
-      // Хвост и шиншилла
-      const tail = bodyNodes[bodyNodes.length - 1];
+      // Хвост с шиншиллой
+      const tail = body[body.length - 1];
+      const tx = tail.x * TILE + TILE / 2;
+      const ty = tail.y * TILE + TILE / 2;
+
       ctx.fillStyle = '#d63384';
       ctx.beginPath();
-      ctx.arc(tail.renderX, tail.renderY, 11, 0, Math.PI * 2);
+      ctx.arc(tx, ty, 9, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.save();
-      ctx.translate(tail.renderX, tail.renderY - 7);
+      // Шиншилла
       ctx.fillStyle = '#f8f8f2';
       ctx.beginPath();
-      ctx.arc(0, 0, 9, 0, Math.PI * 2);
+      ctx.arc(tx, ty - 6, 7, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#ffb8b8';
       ctx.beginPath();
-      ctx.arc(-5, -8, 3.5, 0, Math.PI * 2);
-      ctx.arc(5, -8, 3.5, 0, Math.PI * 2);
+      ctx.arc(tx - 4, ty - 12, 3, 0, Math.PI * 2);
+      ctx.arc(tx + 4, ty - 12, 3, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#8be9fd';
-      ctx.beginPath();
-      ctx.arc(3, -1, 1.8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
 
       // Голова таксы
-      const head = bodyNodes[0];
+      const head = body[0];
+      const hx = head.x * TILE + TILE / 2;
+      const hy = head.y * TILE + TILE / 2;
+
       ctx.fillStyle = '#ff79c6';
       ctx.beginPath();
-      ctx.arc(head.renderX, head.renderY, 13, 0, Math.PI * 2);
+      ctx.arc(hx, hy, 11, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#fff';
+      // Нос
+      ctx.fillStyle = '#111';
       ctx.beginPath();
-      ctx.arc(head.renderX + headDir.x * 5 - 3, head.renderY + headDir.y * 5 - 3, 3.5, 0, Math.PI * 2);
-      ctx.arc(head.renderX + headDir.x * 5 + 3, head.renderY + headDir.y * 5 - 3, 3.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#120814';
-      ctx.beginPath();
-      ctx.arc(head.renderX + headDir.x * 6 - 3, head.renderY + headDir.y * 6 - 3, 1.8, 0, Math.PI * 2);
-      ctx.arc(head.renderX + headDir.x * 6 + 3, head.renderY + headDir.y * 6 - 3, 1.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#120814';
-      ctx.beginPath();
-      ctx.arc(head.renderX + headDir.x * 10, head.renderY + headDir.y * 10, 3.5, 0, Math.PI * 2);
+      ctx.arc(hx + headDir.x * 9, hy + headDir.y * 9, 3, 0, Math.PI * 2);
       ctx.fill();
     }
-
-    for (const p of particles) {
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = Math.max(0, p.life);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1.0;
   }
 
-  // --- МОДАЛКИ И ПЕРЕХОДЫ ---
-  const startModal = document.getElementById('start-modal');
-  const endModal = document.getElementById('end-modal');
-  const winModal = document.getElementById('win-modal');
-  const victoryModal = document.getElementById('victory-modal');
-
-  document.getElementById('start-btn').onclick = () => {
-    initAudio();
-    startModal.classList.add('hidden');
-    loadLevel(0);
-    isRunning = true;
-  };
-
+  // Кнопки окон
   document.getElementById('restart-btn').onclick = () => {
-    endModal.classList.add('hidden');
-    respawn();
-    isRunning = true;
+    document.getElementById('end-modal').classList.add('hidden');
+    loadLevel(curLvl);
+  };
+  document.getElementById('next-btn').onclick = () => {
+    document.getElementById('win-modal').classList.add('hidden');
+    loadLevel(curLvl + 1);
   };
 
-  document.getElementById('next-lvl-btn').onclick = () => {
-    winModal.classList.add('hidden');
-    loadLevel(currentLvlIdx + 1);
-    isRunning = true;
-  };
-
-  document.getElementById('all-restart-btn').onclick = () => {
-    victoryModal.classList.add('hidden');
-    loadLevel(0);
-    isRunning = true;
-  };
+  // Мгновенный запуск уровня
+  loadLevel(0);
+  loop();
 })();
 </script>
 </body>
-  </html>
+   </html>
