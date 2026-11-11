@@ -42,7 +42,6 @@
       position: relative;
     }
 
-    /* Фоновый космос */
     #space-bg {
       position: fixed;
       inset: 0;
@@ -55,7 +54,6 @@
       z-index: 2;
     }
 
-    /* Верхний блок */
     header {
       text-align: center;
       margin-top: 4px;
@@ -102,7 +100,6 @@
       text-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
     }
 
-    /* Космическая арена с персонажами */
     .cosmic-stage {
       width: 100%;
       max-width: 480px;
@@ -134,7 +131,6 @@
       100% { transform: translateY(6px) rotate(3deg); }
     }
 
-    /* Рулетка в центре */
     .roulette-wrap {
       position: relative;
       flex: 1;
@@ -168,7 +164,6 @@
       background: linear-gradient(-90deg, #070914 20%, transparent);
     }
 
-    /* Лазерная шкала */
     .marker {
       position: absolute;
       top: 0;
@@ -209,8 +204,8 @@
 
     .card {
       flex-shrink: 0;
-      width: 102px;
-      height: 112px;
+      width: 106px;
+      height: 114px;
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -218,13 +213,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       text-align: center;
       padding: 6px;
     }
 
     .card .ico {
-      font-size: 24px;
+      font-size: 22px;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
     }
     .card .type-lbl {
@@ -232,6 +227,10 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 95px;
     }
     .card .meta-lbl {
       font-size: 9px;
@@ -254,14 +253,13 @@
     }
     .card.legendary .type-lbl { color: var(--legendary); }
 
-    /* Окно дропа */
     .drop-display {
       width: 100%;
       max-width: 440px;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 22px;
-      padding: 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -270,7 +268,7 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-      min-height: 190px;
+      min-height: 195px;
       justify-content: center;
       transition: all 0.3s ease;
     }
@@ -284,7 +282,7 @@
     }
 
     .drop-title {
-      font-size: 21px;
+      font-size: 20px;
       font-weight: 900;
       color: #fff;
     }
@@ -293,7 +291,7 @@
       font-size: 13px;
       color: #cbd5e1;
       line-height: 1.4;
-      max-width: 320px;
+      max-width: 340px;
     }
 
     .tag-row {
@@ -308,13 +306,12 @@
       background: rgba(99, 102, 241, 0.1);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 4px 10px;
-      font-size: 11px;
+      padding: 3px 8px;
+      font-size: 10px;
       font-weight: 700;
       color: #e2e8f0;
     }
 
-    /* Панель кнопок */
     .action-panel {
       width: 100%;
       max-width: 440px;
@@ -375,72 +372,57 @@
   <header>
     <div class="badge-top">
       <span class="pulse-dot"></span>
-      <span>Орбитальная Студия</span>
+      <span>Студийная Станция</span>
     </div>
     <h1>КЕЙС ПРОДЮСЕРА</h1>
   </header>
 
   <div class="cosmic-stage">
-    <!-- Астро-Шиншилла слева -->
+    <!-- Астро-Шиншилла -->
     <div class="astro-hero" id="hero-chinchilla">
       <svg width="56" height="78" viewBox="0 0 56 78" fill="none">
-        <!-- Антенна скафандра -->
         <line x1="28" y1="12" x2="28" y2="2" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
         <circle cx="28" cy="2" r="2.5" fill="#38bdf8"/>
-        <!-- Прозрачный шлем -->
         <circle cx="28" cy="24" r="18" fill="rgba(56, 189, 248, 0.18)" stroke="#38bdf8" stroke-width="1.8"/>
         <ellipse cx="23" cy="18" rx="5" ry="2.5" fill="rgba(255,255,255,0.4)" transform="rotate(-25 23 18)"/>
-        <!-- Ушки шиншиллы внутри шлема -->
         <ellipse cx="18" cy="16" rx="4" ry="7" fill="#64748b" transform="rotate(-15 18 16)"/>
         <ellipse cx="18" cy="16" rx="2.2" ry="4.5" fill="#fda4af" transform="rotate(-15 18 16)"/>
         <ellipse cx="38" cy="16" rx="4" ry="7" fill="#64748b" transform="rotate(15 38 16)"/>
         <ellipse cx="38" cy="16" rx="2.2" ry="4.5" fill="#fda4af" transform="rotate(15 38 16)"/>
-        <!-- Мордочка шиншиллы -->
         <ellipse cx="28" cy="26" rx="11" ry="9" fill="#94a3b8"/>
         <ellipse cx="28" cy="28" rx="6.5" ry="5.5" fill="#f8fafc"/>
         <circle cx="24" cy="24" r="2" fill="#090d16"/>
         <circle cx="32" cy="24" r="2" fill="#090d16"/>
         <circle cx="28" cy="27" r="1.3" fill="#fb7185"/>
-        <!-- Костюм-скафандр -->
         <rect x="16" y="40" width="24" height="26" rx="8" fill="#e2e8f0"/>
         <rect x="22" y="46" width="12" height="9" rx="3" fill="#38bdf8"/>
-        <!-- Лапки -->
         <circle cx="12" cy="48" r="4" fill="#cbd5e1"/>
         <circle cx="44" cy="48" r="4" fill="#cbd5e1"/>
-        <!-- Хвост шиншиллы сзади -->
         <path d="M16 60 C8 58 6 68 12 72 C18 76 22 70 20 64" fill="#64748b"/>
       </svg>
     </div>
 
-    <!-- Центральная рулетка -->
+    <!-- Рулетка -->
     <div class="roulette-wrap">
       <div class="marker"></div>
       <div class="tape" id="tape"></div>
     </div>
 
-    <!-- Астро-Такса справа -->
+    <!-- Астро-Такса -->
     <div class="astro-hero right" id="hero-dachshund">
       <svg width="56" height="78" viewBox="0 0 56 78" fill="none">
-        <!-- Реактивный ранец за спиной -->
         <rect x="36" y="32" width="8" height="20" rx="3" fill="#475569"/>
         <polygon points="40,54 36,62 44,62" fill="#f59e0b"/>
-        <!-- Скафандр таксы -->
         <rect x="14" y="36" width="26" height="24" rx="8" fill="#854d0e"/>
-        <!-- Полосатый космический свитер -->
         <rect x="18" y="36" width="6" height="24" fill="#dc2626"/>
         <rect x="28" y="36" width="6" height="24" fill="#facc15"/>
-        <!-- Шлем скафандра вытянутый -->
         <ellipse cx="26" cy="24" rx="16" ry="14" fill="rgba(245, 158, 11, 0.18)" stroke="#f59e0b" stroke-width="1.8"/>
-        <!-- Мордочка таксы -->
         <ellipse cx="24" cy="24" rx="10" ry="7.5" fill="#a16207"/>
         <ellipse cx="16" cy="26" rx="7" ry="4.5" fill="#a16207"/>
         <circle cx="11" cy="25" r="1.8" fill="#0f172a"/>
-        <!-- Ухо таксы -->
         <ellipse cx="32" cy="22" rx="4" ry="10" fill="#713f12" transform="rotate(25 32 22)"/>
-        <!-- Глаз -->
         <circle cx="22" cy="22" r="1.8" fill="#fff"/>
         <circle cx="21.5" cy="22" r="1" fill="#000"/>
-        <!-- Лапки -->
         <rect x="16" y="60" width="5" height="10" rx="2.5" fill="#713f12"/>
         <rect x="30" y="60" width="5" height="10" rx="2.5" fill="#713f12"/>
       </svg>
@@ -448,18 +430,17 @@
   </div>
 
   <div class="drop-display" id="display">
-    <div class="drop-rarity">Связь со станцией установлена</div>
-    <div class="drop-title">Что напишем сегодня? 🚀</div>
-    <div class="drop-desc">Крути кейс, чтобы выбить космический стиль, темп и тональность для следующего трека.</div>
+    <div class="drop-rarity">Связь со студией установлена</div>
+    <div class="drop-title">Что дропнем сегодня? 🎧</div>
+    <div class="drop-desc">Крути кейс, чтобы выбить стиль от 52 и детройта до Opium, джерка и темного андеграунда.</div>
   </div>
 
   <div class="action-panel">
-    <button class="btn-main" id="spin-btn">Открыть космо-кейс 🌌</button>
+    <button class="btn-main" id="spin-btn">Крутить кейс 🎲</button>
     <button class="btn-share" id="share-btn">Скопировать ТЗ в буфер 📋</button>
   </div>
 
 <script>
-  // Telegram WebApp
   const tg = window.Telegram?.WebApp;
   if (tg) {
     try {
@@ -481,7 +462,7 @@
     } catch(e) {}
   }
 
-  // Фон: Космос с параллаксом
+  // Космический фон
   const bgCanvas = document.getElementById('space-bg');
   const bgCtx = bgCanvas.getContext('2d');
   let stars = [];
@@ -505,8 +486,6 @@
 
   function drawSpace() {
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-    // Туманность
     const grad = bgCtx.createRadialGradient(
       bgCanvas.width * 0.5, bgCanvas.height * 0.35, 10,
       bgCanvas.width * 0.5, bgCanvas.height * 0.35, bgCanvas.width * 0.7
@@ -517,13 +496,11 @@
     bgCtx.fillStyle = grad;
     bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-    // Звезды
     for (const s of stars) {
       bgCtx.fillStyle = `rgba(255, 255, 255, ${s.a})`;
       bgCtx.beginPath();
       bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       bgCtx.fill();
-
       s.y -= s.speed;
       if (s.y < 0) s.y = bgCanvas.height;
     }
@@ -531,7 +508,7 @@
   }
   drawSpace();
 
-  // Web Audio
+  // Звуковой движок
   class CosmicSound {
     constructor() { this.ctx = null; }
     init() {
@@ -578,21 +555,197 @@
   }
   const sfx = new CosmicSound();
 
-  // Задачи
+  // База стилей с добавлением всех указанных артистов
   const ITEMS = [
-    { type: 'Луп', name: 'Космический Drift Melody', bpm: '144 BPM', key: 'C Minor', rarity: 'common', ico: '🎹', desc: 'Детюненный синтовый лид с реверберацией и космическим фленджером.', tags: ['Space Lead', 'Drill', 'Detune'] },
-    { type: 'Луп', name: 'Ambient Space Pad', bpm: '120 BPM', key: 'F# Minor', rarity: 'common', ico: '🌌', desc: 'Воздушный синт-пэд с фильтрацией высоких частот и текстурным шумом звезд.', tags: ['Nebula', 'Warm Pad', 'Chill'] },
-    { type: 'Луп', name: 'Sub-Orbit 808 Glide', bpm: '140 BPM', key: 'D Minor', rarity: 'common', ico: '🔊', desc: 'Глубокий суб-бас с длинными слайдами по октавам.', tags: ['808 Glide', 'Deep Sub', 'Heavy'] },
+    // --- 52 / Питерский трушный звук ---
+    { 
+      type: 'Бит', 
+      name: '52 Плотный Уличный Трэп', 
+      bpm: '140 BPM', 
+      key: 'D Minor', 
+      rarity: 'rare', 
+      ico: '🧱', 
+      desc: 'В стиле ALBLAK 52 и FRIENDLY THUG 52 NGG. Тяжелая бочка, жесткий 808 без лишней грязи, минималистичные мрачные клавиши и ощущение трушного уличного монолога.', 
+      tags: ['ALBLAK 52', 'FRIENDLY THUG', '52 Sound', 'Real Trap'] 
+    },
+    { 
+      type: 'Луп', 
+      name: 'Мрачные 52 Клавиши', 
+      bpm: '138 BPM', 
+      key: 'C Minor', 
+      rarity: 'common', 
+      ico: '🎹', 
+      desc: 'Строгая фортепианная мелодия с глубоким ревербом и виниловым шумом в духе питерского андеграунда.', 
+      tags: ['52 Melodic', 'Dark Piano', 'Underground'] 
+    },
 
-    { type: 'Бит', name: 'Cyber Phonk / Drift', bpm: '140 BPM', key: 'A Minor', rarity: 'rare', ico: '🏎️', desc: 'Ковбелл с перегрузом, грязные акапеллы и раскатистая бочка.', tags: ['Phonk', 'Cowbell', 'Distortion'] },
-    { type: 'Бит', name: 'Cosmic Trap Metal', bpm: '138 BPM', key: 'E Minor', rarity: 'rare', ico: '🔥', desc: 'Быстрые хэты с триолями, плотный снейр и ревущий 808 под агрессивный флоу.', tags: ['Trap Metal', 'Fast Hats', 'Heavy'] },
-    { type: 'Луп', name: 'Hyper-Rage Arp', bpm: '152 BPM', key: 'G Major', rarity: 'rare', ico: '⚡', desc: 'Энергичный пилообразный арпеджиатор с портаменто.', tags: ['Rage', 'Hyperpop', 'Arp'] },
+    // --- Скам-рэп / Детройт (Scally, 163, Stephan, Luka) ---
+    { 
+      type: 'Бит', 
+      name: 'Классический Скам-Детройт', 
+      bpm: '200 BPM', 
+      key: 'F Minor', 
+      rarity: 'rare', 
+      ico: '💳', 
+      desc: 'В стиле Scally Milano. Рваные полиритмичные басы, сочные колокольчики, смещенные снейры и офф-бит ритмика для быстрого флекса.', 
+      tags: ['Scally Milano', 'Detroit', 'Scam Rap', '200 BPM'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Черный Юмор Детройт', 
+      bpm: '196 BPM', 
+      key: 'A Minor', 
+      rarity: 'rare', 
+      ico: '🥷', 
+      desc: 'В стиле 163ONMYNECK. Изобретательный бас-паттерн, синкопированные хай-хэты и язвительные сэмплы под сторителлинг с черным юмором.', 
+      tags: ['163ONMYNECK', 'Detroit Bounce', 'Storytelling'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Скоростной Скам-Флекс', 
+      bpm: '205 BPM', 
+      key: 'G# Minor', 
+      rarity: 'common', 
+      ico: '⚡', 
+      desc: 'В стиле uglystephan. Бешеный темп, хлесткие клапы, короткие панчи и прыгающий 808.', 
+      tags: ['uglystephan', 'Fast Detroit', 'Bouncy'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Минимал Уличный Фрост', 
+      bpm: '142 BPM', 
+      key: 'E Minor', 
+      rarity: 'common', 
+      ico: '🔪', 
+      desc: 'В стиле hood rich luka. Дерзкий минималистичный бит: только сухой кик, пробивной снейр и гипнотический луп из двух нот.', 
+      tags: ['hood rich luka', 'Raw Street', 'Minimal'] 
+    },
 
-    { type: 'Бит', name: 'Starlight Hardstyle Beat', bpm: '158 BPM', key: 'G# Minor', rarity: 'epic', ico: '🔨', desc: 'Тяжелая дисторшн-бочка, реверсивный бас и взрывной дроп.', tags: ['Hardstyle', '158 BPM', 'Energy'] },
-    { type: 'Бит', name: 'Alien Rage в стиле Yeat', bpm: '150 BPM', key: 'F Minor', rarity: 'epic', ico: '🛸', desc: 'Космические синт-паки, пробивной кик и футуристичный вайб.', tags: ['Rage', 'Yeat Style', 'Future'] },
+    // --- Opium / Рейдж (Ken Carson, Lone, Homixide, Hardrock, Yeat) ---
+    { 
+      type: 'Бит', 
+      name: 'Клубный Мошпит Рейдж', 
+      bpm: '154 BPM', 
+      key: 'F Minor', 
+      rarity: 'epic', 
+      ico: '🩸', 
+      desc: 'В стиле Ken Carson (Fighting My Demons, Yale). Жирные пилообразные EDM-лиды, перегруженный спикер-блоу 808 и драйв для рейвов.', 
+      tags: ['Ken Carson', 'Opium', 'Rage', 'Moshpit'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Эмбиент-Трэп Атмосфера', 
+      bpm: '136 BPM', 
+      key: 'B Minor', 
+      rarity: 'rare', 
+      ico: '🦇', 
+      desc: 'В стиле Destroy Lonely. Залитые дилеем электрогитары, воздушные синтезаторы, космический реверб и плавный кач.', 
+      tags: ['Destroy Lonely', 'Opium Ambient', 'Guitar Trap'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Heavy Guitar Moshpit', 
+      bpm: '150 BPM', 
+      key: 'C# Minor', 
+      rarity: 'epic', 
+      ico: '🎸', 
+      desc: 'В стиле Homixide Gang. Тяжелые дисторшн-риффы электрогитары, агрессивные синты и плотный 808 под слэм.', 
+      tags: ['Homixide Gang', 'Opium Guitar', 'Hardcore'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Психоделический Dark Трэп', 
+      bpm: '134 BPM', 
+      key: 'G Minor', 
+      rarity: 'rare', 
+      ico: '🍄', 
+      desc: 'В стиле Hardrock. Мрачная психоделика, расплывчатые текстуры, вокальные чопы и кач в духе раннего Carti и Thugger.', 
+      tags: ['Hardrock', 'Psychedelic Trap', 'Dark Vibe'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Фирменный Bell-Rage', 
+      bpm: '148 BPM', 
+      key: 'E Minor', 
+      rarity: 'epic', 
+      ico: '🔔', 
+      desc: 'В стиле Yeat. Знаменитый пронзительный колокол (Yeat Bell), плотные слои синтов и качающий саб с триольными хэтами.', 
+      tags: ['Yeat', 'Yeat Bell', 'Rage', 'Adlibs'] 
+    },
 
-    { type: 'Бит', name: 'Галактический Эксклюзив', bpm: '144 BPM', key: 'B Minor', rarity: 'legendary', ico: '👑', desc: 'Полный трек под ключ: интро с голосовым тегом, 2 куплета, бридж и дроп.', tags: ['Exclusive', 'Masterpiece', 'Cash'] },
-    { type: 'Челлендж', name: 'Бит из 1 Сэмпла за 20 мин', bpm: 'Свободный', key: 'Любой', rarity: 'legendary', ico: '⏱️', desc: 'Запиши любой звук рядом и собери весь бит только из него.', tags: ['Challenge', 'Pro Skill', 'Speed'] }
+    // --- Андерграунд / Джерк / Дарк (Nettspend, OsamaSon, Glokk40, etc.) ---
+    { 
+      type: 'Бит', 
+      name: 'Эмбиент Джерк / Вайб', 
+      bpm: '138 BPM', 
+      key: 'Eb Minor', 
+      rarity: 'rare', 
+      ico: '🌪️', 
+      desc: 'В стиле Nettspend. Размытые эмбиент-сэмплы, зажеванный звук кассеты, хаотичные хэты и ленивый, но гипнотический грув.', 
+      tags: ['Nettspend', 'Jerk', 'Ambient Trap', 'Underground'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Грязный Слайм-Трэп', 
+      bpm: '142 BPM', 
+      key: 'D Minor', 
+      rarity: 'common', 
+      ico: '🐍', 
+      desc: 'В стиле Slimesito. Глухой и жесткий андерграундный звук: тяжелый 808, мрачные колокола и холодная уличная подача.', 
+      tags: ['Slimesito', 'Slime Trap', 'Dark Underground'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Хаотичный Flanger Rage', 
+      bpm: '155 BPM', 
+      key: 'F# Minor', 
+      rarity: 'epic', 
+      ico: '💥', 
+      desc: 'В стиле OsamaSon. Перегруженные лиды, безумный фленджер, глитчи и сносящий басслайн под кричащий вокал.', 
+      tags: ['OsamaSon', 'Glitch Rage', 'Chaos', 'Distorted'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Глитч-Джерк Эксперимент', 
+      bpm: '144 BPM', 
+      key: 'Bb Minor', 
+      rarity: 'rare', 
+      ico: '🧪', 
+      desc: 'В стиле 2Sdxrt3all. Нестандартная перкуссия, короткие сбивки, микросэмплы и акцент на грубый лоу-фай бас.', 
+      tags: ['2Sdxrt3all', 'Experimental Jerk', 'Raw Sound'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Мрачный Атланта Андеграунд', 
+      bpm: '146 BPM', 
+      key: 'C Minor', 
+      rarity: 'rare', 
+      ico: '⛓️', 
+      desc: 'В стиле Glokk40Spaz. Мрачные мелодичные синты с быстрым пробивным хай-хэт роллом и тяжелым киком прямо в грудь.', 
+      tags: ['Glokk40Spaz', 'Dark Melody', 'Raw Underground'] 
+    },
+
+    // --- Легендарные цели ---
+    { 
+      type: 'Бит', 
+      name: 'Галактический Эксклюзив', 
+      bpm: '144 BPM', 
+      key: 'Любая', 
+      rarity: 'legendary', 
+      ico: '👑', 
+      desc: 'Собрать полноценный хит: мощное интро с тегом, контрастный куплет, взрывной мошпит-дроп и аутро. Готово на эксклюзив!', 
+      tags: ['Exclusive', 'Masterpiece', 'Full Track', 'Cash'] 
+    },
+    { 
+      type: 'Челлендж', 
+      name: 'Бит за 20 мин: 52 vs Opium', 
+      bpm: 'Свободный', 
+      key: 'Любая', 
+      rarity: 'legendary', 
+      ico: '⏱️', 
+      desc: 'Скрести плотный уличный звук 52 с футуристичными синтами Ken Carson в одном треке за 20 минут.', 
+      tags: ['Challenge', '52 x Opium', 'Speedrun'] 
+    }
   ];
 
   const tapeEl = document.getElementById('tape');
@@ -600,7 +753,7 @@
   const shareBtn = document.getElementById('share-btn');
   const displayEl = document.getElementById('display');
 
-  const CARD_WIDTH = 114; // 102px + 12px gap
+  const CARD_WIDTH = 118; // 106px + 12px gap
   let isSpinning = false;
   let tapeData = [];
   let currentTaskText = '';
@@ -609,7 +762,7 @@
     tapeEl.innerHTML = '';
     tapeData = [];
     
-    for (let i = 0; i < 65; i++) {
+    for (let i = 0; i < 70; i++) {
       const item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
       tapeData.push(item);
 
@@ -617,7 +770,7 @@
       card.className = `card ${item.rarity}`;
       card.innerHTML = `
         <div class="ico">${item.ico}</div>
-        <div class="type-lbl">${item.type}</div>
+        <div class="type-lbl">${item.name}</div>
         <div class="meta-lbl">${item.bpm}</div>
       `;
       tapeEl.appendChild(card);
@@ -632,7 +785,7 @@
     shareBtn.style.display = 'none';
     sfx.init();
 
-    const winIndex = 48 + Math.floor(Math.random() * 8);
+    const winIndex = 50 + Math.floor(Math.random() * 8);
     const winItem = tapeData[winIndex];
 
     const microOffset = (Math.random() - 0.5) * 45;
@@ -689,7 +842,7 @@
       </div>
     `;
 
-    currentTaskText = `🌌 Космическое ТЗ для продюсера:\n${item.ico} ${item.name}\nФормат: ${item.type} | ${item.bpm} | Тональность: ${item.key}\nПодробности: ${item.desc}\nТеги: ${item.tags.join(', ')}`;
+    currentTaskText = `🎯 Задача для продюсера:\n${item.ico} ${item.name}\nФормат: ${item.type} | ${item.bpm} | Тональность: ${item.key}\nПодробности: ${item.desc}\nТеги: ${item.tags.join(', ')}`;
     shareBtn.style.display = 'flex';
   }
 
