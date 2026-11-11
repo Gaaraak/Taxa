@@ -432,7 +432,7 @@
   <div class="drop-display" id="display">
     <div class="drop-rarity">Связь со студией установлена</div>
     <div class="drop-title">Что дропнем сегодня? 🎧</div>
-    <div class="drop-desc">Крути кейс, чтобы выбить стиль от 52 и детройта до Opium, джерка и темного андеграунда.</div>
+    <div class="drop-desc">Крути кейс, чтобы выбить стиль от Slayr, плагга и супертрэпа до 52, детройта и Opium.</div>
   </div>
 
   <div class="action-panel">
@@ -555,9 +555,261 @@
   }
   const sfx = new CosmicSound();
 
-  // База стилей с добавлением всех указанных артистов
+  // Расширенная база артистов и стилей
   const ITEMS = [
-    // --- 52 / Питерский трушный звук ---
+    // === 25 НОВЫХ ВАРИАНТОВ (ВКЛЮЧАЯ SLAYR И АКТУАЛЬНЫЙ САУНД) ===
+    { 
+      type: 'Бит', 
+      name: 'Мелодик Плагг / Slayr Vibe', 
+      bpm: '144 BPM', 
+      key: 'D# Minor', 
+      rarity: 'rare', 
+      ico: '🌸', 
+      desc: 'В стиле Slayr. Искрящиеся мечтательные колокольчики, мягкий Zaytoven/Pierre 808, качающий снейр и ностальгическая синтовая мелодия.', 
+      tags: ['Slayr', 'Pluggnb', 'Melodic Trap', 'Dreamy'] 
+    },
+    { 
+      type: 'Луп', 
+      name: 'Slayr Synth Chords', 
+      bpm: '140 BPM', 
+      key: 'G# Minor', 
+      rarity: 'common', 
+      ico: '✨', 
+      desc: 'Теплые джазовые аккорды с вибрато и хорусом в стиле новой волны мелодичного плаггнби.', 
+      tags: ['Slayr Type', 'Chords', 'Chorus'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Эмоциональный PluggNB', 
+      bpm: '142 BPM', 
+      key: 'F# Major', 
+      rarity: 'rare', 
+      ico: '💔', 
+      desc: 'В стиле Summrs и Autumn!. Звонкий клэп, перкуссионные триоли, воздушный вокальный чоп и глубокий суб-бас с мягким ударом.', 
+      tags: ['Summrs', 'Autumn!', 'Pluggnb', 'Soul'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Грязный Тяжелый Plugg', 
+      bpm: '138 BPM', 
+      key: 'C Minor', 
+      rarity: 'common', 
+      ico: '🥤', 
+      desc: 'В стиле Kankan. Тяжелый басслайн, дисторшн на мастере, ленивый флоу-грув и фирменные грязные хэты.', 
+      tags: ['Kankan', 'Plugg', 'Distorted 808'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Футуристичный Supertrap', 
+      bpm: '150 BPM', 
+      key: 'A# Minor', 
+      rarity: 'epic', 
+      ico: '🛸', 
+      desc: 'В стиле Redda. Безумный полиритмичный саунд-дизайн, глитчи, инопланетные арпеджиаторы и взрывающий уши саб.', 
+      tags: ['Redda', 'Supertrap', 'Alien Synth'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Хаотичный Лоу-Фай Джерк', 
+      bpm: '142 BPM', 
+      key: 'B Minor', 
+      rarity: 'rare', 
+      ico: '🌀', 
+      desc: 'В стиле xaviersobased. Быстрый кач, офф-бит драм-партия, зажеванный сэмпл кассеты и перегруженные снейры.', 
+      tags: ['xaviersobased', 'Jerk', 'Lo-Fi', 'Underground'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Текстурный Dark-Vibe Трэп', 
+      bpm: '146 BPM', 
+      key: 'F Minor', 
+      rarity: 'rare', 
+      ico: '🕶️', 
+      desc: 'В стиле che. Минималистичный сырой бас, короткие паузы в дропе и гипнотический синтовый хук.', 
+      tags: ['che', 'Dark Vibe', 'Raw', 'Atlanta'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Глитч-Андеграунд Эксперимент', 
+      bpm: '145 BPM', 
+      key: 'E Minor', 
+      rarity: 'common', 
+      ico: '📟', 
+      desc: 'В стиле 1oneover. Нестандартные сбивки, микро-роллы на хэтах и давящий монолитный 808.', 
+      tags: ['1oneover', 'Glitch Trap', 'Experimental'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Холодный Мрачный Трэп', 
+      bpm: '138 BPM', 
+      key: 'C# Minor', 
+      rarity: 'common', 
+      ico: '❄️', 
+      desc: 'В стиле Southstrip. Ледяные колокола, мрачная монотонная атмосфера и жесткая прямая бочка.', 
+      tags: ['Southstrip', 'Cold Trap', 'Dark 808'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Европейский Вайперр-Рейдж', 
+      bpm: '152 BPM', 
+      key: 'G Minor', 
+      rarity: 'epic', 
+      ico: '🕷️', 
+      desc: 'В стиле Kai Angel & 9mice (Viperr). Агрессивный индустриальный синт, евро-дэнс влияние, режущие частоты и мошпит-кач.', 
+      tags: ['Viperr', 'Kai Angel', '9mice', 'Industrial'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Джерк-Рейв с Автотюном', 
+      bpm: '140 BPM', 
+      key: 'D Major', 
+      rarity: 'rare', 
+      ico: '💊', 
+      desc: 'В стиле Toxi$. Прыгающая ритм-секция, яркий качающий пэд, свипы и динамичный саунд для громких клубов.', 
+      tags: ['Toxi$', 'Jerk Trap', 'Club Bounce'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Колючий Детройт с Панчами', 
+      bpm: '198 BPM', 
+      key: 'F# Minor', 
+      rarity: 'rare', 
+      ico: '🪓', 
+      desc: 'В стиле Heronwater. Острые как бритва клапы, смещенный бас, неожиданные остановки для убойных панчлайнов.', 
+      tags: ['Heronwater', 'Detroit', 'Hard Punch'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Тяжелый Уличный Дрилл/Трэп', 
+      bpm: '142 BPM', 
+      key: 'A Minor', 
+      rarity: 'common', 
+      ico: '🥷', 
+      desc: 'В стиле Bushido Zho. Тяжелый перегруз баса, хлесткий римшот и прямолинейный грув для жесткой читки.', 
+      tags: ['Bushido Zho', 'Heavy Beat', 'Aggressive'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Ироничный Быстрый Детройт', 
+      bpm: '202 BPM', 
+      key: 'C Minor', 
+      rarity: 'common', 
+      ico: '🎰', 
+      desc: 'В стиле OG Buda. Прыгающий бас, ретро-синты, офф-бит ритмика и пространство под быстрый флоу.', 
+      tags: ['OG Buda', 'Detroit', 'Fast Bounce'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Меланхоличный Мелодик Трэп', 
+      bpm: '130 BPM', 
+      key: 'Bb Minor', 
+      rarity: 'rare', 
+      ico: '🥀', 
+      desc: 'В стиле Платины. Сладкие пережатые вокальные сэмплы, мягкие синтезаторы и неторопливый вальяжный ритм.', 
+      tags: ['Платина', 'Melodic Trap', 'Sweet 808'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Многослойный Саунд-Дизайн Бит', 
+      bpm: '128 BPM', 
+      key: 'D Minor', 
+      rarity: 'epic', 
+      ico: '🕌', 
+      desc: 'В стиле Saluki. Живые этнические перкуссии, сложные модуляции, кинематографичные переходы и богатый бас.', 
+      tags: ['Saluki', 'Sound Design', 'Cinematic'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Классический Бэнгер Трэп', 
+      bpm: '140 BPM', 
+      key: 'G# Minor', 
+      rarity: 'rare', 
+      ico: '📼', 
+      desc: 'В стиле Big Baby Tape. Плотный 808, классические олдскул мемфис-сэмплы, жирные хэты и качающий грув.', 
+      tags: ['Big Baby Tape', 'Trap Banger', 'Memphis Chop'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Глянцевый Хитовый Чартовый Трэп', 
+      bpm: '140 BPM', 
+      key: 'Eb Minor', 
+      rarity: 'epic', 
+      ico: '💎', 
+      desc: 'В стиле Aarne (AA LANGUAGE). Чистейший коммерческий микс, пробивающий саб, запоминающийся синтовый хук.', 
+      tags: ['Aarne', 'Hit Beat', 'Clean Mix'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Яркий Мелодичный Дэнс-Трэп', 
+      bpm: '154 BPM', 
+      key: 'F Major', 
+      rarity: 'common', 
+      ico: '☀️', 
+      desc: 'В стиле Lil Tecca. Веселые гитарные риффы, солнечные синтезаторы и легкий подпрыгивающий ритм.', 
+      tags: ['Lil Tecca', 'Bouncy', 'Summer Vibe'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Сонный Психоделический Трэп', 
+      bpm: '132 BPM', 
+      key: 'E Minor', 
+      rarity: 'rare', 
+      ico: '🌙', 
+      desc: 'В стиле Lucki. Медленный затянутый 808, размытые пэды, гипнотические колокольчики и ленивый вайб.', 
+      tags: ['Lucki', 'Slow Trap', 'Hypnotic'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Энергичный Hyper-Rage / Digicore', 
+      bpm: '160 BPM', 
+      key: 'C# Major', 
+      rarity: 'rare', 
+      ico: '⚡', 
+      desc: 'В стиле midwxst и Trippie Redd (Trip At Knight). Скоростные синтезаторы, перегруз и бунтарская энергия.', 
+      tags: ['midwxst', 'Trippie Redd', 'Digicore', 'Hyperpop'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Шуточный Скоростной Детройт', 
+      bpm: '204 BPM', 
+      key: 'A Minor', 
+      rarity: 'common', 
+      ico: '🏎️', 
+      desc: 'В стиле BabyTron. Неожиданные сэмплы из поп-хитов 80-х, безумные брейки на снейрах и офф-бит бас.', 
+      tags: ['BabyTron', 'Fast Detroit', 'Samples'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Меланхоличный Пиано-Трэп', 
+      bpm: '130 BPM', 
+      key: 'G Minor', 
+      rarity: 'common', 
+      ico: '🎹', 
+      desc: 'В стиле Polo G. Грустное фортепиано с акцентом на минорные аккорды, сухой акустический кик и чистый снейр.', 
+      tags: ['Polo G', 'Piano Trap', 'Melancholy'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Психоделический Альт-Рок Трэп', 
+      bpm: '124 BPM', 
+      key: 'D Minor', 
+      rarity: 'epic', 
+      ico: '⛵', 
+      desc: 'В стиле Lil Yachty (Let’s Start Here). Живые барабаны, психоделический гитарный фузз и органные пэды.', 
+      tags: ['Lil Yachty', 'Psychedelic Rock', 'Live Drums'] 
+    },
+    { 
+      type: 'Бит', 
+      name: 'Темный Бруклин Дрилл', 
+      bpm: '142 BPM', 
+      key: 'B Minor', 
+      rarity: 'common', 
+      ico: '🗽', 
+      desc: 'В стиле DUSTY LOCANE. Скользящий 808 с дикими прыжками по октавам, темные струнные и глухой клэп.', 
+      tags: ['DUSTY LOCANE', 'Brooklyn Drill', 'Slide 808'] 
+    },
+
+    // === ПРЕДЫДУЩИЕ КЛЮЧЕВЫЕ ВАРИАНТЫ (52, OPIUM, DETROIT, JERK) ===
     { 
       type: 'Бит', 
       name: '52 Плотный Уличный Трэп', 
@@ -565,21 +817,9 @@
       key: 'D Minor', 
       rarity: 'rare', 
       ico: '🧱', 
-      desc: 'В стиле ALBLAK 52 и FRIENDLY THUG 52 NGG. Тяжелая бочка, жесткий 808 без лишней грязи, минималистичные мрачные клавиши и ощущение трушного уличного монолога.', 
-      tags: ['ALBLAK 52', 'FRIENDLY THUG', '52 Sound', 'Real Trap'] 
+      desc: 'В стиле ALBLAK 52 и FRIENDLY THUG 52 NGG. Тяжелая бочка, жесткий 808 без лишней грязи и минималистичные мрачные клавиши.', 
+      tags: ['ALBLAK 52', 'FRIENDLY THUG', '52 Sound'] 
     },
-    { 
-      type: 'Луп', 
-      name: 'Мрачные 52 Клавиши', 
-      bpm: '138 BPM', 
-      key: 'C Minor', 
-      rarity: 'common', 
-      ico: '🎹', 
-      desc: 'Строгая фортепианная мелодия с глубоким ревербом и виниловым шумом в духе питерского андеграунда.', 
-      tags: ['52 Melodic', 'Dark Piano', 'Underground'] 
-    },
-
-    // --- Скам-рэп / Детройт (Scally, 163, Stephan, Luka) ---
     { 
       type: 'Бит', 
       name: 'Классический Скам-Детройт', 
@@ -587,8 +827,8 @@
       key: 'F Minor', 
       rarity: 'rare', 
       ico: '💳', 
-      desc: 'В стиле Scally Milano. Рваные полиритмичные басы, сочные колокольчики, смещенные снейры и офф-бит ритмика для быстрого флекса.', 
-      tags: ['Scally Milano', 'Detroit', 'Scam Rap', '200 BPM'] 
+      desc: 'В стиле Scally Milano. Рваные полиритмичные басы, сочные колокольчики и офф-бит ритмика под скам-рэп.', 
+      tags: ['Scally Milano', 'Detroit', 'Scam Rap'] 
     },
     { 
       type: 'Бит', 
@@ -597,7 +837,7 @@
       key: 'A Minor', 
       rarity: 'rare', 
       ico: '🥷', 
-      desc: 'В стиле 163ONMYNECK. Изобретательный бас-паттерн, синкопированные хай-хэты и язвительные сэмплы под сторителлинг с черным юмором.', 
+      desc: 'В стиле 163ONMYNECK. Изобретательный бас-паттерн, синкопированные хай-хэты и язвительные сэмплы.', 
       tags: ['163ONMYNECK', 'Detroit Bounce', 'Storytelling'] 
     },
     { 
@@ -607,7 +847,7 @@
       key: 'G# Minor', 
       rarity: 'common', 
       ico: '⚡', 
-      desc: 'В стиле uglystephan. Бешеный темп, хлесткие клапы, короткие панчи и прыгающий 808.', 
+      desc: 'В стиле uglystephan. Бешеный темп, хлесткие клапы и прыгающий 808.', 
       tags: ['uglystephan', 'Fast Detroit', 'Bouncy'] 
     },
     { 
@@ -617,11 +857,9 @@
       key: 'E Minor', 
       rarity: 'common', 
       ico: '🔪', 
-      desc: 'В стиле hood rich luka. Дерзкий минималистичный бит: только сухой кик, пробивной снейр и гипнотический луп из двух нот.', 
+      desc: 'В стиле hood rich luka. Дерзкий минималистичный бит: только сухой кик, пробивной снейр и луп из двух нот.', 
       tags: ['hood rich luka', 'Raw Street', 'Minimal'] 
     },
-
-    // --- Opium / Рейдж (Ken Carson, Lone, Homixide, Hardrock, Yeat) ---
     { 
       type: 'Бит', 
       name: 'Клубный Мошпит Рейдж', 
@@ -629,7 +867,7 @@
       key: 'F Minor', 
       rarity: 'epic', 
       ico: '🩸', 
-      desc: 'В стиле Ken Carson (Fighting My Demons, Yale). Жирные пилообразные EDM-лиды, перегруженный спикер-блоу 808 и драйв для рейвов.', 
+      desc: 'В стиле Ken Carson (Fighting My Demons, Yale). Жирные пилообразные EDM-лиды и перегруженный 808.', 
       tags: ['Ken Carson', 'Opium', 'Rage', 'Moshpit'] 
     },
     { 
@@ -639,7 +877,7 @@
       key: 'B Minor', 
       rarity: 'rare', 
       ico: '🦇', 
-      desc: 'В стиле Destroy Lonely. Залитые дилеем электрогитары, воздушные синтезаторы, космический реверб и плавный кач.', 
+      desc: 'В стиле Destroy Lonely. Залитые дилеем гитары, воздушные синтезаторы и космический реверб.', 
       tags: ['Destroy Lonely', 'Opium Ambient', 'Guitar Trap'] 
     },
     { 
@@ -649,7 +887,7 @@
       key: 'C# Minor', 
       rarity: 'epic', 
       ico: '🎸', 
-      desc: 'В стиле Homixide Gang. Тяжелые дисторшн-риффы электрогитары, агрессивные синты и плотный 808 под слэм.', 
+      desc: 'В стиле Homixide Gang. Тяжелые дисторшн-риффы электрогитары, агрессивные синты и плотный 808.', 
       tags: ['Homixide Gang', 'Opium Guitar', 'Hardcore'] 
     },
     { 
@@ -659,7 +897,7 @@
       key: 'G Minor', 
       rarity: 'rare', 
       ico: '🍄', 
-      desc: 'В стиле Hardrock. Мрачная психоделика, расплывчатые текстуры, вокальные чопы и кач в духе раннего Carti и Thugger.', 
+      desc: 'В стиле Hardrock. Мрачная психоделика, расплывчатые текстуры и вокальные чопы в духе раннего Carti.', 
       tags: ['Hardrock', 'Psychedelic Trap', 'Dark Vibe'] 
     },
     { 
@@ -669,11 +907,9 @@
       key: 'E Minor', 
       rarity: 'epic', 
       ico: '🔔', 
-      desc: 'В стиле Yeat. Знаменитый пронзительный колокол (Yeat Bell), плотные слои синтов и качающий саб с триольными хэтами.', 
+      desc: 'В стиле Yeat. Знаменитый пронзительный колокол (Yeat Bell), плотные слои синтов и качающий саб.', 
       tags: ['Yeat', 'Yeat Bell', 'Rage', 'Adlibs'] 
     },
-
-    // --- Андерграунд / Джерк / Дарк (Nettspend, OsamaSon, Glokk40, etc.) ---
     { 
       type: 'Бит', 
       name: 'Эмбиент Джерк / Вайб', 
@@ -681,8 +917,8 @@
       key: 'Eb Minor', 
       rarity: 'rare', 
       ico: '🌪️', 
-      desc: 'В стиле Nettspend. Размытые эмбиент-сэмплы, зажеванный звук кассеты, хаотичные хэты и ленивый, но гипнотический грув.', 
-      tags: ['Nettspend', 'Jerk', 'Ambient Trap', 'Underground'] 
+      desc: 'В стиле Nettspend. Размытые эмбиент-сэмплы, кассетный звук, хаотичные хэты и гипнотический грув.', 
+      tags: ['Nettspend', 'Jerk', 'Ambient Trap'] 
     },
     { 
       type: 'Бит', 
@@ -691,7 +927,7 @@
       key: 'D Minor', 
       rarity: 'common', 
       ico: '🐍', 
-      desc: 'В стиле Slimesito. Глухой и жесткий андерграундный звук: тяжелый 808, мрачные колокола и холодная уличная подача.', 
+      desc: 'В стиле Slimesito. Глухой и жесткий звук: тяжелый 808, мрачные колокола и холодная уличная подача.', 
       tags: ['Slimesito', 'Slime Trap', 'Dark Underground'] 
     },
     { 
@@ -701,8 +937,8 @@
       key: 'F# Minor', 
       rarity: 'epic', 
       ico: '💥', 
-      desc: 'В стиле OsamaSon. Перегруженные лиды, безумный фленджер, глитчи и сносящий басслайн под кричащий вокал.', 
-      tags: ['OsamaSon', 'Glitch Rage', 'Chaos', 'Distorted'] 
+      desc: 'В стиле OsamaSon. Перегруженные лиды, безумный фленджер, глитчи и сносящий басслайн.', 
+      tags: ['OsamaSon', 'Glitch Rage', 'Chaos'] 
     },
     { 
       type: 'Бит', 
@@ -711,7 +947,7 @@
       key: 'Bb Minor', 
       rarity: 'rare', 
       ico: '🧪', 
-      desc: 'В стиле 2Sdxrt3all. Нестандартная перкуссия, короткие сбивки, микросэмплы и акцент на грубый лоу-фай бас.', 
+      desc: 'В стиле 2Sdxrt3all. Нестандартная перкуссия, короткие сбивки и грубый лоу-фай бас.', 
       tags: ['2Sdxrt3all', 'Experimental Jerk', 'Raw Sound'] 
     },
     { 
@@ -721,11 +957,11 @@
       key: 'C Minor', 
       rarity: 'rare', 
       ico: '⛓️', 
-      desc: 'В стиле Glokk40Spaz. Мрачные мелодичные синты с быстрым пробивным хай-хэт роллом и тяжелым киком прямо в грудь.', 
+      desc: 'В стиле Glokk40Spaz. Мрачные мелодичные синты, быстрый ролл хэтов и тяжелый кик в грудь.', 
       tags: ['Glokk40Spaz', 'Dark Melody', 'Raw Underground'] 
     },
 
-    // --- Легендарные цели ---
+    // Легендарные цели
     { 
       type: 'Бит', 
       name: 'Галактический Эксклюзив', 
@@ -733,18 +969,18 @@
       key: 'Любая', 
       rarity: 'legendary', 
       ico: '👑', 
-      desc: 'Собрать полноценный хит: мощное интро с тегом, контрастный куплет, взрывной мошпит-дроп и аутро. Готово на эксклюзив!', 
-      tags: ['Exclusive', 'Masterpiece', 'Full Track', 'Cash'] 
+      desc: 'Собрать полноценный хит: мощное интро с тегом, контрастный куплет, взрывной мошпит-дроп и аутро.', 
+      tags: ['Exclusive', 'Masterpiece', 'Full Track'] 
     },
     { 
       type: 'Челлендж', 
-      name: 'Бит за 20 мин: 52 vs Opium', 
+      name: 'Бит за 20 мин: Slayr vs Opium', 
       bpm: 'Свободный', 
       key: 'Любая', 
       rarity: 'legendary', 
       ico: '⏱️', 
-      desc: 'Скрести плотный уличный звук 52 с футуристичными синтами Ken Carson в одном треке за 20 минут.', 
-      tags: ['Challenge', '52 x Opium', 'Speedrun'] 
+      desc: 'Скрести нежный плаггнби Slayr с агрессивным дисторшном Ken Carson за 20 минут.', 
+      tags: ['Challenge', 'Slayr x Opium', 'Speedrun'] 
     }
   ];
 
@@ -762,7 +998,7 @@
     tapeEl.innerHTML = '';
     tapeData = [];
     
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < 75; i++) {
       const item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
       tapeData.push(item);
 
@@ -785,7 +1021,7 @@
     shareBtn.style.display = 'none';
     sfx.init();
 
-    const winIndex = 50 + Math.floor(Math.random() * 8);
+    const winIndex = 52 + Math.floor(Math.random() * 8);
     const winItem = tapeData[winIndex];
 
     const microOffset = (Math.random() - 0.5) * 45;
